@@ -60,7 +60,15 @@ BOOL CBekVideoMergeApp::InitInstance()
 	}
 
 	//日志模块初始化
-	LogBase_init(LOG_CONF_PATH);
+	wstring wstrCurrentPath = _T("");
+	wstring wstrLogConfPath = _T("");
+	CWinUtils::GetCurrentProcessPath(wstrCurrentPath);
+	wstrLogConfPath = wstrCurrentPath + _T("\\log");
+	if (!CWinUtils::FileExists(wstrLogConfPath))
+	{
+		CWinUtils::CreateDirectorys(wstrLogConfPath);
+	}
+	LogBase_init(LOG_CONF_BEKVIDEOMERGE);
 
 	//gdiplus初始化
 	GdiplusStartupInput gdiplusStartupInput;

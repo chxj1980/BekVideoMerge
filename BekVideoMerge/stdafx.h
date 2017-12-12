@@ -46,6 +46,7 @@ using namespace std;
 #include "Common/ServiceUtils.h"
 #include "Common/LogBase.h"
 #include "Common/SocketUtils.h"
+#include "Common/WinUtils.h"
 #pragma comment(lib, "CommonDll.lib")
 
 //gdiplus

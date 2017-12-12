@@ -36,6 +36,12 @@
     <ClInclude Include="..\inc\BaseDefine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VideoMergeManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPSockz.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BekVideoMerge.cpp">
@@ -45,6 +51,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoMergeManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPSockz.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

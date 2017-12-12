@@ -5,6 +5,9 @@
 #pragma once
 
 
+#include "VideoMergeManager.h"
+
+
 // CBekVideoMergeDlg dialog
 class CBekVideoMergeDlg : public CDialogEx
 {
@@ -30,5 +33,12 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg LRESULT OnSocketTCP(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnSocketUDP(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CVideoMergeManager videoMergeManager;
+	CJmqUDP jmqUdp;
+	CTCPSockz jmqTcp;
 };

@@ -7,6 +7,8 @@
 #include "BekVideoMergeDlg.h"
 #include "afxdialogex.h"
 
+#define MODULE_NAME	_T("BekVideoMerge")
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -64,6 +66,8 @@ BEGIN_MESSAGE_MAP(CBekVideoMergeDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_MESSAGE(WM_SOCKET_UDP, OnSocketTCP)
+	ON_MESSAGE(WM_SOCKET_UDP, OnSocketUDP)
 END_MESSAGE_MAP()
 
 
@@ -99,6 +103,25 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+
+	L_DEBUG(_T("CBekVideoMergeDlg OnInitDialog\n"));
+	videoMergeManager.StartWork();
+
+	if (!jmqTcp.InitSockS(m_hWnd, LISTENING_PORT_TCP, WM_SOCKET_TCP, 0))
+	{
+		L_ERROR(_T("jmqTcp.InitSockS failed, Exit.\n"));
+		CDialog::DestroyWindow();
+		return FALSE;
+	}
+	if (!jmqUdp.InitSockU(m_hWnd, LISTENING_PORT_UDP, WM_SOCKET_UDP))
+	{
+		L_ERROR(_T("jmqUdp.InitSockU failed, Exit.\n"));
+		CDialog::DestroyWindow();
+		return FALSE;
+	}
+
+
+	
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -150,5 +173,15 @@ void CBekVideoMergeDlg::OnPaint()
 HCURSOR CBekVideoMergeDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+LRESULT CBekVideoMergeDlg::OnSocketTCP(WPARAM wParam, LPARAM lParam)
+{
+	return S_OK;
+}
+
+LRESULT CBekVideoMergeDlg::OnSocketUDP(WPARAM wParam, LPARAM lParam)
+{
+	return S_OK;
 }
 

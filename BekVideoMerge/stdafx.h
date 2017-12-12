@@ -43,6 +43,7 @@ using namespace std;
 
 #include "BaseDefine.h"
 
+//CommonDll
 #include "Common/ServiceUtils.h"
 #include "Common/LogBase.h"
 #include "Common/SocketUtils.h"
@@ -54,7 +55,10 @@ using namespace std;
 #pragma comment(lib, "gdiplus/GdiPlus.lib")
 using namespace Gdiplus;
 
-
+//Socket
+#include "JmqUDP.h"
+#include "TCPSockz.h"
+#pragma comment(lib, "CUdpForJMQ.lib")
 
 #ifdef _UNICODE
 #if defined _M_IX86

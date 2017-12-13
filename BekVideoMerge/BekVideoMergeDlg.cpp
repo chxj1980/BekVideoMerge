@@ -107,15 +107,15 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 	L_DEBUG(_T("CBekVideoMergeDlg OnInitDialog\n"));
 	videoMergeManager.StartWork();
 
-	if (!jmqTcp.InitSockS(m_hWnd, LISTENING_PORT_TCP, WM_SOCKET_TCP, 0))
+	if (!tcpServer.InitSockS(m_hWnd, LISTENING_PORT_TCP, WM_SOCKET_TCP, 0))
 	{
-		L_ERROR(_T("jmqTcp.InitSockS failed, Exit.\n"));
+		L_ERROR(_T("tcpServer.InitSockS failed, Exit.\n"));
 		CDialog::DestroyWindow();
 		return FALSE;
 	}
-	if (!jmqUdp.InitSockU(m_hWnd, LISTENING_PORT_UDP, WM_SOCKET_UDP))
+	if (!udpServer.InitSockU(m_hWnd, LISTENING_PORT_UDP, WM_SOCKET_UDP))
 	{
-		L_ERROR(_T("jmqUdp.InitSockU failed, Exit.\n"));
+		L_ERROR(_T("udpServer.InitSockU failed, Exit.\n"));
 		CDialog::DestroyWindow();
 		return FALSE;
 	}

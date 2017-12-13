@@ -39,6 +39,6 @@ protected:
 
 private:
 	CVideoMergeManager videoMergeManager;
-	CJmqUDP jmqUdp;
-	CTCPSockz jmqTcp;
+	CJmqUDP udpServer;
+	CTCPSockz tcpServer;
 };

@@ -14,16 +14,14 @@ public:
 private:
 	void InitParameter();
 	bool InitDB();
+	bool InitChannel();
+	bool InitErrorData();
 
 private:
 	_ConnectionPtr m_pDB;	//数据库连接指针
 	wstring m_wsProgramPath;	//主程序目录
-	//wstring m_wsLogPath;	//日志目录
-	//wstring m_wsConfPath;	//配置文件目录
-	//wstring m_wsResPath;	//资源文件目录
-	//wstring m_wsMapPath;		//地图文件目录
-	//wstring m_wsThirdPartyPath;		//第三方工具目录
-	//wstring m_wsVideoPath;	//视频转换临时目录
+	map<wstring, CHANNEL_CONFIG>	m_mapChannels;		//视频通道配置
+	map<wstring, ERROR_DATA> m_mapErrorDatas;	//项目编号信息、扣分编号信息
 };
 
 #endif

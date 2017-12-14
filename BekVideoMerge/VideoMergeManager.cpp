@@ -7,6 +7,9 @@
 
 CVideoMergeManager::CVideoMergeManager()
 {
+	m_wsProgramPath = _T("");
+	m_mapChannels.clear();
+	m_mapErrorDatas.clear();
 }
 
 CVideoMergeManager::~CVideoMergeManager()
@@ -24,7 +27,15 @@ bool CVideoMergeManager::StartWork()
 		return false;
 	}
 
+	if (!InitChannel())
+	{
+		return false;
+	}
 
+	if (!InitErrorData())
+	{
+		return false;
+	}
 
 	L_TRACE_LEAVE(_T("\n"));
 
@@ -36,24 +47,12 @@ void CVideoMergeManager::InitParameter()
 	L_TRACE_ENTER(_T("\n"));
 
 	CWinUtils::GetCurrentProcessPath(m_wsProgramPath);
-	//m_wsLogPath = m_wsProgramPath + _T("\\log");
-	//m_wsConfPath = m_wsProgramPath + _T("\\conf");
-	//m_wsResPath = m_wsProgramPath + _T("\\res");
-	//m_wsMapPath = m_wsResPath + _T("\\map");
-	//m_wsThirdPartyPath = m_wsProgramPath + _T("\\3rd");
-	//m_wsVideoPath = m_wsProgramPath + _T("\\video");
-
 	L_DEBUG(_T("m_sProgramPath=%s\n"), m_wsProgramPath.c_str());
-	//L_DEBUG(_T("m_sLogPath=%s\n"), m_wsLogPath.c_str());
-	//L_DEBUG(_T("m_sConfPath=%s\n"), m_wsConfPath.c_str());
-	//L_DEBUG(_T("m_sResPath=%s\n"), m_wsResPath.c_str());
-	//L_DEBUG(_T("m_sMapPath=%s\n"), m_wsMapPath.c_str());
-	//L_DEBUG(_T("m_sThirdPartyPath=%s\n"), m_wsThirdPartyPath.c_str());
-	//L_DEBUG(_T("m_sVideoPath=%s\n"), m_wsVideoPath.c_str());
 
 	L_TRACE_LEAVE(_T("\n"));
 }
 
+//初始化数据库连接
 bool CVideoMergeManager::InitDB()
 {
 	L_TRACE_ENTER(_T("\n"));
@@ -145,6 +144,163 @@ bool CVideoMergeManager::InitDB()
 		L_ERROR(_T("InitDB catch an error : %s"), e.ErrorMessage());
 		return false;
 	}
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+//从数据库读取通道配置
+bool CVideoMergeManager::InitChannel()
+{
+	L_TRACE_ENTER(_T("\n"));
+	m_mapChannels.clear();
+
+	try
+	{
+		wstring wsSql = CStringUtils::Format(_T("select %s,%s,%s,%s,%s,%s,%s,%s,%s from %s order by %s"),
+			DB_FIELD_BH,
+			DB_FIELD_SBIP,
+			DB_FIELD_YHM,
+			DB_FIELD_MM,
+			DB_FIELD_DKH,
+			DB_FIELD_TDH,
+			DB_FIELD_TRANSMODE,
+			DB_FIELD_MEDIAIP,
+			DB_FIELD_NID,
+			DB_TABLE_TBKVIDEO,
+			DB_FIELD_BH);
+
+		VARIANT cnt;
+		cnt.vt = VT_INT;
+		_RecordsetPtr pSet = m_pDB->Execute((_bstr_t)wsSql.c_str(), &cnt, adCmdUnknown);
+		_variant_t vat;
+		if (pSet != NULL && !pSet->adoEOF)
+		{
+			while (!pSet->adoEOF)
+			{
+				wstring wsBh = _T("");
+				wstring wsNid = _T("");
+				
+				vat = pSet->GetCollect(DB_FIELD_BH);
+				if (vat.vt != NULL)
+				{
+					wsBh = (_bstr_t)vat;
+				}
+				vat = pSet->GetCollect(DB_FIELD_NID);
+				if (vat.vt != NULL)
+				{
+					wsNid = (_bstr_t)vat;
+				}
+
+				if (!wsBh.empty() && !wsNid.empty())
+				{
+					wstring wsKey = wsBh + _T("_") + wsNid;
+					vat = pSet->GetCollect(DB_FIELD_BH);
+					if (vat.vt != NULL)
+					{
+						strncpy(m_mapChannels[wsKey].szDeviceNo, (LPCSTR)(_bstr_t)vat, 10);
+					}
+					vat = pSet->GetCollect(DB_FIELD_SBIP);
+					if (vat.vt != NULL)
+					{
+						strncpy(m_mapChannels[wsKey].szDeviceIP, (LPCSTR)(_bstr_t)vat, 16);
+					}
+					vat = pSet->GetCollect(DB_FIELD_YHM);
+					if (vat.vt != NULL)
+					{
+						strncpy(m_mapChannels[wsKey].szUsername, (LPCSTR)(_bstr_t)vat, 16);
+					}
+					vat = pSet->GetCollect(DB_FIELD_MM);
+					if (vat.vt != NULL)
+					{
+						strncpy(m_mapChannels[wsKey].szPassword, (LPCSTR)(_bstr_t)vat, 16);
+					}
+					vat = pSet->GetCollect(DB_FIELD_DKH);
+					if (vat.vt != NULL)
+					{
+						m_mapChannels[wsKey].dwPort = atoi((_bstr_t)vat);
+					}
+					vat = pSet->GetCollect(DB_FIELD_TDH);
+					if (vat.vt != NULL)
+					{
+						m_mapChannels[wsKey].dwChannel = atoi((_bstr_t)vat);
+					}
+					vat = pSet->GetCollect(DB_FIELD_TRANSMODE);
+					if (vat.vt != NULL)
+					{
+						m_mapChannels[wsKey].nStreamType = atoi((_bstr_t)vat);
+					}
+					vat = pSet->GetCollect(DB_FIELD_MEDIAIP);
+					if (vat.vt != NULL)
+					{
+						strncpy(m_mapChannels[wsKey].szMideaIP, (LPCSTR)(_bstr_t)vat, 16);
+					}
+				}
+				pSet->MoveNext();
+			}
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("InitChannel catch an error\n"));
+		return false;
+	}
+
+	L_INFO(_T("Read channel infos from database end, count = %d\n"), m_mapChannels.size());
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+//从数据库读取项目编号信息和扣分编号信息
+bool CVideoMergeManager::InitErrorData()
+{
+	L_TRACE_ENTER(_T("\n"));
+	m_mapErrorDatas.clear();
+
+	try
+	{
+		wstring wsSql = CStringUtils::Format(_T("select %s,%s,%s from %s"),
+			DB_FIELD_CWBH,
+			DB_FIELD_KFLX,
+			DB_FIELD_KCFS,
+			DB_TABLE_ERRORDATA);
+
+		VARIANT cnt;
+		cnt.vt = VT_INT;
+		_RecordsetPtr pSet = m_pDB->Execute((_bstr_t)wsSql.c_str(), &cnt, adCmdUnknown);
+		_variant_t vat;
+		if (pSet != NULL && !pSet->adoEOF)
+		{
+			while (!pSet->adoEOF)
+			{
+				vat = pSet->GetCollect(DB_FIELD_CWBH);
+				if (vat.vt != NULL)
+				{
+					wstring wsNo = (_bstr_t)vat;
+					vat = pSet->GetCollect(DB_FIELD_KFLX);
+					if (vat.vt != NULL)
+					{
+						strncpy(m_mapErrorDatas[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 10);
+					}
+					vat = pSet->GetCollect(DB_FIELD_KCFS);
+					if (vat.vt != NULL)
+					{
+						m_mapErrorDatas[wsNo].ikcfs = atoi((_bstr_t)vat);
+					}
+				}
+
+				pSet->MoveNext();
+			}
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("InitErrorData catch an error\n"));
+		return false;
+	}
+
+	L_INFO(_T("Read ErrorData infos from database end, count = %d\n"), m_mapErrorDatas.size());
 
 	L_TRACE_LEAVE(_T("\n"));
 	return true;

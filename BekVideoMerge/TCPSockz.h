@@ -19,8 +19,8 @@
 class CTCPSockz  
 {
 public:
-	void SendToClient(SOCKET cursock, CString strSend);
-	CString RecvFromSock(SOCKET cursock);
+	void SendToClient(SOCKET cursock, char* strSend);
+	string RecvFromSock(SOCKET cursock);
 	void CloseSock();
 	void OnFDAccept();
 	BOOL InitSockS(HWND hwndz,UINT uPort,u_int wMSG,DWORD flogid);//初始化服务端

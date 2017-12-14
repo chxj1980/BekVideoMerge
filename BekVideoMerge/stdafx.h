@@ -48,6 +48,8 @@ using namespace std;
 #include "Common/LogBase.h"
 #include "Common/SocketUtils.h"
 #include "Common/WinUtils.h"
+#include "Common/StringUtils.h"
+#include "Common/Base64Utils.h"
 #pragma comment(lib, "CommonDll.lib")
 
 //gdiplus

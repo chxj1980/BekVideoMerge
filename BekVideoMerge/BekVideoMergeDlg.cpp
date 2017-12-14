@@ -66,7 +66,7 @@ BEGIN_MESSAGE_MAP(CBekVideoMergeDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_MESSAGE(WM_SOCKET_UDP, OnSocketTCP)
+	ON_MESSAGE(WM_SOCKET_TCP, OnSocketTCP)
 	ON_MESSAGE(WM_SOCKET_UDP, OnSocketUDP)
 END_MESSAGE_MAP()
 
@@ -177,11 +177,60 @@ HCURSOR CBekVideoMergeDlg::OnQueryDragIcon()
 
 LRESULT CBekVideoMergeDlg::OnSocketTCP(WPARAM wParam, LPARAM lParam)
 {
+	int nEvent = WSAGETSELECTEVENT(lParam); //消息类别 
+	int nErrorCode = WSAGETSELECTERROR(lParam);//错误代码 
+	SOCKET sock = (SOCKET)wParam; //目标socket 
+	switch (nEvent)
+	{
+	case FD_ACCEPT:
+	{
+		L_INFO(_T("Accept from TCP Client\n"));
+		tcpServer.OnFDAccept();
+		break;
+	}
+	case FD_READ:
+	{
+		string strRecv = tcpServer.RecvFromSock(sock);
+		wstring wsRecv = _T("");
+		CStringUtils::ASCII2Unicode(strRecv, wsRecv);
+		L_DEBUG(_T("TCPServer Receive = %s\n"), wsRecv.c_str());
+		tcpServer.SendToClient(sock, (char*)strRecv.c_str());
+		break;
+	}
+	case FD_CLOSE: 
+	{
+		L_INFO(_T("Close from TCP Client\n"));
+		closesocket(sock);
+		break;
+	}
+	default:
+		break;
+	}
+	
 	return S_OK;
 }
 
 LRESULT CBekVideoMergeDlg::OnSocketUDP(WPARAM wParam, LPARAM lParam)
 {
+	if ((LOWORD(lParam) & FD_READ) == FD_READ)
+	{
+		PACKTYPE packType;
+		int nCarNo;	//考车号
+		char *recvBuf = NULL;
+		udpServer.RecvFromSock(packType, &recvBuf, nCarNo);
+		switch (packType)
+		{
+		case GNSSDATA:
+		{
+			int k = 0;
+			//jmqmanager.OnGnssData(recvbuf, ikch);//处理UDP数据 经纬度等信息
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
 	return S_OK;
 }
 

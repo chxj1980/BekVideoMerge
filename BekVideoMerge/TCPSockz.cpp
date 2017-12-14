@@ -137,7 +137,7 @@ void CTCPSockz::CloseSock()
 	}
 }
 
-CString CTCPSockz::RecvFromSock(SOCKET cursock)
+string CTCPSockz::RecvFromSock(SOCKET cursock)
 {
 	memset(recvwsabuf.buf,0,PACK_SIZE);
 	DWORD dwRead;
@@ -147,30 +147,31 @@ CString CTCPSockz::RecvFromSock(SOCKET cursock)
 	CString strTemp=_T("");
 	if(SOCKET_ERROR==WSARecvFrom(cursock,&recvwsabuf,1,&dwRead,&dwFlag,(SOCKADDR*)&addrFrom,&len,NULL,NULL))
 	{
- 		TRACE(_T("Warning: RecvFromSock 方法发生异常. 错误信息: %d; 文件: %s; 行: %d\n"),WSAGetLastError() , __FILE__, __LINE__);
- 		//logz.WriteLog(flogID,"WSARecvFrom SOCKET_ERROR %d",WSAGetLastError());
-		L_ERROR(_T("WSARecvFromt failed\n"));
- 		return strTemp; 
+		L_ERROR(_T("WSARecvFromt failed, error = %d\n"), WSAGetLastError());
+ 		return ""; 
  	}
-	strTemp.Format(_T("%s"),recvwsabuf.buf);
-	return strTemp;
+
+	return recvwsabuf.buf;
 }
 
-void CTCPSockz::SendToClient(SOCKET cursock, CString strSend)
+void CTCPSockz::SendToClient(SOCKET cursock, char* strSend)
 {
 	int len;
 	WSABUF wsabuf;
 	DWORD dwSend;
 
-#ifdef _UNICODE
-	USES_CONVERSION;
-	wsabuf.buf = W2A(strSend);
-	wsabuf.len = strlen(wsabuf.buf) + 1;
-#else
-	len = strSend.GetLength();
+//#ifdef _UNICODE
+//	USES_CONVERSION;
+//	wsabuf.buf = W2A(strSend);
+//	wsabuf.len = strlen(wsabuf.buf) + 1;
+//#else
+//	len = strSend.GetLength();
+//	wsabuf.buf = strSend;
+//	wsabuf.len = len + 1;
+//#endif
+
 	wsabuf.buf = strSend;
-	wsabuf.len = len + 1;
-#endif
+	wsabuf.len = strlen(strSend) + 1;
 	
 	if(SOCKET_ERROR==WSASendTo(cursock,&wsabuf,1,&dwSend,0,(SOCKADDR*)&addrSrv,sizeof(SOCKADDR),NULL,NULL))
 	{

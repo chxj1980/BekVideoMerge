@@ -60,7 +60,15 @@ BOOL CBekVideoMergeApp::InitInstance()
 	}
 
 	//日志模块初始化
-	LogBase_init(LOG_CONF_PATH);
+	wstring wstrCurrentPath = _T("");
+	wstring wstrLogConfPath = _T("");
+	CWinUtils::GetCurrentProcessPath(wstrCurrentPath);
+	wstrLogConfPath = wstrCurrentPath + _T("\\log");
+	if (!CWinUtils::FileExists(wstrLogConfPath))
+	{
+		CWinUtils::CreateDirectorys(wstrLogConfPath);
+	}
+	LogBase_init(LOG_CONF_BEKVIDEOMERGE);
 
 	//gdiplus初始化
 	GdiplusStartupInput gdiplusStartupInput;
@@ -86,44 +94,18 @@ BOOL CBekVideoMergeApp::InitInstance()
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
-
-	CBekVideoMergeDlg dlg;
-	m_pMainWnd = &dlg;
-	INT_PTR nResponse = dlg.DoModal();
-	if (nResponse == IDOK)
-	{
-		// TODO: Place code here to handle when the dialog is
-		//  dismissed with OK
-	}
-	else if (nResponse == IDCANCEL)
-	{
-		// TODO: Place code here to handle when the dialog is
-		//  dismissed with Cancel
-	}
-	else if (nResponse == -1)
-	{
-		TRACE(traceAppMsg, 0, "Warning: dialog creation failed, so application is terminating unexpectedly.\n");
-		TRACE(traceAppMsg, 0, "Warning: if you are using MFC controls on the dialog, you cannot #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS.\n");
-	}
-
-	// Delete the shell manager created above.
-	if (pShellManager != NULL)
-	{
-		delete pShellManager;
-	}
-
-#ifndef _AFXDLL
-	ControlBarCleanUp();
-#endif
-
-	// Since the dialog has been closed, return FALSE so that we exit the
-	//  application, rather than start the application's message pump.
-	return FALSE;
+	
+	CBekVideoMergeDlg *pDlg = new CBekVideoMergeDlg;
+	m_pMainWnd = pDlg;
+	return pDlg->Create(IDD_BEKVIDEOMERGE_DIALOG);
 }
 
 int CBekVideoMergeApp::ExitInstance()
 {
 	// TODO: Add your specialized code here and/or call the base class
+
+	L_INFO(_T("BekVideoMerge Exit"));
+
 	GdiplusShutdown(gdiplusToken);	//GDI+ exit
 	CoUninitialize();
 

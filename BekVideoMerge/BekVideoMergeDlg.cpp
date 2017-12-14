@@ -7,6 +7,8 @@
 #include "BekVideoMergeDlg.h"
 #include "afxdialogex.h"
 
+#define MODULE_NAME	_T("BekVideoMerge")
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -64,6 +66,8 @@ BEGIN_MESSAGE_MAP(CBekVideoMergeDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_MESSAGE(WM_SOCKET_TCP, OnSocketTCP)
+	ON_MESSAGE(WM_SOCKET_UDP, OnSocketUDP)
 END_MESSAGE_MAP()
 
 
@@ -99,6 +103,26 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+
+	L_DEBUG(_T("CBekVideoMergeDlg OnInitDialog\n"));
+
+	videoMergeManager.StartWork();
+
+	if (!tcpServer.InitSockS(m_hWnd, LISTENING_PORT_TCP, WM_SOCKET_TCP, 0))
+	{
+		L_ERROR(_T("tcpServer.InitSockS failed, Exit.\n"));
+		CDialog::DestroyWindow();
+		return FALSE;
+	}
+	if (!udpServer.InitSockU(m_hWnd, LISTENING_PORT_UDP, WM_SOCKET_UDP))
+	{
+		L_ERROR(_T("udpServer.InitSockU failed, Exit.\n"));
+		CDialog::DestroyWindow();
+		return FALSE;
+	}
+
+
+	
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -150,5 +174,64 @@ void CBekVideoMergeDlg::OnPaint()
 HCURSOR CBekVideoMergeDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+LRESULT CBekVideoMergeDlg::OnSocketTCP(WPARAM wParam, LPARAM lParam)
+{
+	int nEvent = WSAGETSELECTEVENT(lParam); //消息类别 
+	int nErrorCode = WSAGETSELECTERROR(lParam);//错误代码 
+	SOCKET sock = (SOCKET)wParam; //目标socket 
+	switch (nEvent)
+	{
+	case FD_ACCEPT:
+	{
+		L_INFO(_T("Accept from TCP Client\n"));
+		tcpServer.OnFDAccept();
+		break;
+	}
+	case FD_READ:
+	{
+		string strRecv = tcpServer.RecvFromSock(sock);
+		wstring wsRecv = _T("");
+		CStringUtils::ASCII2Unicode(strRecv, wsRecv);
+		L_DEBUG(_T("TCPServer Receive = %s\n"), wsRecv.c_str());
+		tcpServer.SendToClient(sock, (char*)strRecv.c_str());
+		break;
+	}
+	case FD_CLOSE: 
+	{
+		L_INFO(_T("Close from TCP Client\n"));
+		closesocket(sock);
+		break;
+	}
+	default:
+		break;
+	}
+	
+	return S_OK;
+}
+
+LRESULT CBekVideoMergeDlg::OnSocketUDP(WPARAM wParam, LPARAM lParam)
+{
+	if ((LOWORD(lParam) & FD_READ) == FD_READ)
+	{
+		PACKTYPE packType;
+		int nCarNo;	//考车号
+		char *recvBuf = NULL;
+		udpServer.RecvFromSock(packType, &recvBuf, nCarNo);
+		switch (packType)
+		{
+		case GNSSDATA:
+		{
+			int k = 0;
+			//jmqmanager.OnGnssData(recvbuf, ikch);//处理UDP数据 经纬度等信息
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
+	return S_OK;
 }
 

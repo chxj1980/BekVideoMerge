@@ -43,17 +43,34 @@ using namespace std;
 
 #include "BaseDefine.h"
 
+//CommonDll
 #include "Common/ServiceUtils.h"
 #include "Common/LogBase.h"
 #include "Common/SocketUtils.h"
+#include "Common/WinUtils.h"
+#include "Common/StringUtils.h"
+#include "Common/Base64Utils.h"
 #pragma comment(lib, "CommonDll.lib")
 
+//Hikvision
+#include "hikvision/inc/HCNetSDK.h"
+#include "BekHikUtil.h"
+#pragma comment(lib, "BekHikUtil.lib")
+
 //gdiplus
-#include "gdiplus/GdiPlus.h"
-#pragma comment(lib, "gdiplus/GdiPlus.lib")
+#include "gdiplus/inc/GdiPlus.h"
+#pragma comment(lib, "gdiplus/lib/GdiPlus.lib")
 using namespace Gdiplus;
 
+//Socket
+#include "JmqUDP.h"
+#include "TCPSockz.h"
+#pragma comment(lib, "CUdpForJMQ.lib")
 
+//ADO
+#pragma warning(disable: 4146)
+#pragma warning(disable: 4244)
+#import "ado/msado15.dll" no_namespace rename("EOF", "adoEOF")
 
 #ifdef _UNICODE
 #if defined _M_IX86

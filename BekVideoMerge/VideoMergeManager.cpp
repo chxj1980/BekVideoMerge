@@ -22,17 +22,26 @@ bool CVideoMergeManager::StartWork()
 
 	InitParameter();
 
+	//初始化数据库连接
 	if (!InitDB())
 	{
 		return false;
 	}
 
+	//读取视频通道配置信息
 	if (!InitChannel())
 	{
 		return false;
 	}
 
+	//读取项目编号信息、扣分编号信息
 	if (!InitErrorData())
+	{
+		return false;
+	}
+
+	//初始化合码器、解码器通道配置
+	if (!InitDevice())
 	{
 		return false;
 	}
@@ -301,6 +310,102 @@ bool CVideoMergeManager::InitErrorData()
 	}
 
 	L_INFO(_T("Read ErrorData infos from database end, count = %d\n"), m_mapErrorDatas.size());
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+//合码器、解码器初始化
+bool CVideoMergeManager::InitDevice()
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	try
+	{
+		//海康sdk初始化
+		if (!CBekHikUtil::InitSDK())
+		{
+			return false;
+		}
+		
+		//从配置文件读取相关配置
+		wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
+		wstring wsCarConfPath = m_wsProgramPath + CONF_PATH_CAR;
+		int nHKDeviceType = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_HMQ, 0, wsEnvConfPath.c_str());	//解码设备类型
+		int nNum = GetPrivateProfileInt(CONF_SECTION_JMQ, CONF_KEY_NUM, 0, wsCarConfPath.c_str());	//解码器数量
+		if (DEVICE_TYPE_JMQ == nHKDeviceType)
+		{
+			L_INFO(_T("Hikvison device type : JMQ, count=%d\n"), nNum);
+		}
+		else if (DEVICE_TYPE_HMQ == nHKDeviceType)
+		{
+			L_INFO(_T("Hikvison device type : HMQ, count=%d\n"), nNum);
+		}
+		else
+		{
+			L_ERROR(_T("Unknown Hikvison device type, HMQ = %d, Please check config file : %s\n"), nHKDeviceType, wsEnvConfPath);
+			return false;
+		}
+
+		for (int i = 1; i <= nNum; i++)
+		{
+			TCHAR buf[MAX_PATH];
+			wstring key = CStringUtils::Format(_T("%d"), i);
+			if (GetPrivateProfileString(CONF_SECTION_JMQ, key.c_str(), _T(""), buf, sizeof(buf)/sizeof(TCHAR), wsCarConfPath.c_str()))
+			{
+				//解析设备IP、用户名、密码、端口
+				wstring wsSource = buf;
+				wstring separator = _T(",");
+				vector<wstring> vecWstr;
+				CStringUtils::SplitString(wsSource, separator, vecWstr);
+				if (vecWstr.size() != 4)
+				{
+					L_ERROR(_T("JMQ Config error, No=%d, value=%s\n"), i, wsSource);
+					return false;
+				}
+				wstring wsIP = vecWstr[0];
+				wstring wsUsername = vecWstr[1];
+				wstring wsPassword = vecWstr[2];
+				wstring wsPort = vecWstr[3];
+				string sPort = "";
+				CStringUtils::Unicode2ASCII(wsPort, sPort);
+				int nPort = atoi(sPort.c_str());
+				if (wsIP.empty() || wsUsername.empty() || wsPassword.empty() || nPort <= 0)
+				{
+					L_ERROR(_T("JMQ Config error, No=%d, value=%s\n"), i, wsSource);
+					return false;
+				}
+
+				//登录设备
+				int nUserId = -1;
+				if (!CBekHikUtil::LoginDevice(wsIP, wsUsername, wsPassword, nPort, nUserId))
+				{
+					L_ERROR(_T("LoginDevice failed, IP=%s\n"), wsIP.c_str());
+					return false;
+				}
+
+				//获取设备能力集
+				NET_DVR_MATRIX_ABILITY_V41 struDecAbility;
+				memset(&struDecAbility, 0, sizeof(NET_DVR_MATRIX_ABILITY_V41));
+				if (!CBekHikUtil::GetDeviceAbility(nUserId, struDecAbility))
+				{
+					L_ERROR(_T("GetDeviceAbility failed, IP=%s\n"), wsIP.c_str());
+					return false;
+				}
+
+				//设置定时重启
+				CBekHikUtil::SetAutoReboot(nUserId, 7, 5, 9);
+
+
+			}
+		}
+
+	}
+	catch (...)
+	{
+		L_ERROR(_T("InitDevice catch an error\n"));
+		return false;
+	}
 
 	L_TRACE_LEAVE(_T("\n"));
 	return true;

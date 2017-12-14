@@ -52,6 +52,11 @@ using namespace std;
 #include "Common/Base64Utils.h"
 #pragma comment(lib, "CommonDll.lib")
 
+//Hikvision
+#include "hikvision/inc/HCNetSDK.h"
+#include "BekHikUtil.h"
+#pragma comment(lib, "BekHikUtil.lib")
+
 //gdiplus
 #include "gdiplus/inc/GdiPlus.h"
 #pragma comment(lib, "gdiplus/lib/GdiPlus.lib")

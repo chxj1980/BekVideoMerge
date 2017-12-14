@@ -17,11 +17,14 @@
 #define CONF_PATH_CAR 						_T("\\conf\\HS_CONF_CAR.ini")
 #define CONF_PATH_DISPLAY				_T("\\conf\\HS_CONF_DISPLAY.ini")
 #define CONF_SECTION_CONFIG			_T("CONFIG")
+#define CONF_SECTION_JMQ				_T("JMQ")	
 #define CONF_KEY_DBADDRESS			_T("DBADDRESS")
 #define CONF_KEY_USERNAME				_T("USERNAME")
 #define CONF_KEY_PASSWORD				_T("PASSWORD")
 #define CONF_KEY_INSTANCE				_T("INSTANCE")
 #define CONF_KEY_SQLORACLE			_T("SQLORACLE")
+#define CONF_KEY_NUM						_T("NUM")
+#define CONF_KEY_HMQ						_T("HMQ")
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")
@@ -92,6 +95,12 @@ typedef enum PACKTYPE {
 typedef enum DatabaseType {
 	DB_ORACLE = 0,
 	DB_SQL = 1
+};
+
+//解码设备类型
+typedef enum HKDeviceType {
+	DEVICE_TYPE_JMQ = 0,	//解码器
+	DEVICE_TYPE_HMQ = 1	//合码器
 };
 
 //通道配置

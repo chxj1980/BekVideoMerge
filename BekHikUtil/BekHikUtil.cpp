@@ -58,10 +58,89 @@ bool CBekHikUtil::LoginDevice(wstring ip, wstring username, wstring password, in
 	}
 	catch (...)
 	{
-		L_ERROR(_T("LoginDevice catch an error"));
+		L_ERROR(_T("LoginDevice catch an error\n"));
 		return false;
 	}
 
+	L_INFO(_T("LoginDevice success\n"));
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+bool CBekHikUtil::GetDeviceAbility(int userId, NET_DVR_MATRIX_ABILITY_V41 &struDecAbility)
+{
+	L_TRACE_ENTER(_T("\n"));
+	
+	if (userId < 0)
+	{
+		L_ERROR(_T("Parameter error, userId=%d\n"), userId);
+		return false;
+	}
+
+	try
+	{
+		memset(&struDecAbility, 0, sizeof(NET_DVR_MATRIX_ABILITY_V41));
+		if (!NET_DVR_GetDeviceAbility(userId, MATRIXDECODER_ABILITY_V41, NULL, 0, (char*)&struDecAbility, sizeof(NET_DVR_MATRIX_ABILITY_V41)))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_GetDeviceAbility failed, errorCode=%d\n"), errorCode);
+			return false;
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("GetDeviceAbility catch an error\n"));
+		return false;
+	}
+
+	L_INFO(_T("GetDeviceAbility success\n"));
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+bool CBekHikUtil::SetAutoReboot(int userId, int byDate, int byHour, int byMinute)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (userId < 0)
+	{
+		L_ERROR(_T("Parameter error, userId=%d\n"), userId);
+		return false;
+	}
+
+	try
+	{
+		DWORD dwRet = 0;
+		NET_DVR_AUTO_REBOOT_CFG struRebootCfg;
+		memset(&struRebootCfg, 0, sizeof(NET_DVR_AUTO_REBOOT_CFG));
+		if (!NET_DVR_GetDVRConfig(userId, NET_DVR_GET_AUTO_REBOOT_CFG,  0, &struRebootCfg, sizeof(NET_DVR_AUTO_REBOOT_CFG), &dwRet))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_GetDVRConfig failed, errorCode=%d\n"), errorCode);
+			return false;
+		}
+
+		if (struRebootCfg.struRebootTime.byDate != byDate)
+		{
+			struRebootCfg.dwSize = sizeof(NET_DVR_AUTO_REBOOT_CFG);
+			struRebootCfg.struRebootTime.byDate = byDate;
+			struRebootCfg.struRebootTime.byHour = byHour;
+			struRebootCfg.struRebootTime.byMinute = byMinute;
+			if (!NET_DVR_SetDVRConfig(userId, NET_DVR_SET_AUTO_REBOOT_CFG, 0, &struRebootCfg, sizeof(NET_DVR_AUTO_REBOOT_CFG)))
+			{
+				int errorCode = NET_DVR_GetLastError();
+				L_ERROR(_T("NET_DVR_SetDVRConfig failed, errorCode=%d\n"), errorCode);
+				return false;
+			}
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("SetAutoReboot catch an error\n"));
+		return false;
+	}
+
+	L_INFO(_T("SetAutoReboot success, byDate=%d, byHour=%d, byMinute=%d\n"), byDate, byHour, byMinute);
 	L_TRACE_LEAVE(_T("\n"));
 	return true;
 }

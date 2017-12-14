@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BekVideoMerge", "BekVideoMerge\BekVideoMerge.vcxproj", "{51D63208-4855-472B-BD6A-0578FBB3D44B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BekHikUtil", "BekHikUtil\BekHikUtil.vcxproj", "{928F846B-AE05-4DF0-B697-89E06037EC51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{51D63208-4855-472B-BD6A-0578FBB3D44B}.Release|x64.Build.0 = Release|x64
 		{51D63208-4855-472B-BD6A-0578FBB3D44B}.Release|x86.ActiveCfg = Release|Win32
 		{51D63208-4855-472B-BD6A-0578FBB3D44B}.Release|x86.Build.0 = Release|Win32
+		{928F846B-AE05-4DF0-B697-89E06037EC51}.Debug|x64.ActiveCfg = Debug|x64
+		{928F846B-AE05-4DF0-B697-89E06037EC51}.Debug|x64.Build.0 = Debug|x64
+		{928F846B-AE05-4DF0-B697-89E06037EC51}.Debug|x86.ActiveCfg = Debug|Win32
+		{928F846B-AE05-4DF0-B697-89E06037EC51}.Debug|x86.Build.0 = Debug|Win32
+		{928F846B-AE05-4DF0-B697-89E06037EC51}.Release|x64.ActiveCfg = Release|x64
+		{928F846B-AE05-4DF0-B697-89E06037EC51}.Release|x64.Build.0 = Release|x64
+		{928F846B-AE05-4DF0-B697-89E06037EC51}.Release|x86.ActiveCfg = Release|Win32
+		{928F846B-AE05-4DF0-B697-89E06037EC51}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

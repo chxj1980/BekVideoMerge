@@ -105,6 +105,7 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 
 	L_DEBUG(_T("CBekVideoMergeDlg OnInitDialog\n"));
+
 	videoMergeManager.StartWork();
 
 	if (!tcpServer.InitSockS(m_hWnd, LISTENING_PORT_TCP, WM_SOCKET_TCP, 0))

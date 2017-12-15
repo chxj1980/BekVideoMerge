@@ -1,15 +1,14 @@
 #include "stdafx.h"
 #include "VideoMergeManager.h"
 
-#include "Function.h"
-
 #define MODULE_NAME	_T("CVideoMergeManager")
 
 CVideoMergeManager::CVideoMergeManager()
 {
 	m_wsProgramPath = _T("");
+	m_mapCarManagers.clear();
 	m_mapChannels.clear();
-	m_mapErrorDatas.clear();
+	m_mapItems.clear();
 }
 
 CVideoMergeManager::~CVideoMergeManager()
@@ -35,7 +34,7 @@ bool CVideoMergeManager::StartWork()
 	}
 
 	//读取项目编号信息、扣分编号信息
-	if (!InitErrorData())
+	if (!InitItems())
 	{
 		return false;
 	}
@@ -242,7 +241,7 @@ bool CVideoMergeManager::InitVideoChannel()
 					vat = pSet->GetCollect(DB_FIELD_MEDIAIP);
 					if (vat.vt != NULL)
 					{
-						strncpy(m_mapChannels[wsKey].szMideaIP, (LPCSTR)(_bstr_t)vat, 16);
+						strncpy(m_mapChannels[wsKey].szMediaIP, (LPCSTR)(_bstr_t)vat, 16);
 					}
 				}
 				pSet->MoveNext();
@@ -262,10 +261,10 @@ bool CVideoMergeManager::InitVideoChannel()
 }
 
 //从数据库读取项目编号信息和扣分编号信息
-bool CVideoMergeManager::InitErrorData()
+bool CVideoMergeManager::InitItems()
 {
 	L_TRACE_ENTER(_T("\n"));
-	m_mapErrorDatas.clear();
+	m_mapItems.clear();
 
 	try
 	{
@@ -290,12 +289,12 @@ bool CVideoMergeManager::InitErrorData()
 					vat = pSet->GetCollect(DB_FIELD_KFLX);
 					if (vat.vt != NULL)
 					{
-						strncpy(m_mapErrorDatas[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 10);
+						strncpy(m_mapItems[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 10);
 					}
 					vat = pSet->GetCollect(DB_FIELD_KCFS);
 					if (vat.vt != NULL)
 					{
-						m_mapErrorDatas[wsNo].ikcfs = atoi((_bstr_t)vat);
+						m_mapItems[wsNo].ikcfs = atoi((_bstr_t)vat);
 					}
 				}
 
@@ -305,11 +304,11 @@ bool CVideoMergeManager::InitErrorData()
 	}
 	catch (...)
 	{
-		L_ERROR(_T("InitErrorData catch an error\n"));
+		L_ERROR(_T("InitItems catch an error\n"));
 		return false;
 	}
 
-	L_INFO(_T("Read ErrorData infos from database end, count = %d\n"), m_mapErrorDatas.size());
+	L_INFO(_T("Read m_mapItems from database end, count = %d\n"), m_mapItems.size());
 
 	L_TRACE_LEAVE(_T("\n"));
 	return true;
@@ -506,7 +505,7 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			}
 
 			//考车初始化
-
+			m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
 		}
 	}
 	catch (...)
@@ -596,7 +595,7 @@ bool CVideoMergeManager::InitBNCChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			}
 
 			//考车初始化
-
+			m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
 		}
 	}
 	catch (...)

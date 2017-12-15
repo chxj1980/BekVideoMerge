@@ -4,6 +4,8 @@
 
 #pragma once
 
+#define _CRT_SECURE_NO_DEPRECATE		//屏蔽调用旧的windows函数产生的警告
+
 #ifndef VC_EXTRALEAN
 #define VC_EXTRALEAN            // Exclude rarely-used stuff from Windows headers
 #endif
@@ -47,3 +49,4 @@
 
 #include <string>
 using namespace std;
+

@@ -122,7 +122,7 @@ typedef struct tagCHANNEL_CONFIG
 	char szPassword[16];	//密码
 	WORD dwPort;		//端口号
 	WORD dwChannel;		//通道号
-	char szMideaIP[16];		//流媒体IP
+	char szMediaIP[16];		//流媒体IP
 	int  nStreamType;	//码流类型 0 主码流 1 子码流
 }CHANNEL_CONFIG, *pCHANNEL_CONFIG;
 

@@ -109,25 +109,27 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 	if (!videoMergeManager.StartWork())
 	{
 		L_ERROR(_T("videoMergeManager.StartWork failed, Exit\n"));
-		CDialog::DestroyWindow();
+		CDialog::OnCancel();
+		//CDialog::DestroyWindow();
 		return FALSE;
 	}
 
 	if (!tcpServer.InitSockS(m_hWnd, LISTENING_PORT_TCP, WM_SOCKET_TCP, 0))
 	{
 		L_ERROR(_T("tcpServer.InitSockS failed, Exit.\n"));
-		CDialog::DestroyWindow();
+		CDialog::OnCancel();
+		//CDialog::DestroyWindow();
 		return FALSE;
 	}
 	if (!udpServer.InitSockU(m_hWnd, LISTENING_PORT_UDP, WM_SOCKET_UDP))
 	{
 		L_ERROR(_T("udpServer.InitSockU failed, Exit.\n"));
-		CDialog::DestroyWindow();
+		CDialog::OnCancel();
+		//CDialog::DestroyWindow();
 		return FALSE;
 	}
 
-
-	
+	L_INFO(_T("CBekVideoMergeDlg OnInitDialog Success\n"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

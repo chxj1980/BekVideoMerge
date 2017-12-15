@@ -244,3 +244,123 @@ bool CBekHikUtil::SetDisplayCfg(int userId, int dispChan, NET_DVR_MATRIX_VOUTCFG
 	return true;
 }
 
+bool CBekHikUtil::StartDynamicDecode(int userId, int decChan, CHANNEL_CONFIG videoChan)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (decChan <= 0)
+	{
+		L_ERROR(_T("Parameter error, decChan=%d\n"), decChan);
+		return false;
+	}
+
+	try
+	{
+		NET_DVR_PU_STREAM_CFG_V41 struStreamCfgV41;
+		memset(&struStreamCfgV41, 0, sizeof(NET_DVR_PU_STREAM_CFG_V41));
+		struStreamCfgV41.dwSize = sizeof(NET_DVR_PU_STREAM_CFG_V41);
+		struStreamCfgV41.byStreamMode = 1;//通过IP或域名取流
+		struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.byChanType = 0;//通道类型，0-普通通道,1-零通道,2-流ID,3-本地输入源，4-虚拟屏服务器通道
+		struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.byChannel = 0;//该参数无效，通道号见dwChannel 
+		struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.byTransProtocol = 0;//传输协议类型0-TCP，1-UDP	
+		struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.byFactoryType = 0;/*前端设备厂家类型,通过接口获取*/
+		
+		struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.byTransMode = videoChan.nStreamType;//传输码流模式 0－主码流 1－子码流    
+		struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.wDVRPort = videoChan.dwPort;//端口号
+		struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.dwChannel = videoChan.dwChannel;//通道号
+		sprintf((char *)struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.byAddress, "%s", videoChan.szDeviceIP);//设备域名
+		sprintf((char *)struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.sUserName, "%s", videoChan.szUsername);//登陆帐号
+		sprintf((char *)struStreamCfgV41.uDecStreamMode.struDecStreamDev.struDevChanInfo.sPassword, "%s", videoChan.szPassword);//密码	
+		
+		if (strlen(videoChan.szMediaIP) != 0)	//流媒体
+		{
+			struStreamCfgV41.uDecStreamMode.struDecStreamDev.struStreamMediaSvrCfg.byValid = 1;//启用流媒体
+			struStreamCfgV41.uDecStreamMode.struDecStreamDev.struStreamMediaSvrCfg.wDevPort = 554;//端口
+			struStreamCfgV41.uDecStreamMode.struDecStreamDev.struStreamMediaSvrCfg.byTransmitType = 0;//TCP
+			sprintf((char *)struStreamCfgV41.uDecStreamMode.struDecStreamDev.struStreamMediaSvrCfg.byAddress, "%s", videoChan.szMediaIP);//流媒体IP
+		}
+
+		if (!NET_DVR_MatrixStartDynamic_V41(userId, decChan, &struStreamCfgV41))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_MatrixStartDynamic_V41 failed, errorCode=%d\n"), errorCode);
+			return false;
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("StartDynamicDecode catch an error\n"));
+		return false;
+	}
+
+	L_INFO(_T("StartDynamicDecode success, decChan=%d\n"), decChan);
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+bool CBekHikUtil::StartPassiveDecode(int userId, int decChan, LONG &lpHandle)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (decChan <= 0)
+	{
+		L_ERROR(_T("Parameter error, decChan=%d\n"), decChan);
+		return false;
+	}
+
+	try
+	{
+		NET_DVR_MATRIX_PASSIVEMODE  passiveMode;
+		passiveMode.wTransProtol = 0;//wTransProtol 	传输协议：0-TCP，1-UDP，2-MCAST 
+		passiveMode.wPassivePort = 8000;//TCP或者UDP端口，TCP时端口默认是8000，不同的解码通道UDP端口号需设置为不同的值
+		passiveMode.byStreamType = 2;//数据类型: 1-实时流, 2-文件流
+
+		lpHandle = NET_DVR_MatrixStartPassiveDecode(userId, decChan, &passiveMode);
+		if (lpHandle < 0)
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_MatrixStartPassiveDecode failed, errorCode=%d\n"), errorCode);
+			return false;
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("StartPassiveDecode catch an error\n"));
+		return false;
+	}
+
+	L_INFO(_T("StartPassiveDecode success, decChan=%d\n"), decChan);
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+bool CBekHikUtil::StopDynamicDecode(int userId, int decChan)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (decChan <= 0)
+	{
+		L_ERROR(_T("Parameter error, decChan=%d\n"), decChan);
+		return false;
+	}
+
+	try
+	{
+		if (!NET_DVR_MatrixStopDynamic(userId, decChan))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_MatrixStopDynamic failed, errorCode=%d\n"), errorCode);
+			return false;
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("StopDynamicDecode catch an error\n"));
+		return false;
+	}
+
+	L_INFO(_T("StopDynamicDecode success, decChan=%d\n"), decChan);
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+

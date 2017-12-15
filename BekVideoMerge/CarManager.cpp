@@ -9,7 +9,6 @@ CCarManager::CCarManager()
 	m_nCarNo = 0;
 }
 
-
 CCarManager::~CCarManager()
 {
 }

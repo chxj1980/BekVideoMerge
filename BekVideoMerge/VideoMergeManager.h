@@ -22,6 +22,8 @@ private:
 	bool InitDevice();	//合码器、解码器初始化
 	bool InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX_ABILITY_V41 struDecAbility);	//合码器DVI通道检测及初始化
 	bool InitBNCChannel(int userId, int deviceNo, NET_DVR_MATRIX_ABILITY_V41 struDecAbility);	//解码器BNC通道检测及初始化
+	bool Run();
+	bool GetVideoChannel(wstring key, CHANNEL_CONFIG &videoChannel);	//根据编号查找视频通道信息
 
 private:
 	_ConnectionPtr m_pDB;	//数据库连接指针

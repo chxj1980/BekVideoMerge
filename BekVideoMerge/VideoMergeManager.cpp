@@ -45,6 +45,12 @@ bool CVideoMergeManager::StartWork()
 		return false;
 	}
 
+	//开始运行
+	if (!Run())
+	{
+		return false;
+	}
+
 	L_TRACE_LEAVE(_T("\n"));
 
 	return true;
@@ -505,7 +511,12 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			}
 
 			//考车初始化
-			m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
+			if (0 == m_mapCarManagers.count(nCarNo))
+			{
+				CCarManager carManager;
+				carManager.InitCar(userId, nCarNo, byDecChan);
+				m_mapCarManagers[nCarNo] = carManager;
+			}
 		}
 	}
 	catch (...)
@@ -595,7 +606,12 @@ bool CVideoMergeManager::InitBNCChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			}
 
 			//考车初始化
-			m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
+			if (0 == m_mapCarManagers.count(nCarNo))
+			{
+				CCarManager carManager;
+				carManager.InitCar(userId, nCarNo, byDecChan);
+				m_mapCarManagers[nCarNo] = carManager;
+			}
 		}
 	}
 	catch (...)
@@ -605,5 +621,50 @@ bool CVideoMergeManager::InitBNCChannel(int userId, int deviceNo, NET_DVR_MATRIX
 	}
 
 	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+bool CVideoMergeManager::Run()
+{
+	CHANNEL_CONFIG channel;
+	map<int, CCarManager>::iterator it;
+	for (it = m_mapCarManagers.begin(); it != m_mapCarManagers.end(); it++)
+	{
+		//车载视频动态解码
+		wstring key = CStringUtils::Format(_T("考车%d_1"), it->first);
+		if (!GetVideoChannel(key, channel))
+		{
+			L_INFO(_T("Video channel 1 of car %d not configured\n"), it->first);
+		}
+		else
+		{
+			it->second.StartDynamicDecode(channel, 0);
+		}
+		key = CStringUtils::Format(_T("考车%d_2"), it->first);
+		if (!GetVideoChannel(key, channel))
+		{
+			L_INFO(_T("Video channel 2 of car %d not configured\n"), it->first);
+		}
+		else
+		{
+			it->second.StartDynamicDecode(channel, 1);
+		}
+		
+		//被动解码
+	}
+
+	return true;
+}
+
+//根据编号查找视频通道信息
+bool CVideoMergeManager::GetVideoChannel(wstring key, CHANNEL_CONFIG &videoChannel)
+{
+	map<wstring, CHANNEL_CONFIG>::iterator it = m_mapChannels.find(key);
+	if (m_mapChannels.end() == it)
+	{
+		return false;
+	}
+
+	videoChannel = it->second;
 	return true;
 }

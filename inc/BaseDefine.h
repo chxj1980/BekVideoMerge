@@ -8,6 +8,8 @@
 #define  LISTENING_PORT_TCP		6708
 //UDP 监听端口
 #define  LISTENING_PORT_UDP		6709
+//显示通道关联的解码通道个数
+#define DISPLAY_CHAN_NUMS		4
 
 //配置文件
 #define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
@@ -25,6 +27,8 @@
 #define CONF_KEY_SQLORACLE			_T("SQLORACLE")
 #define CONF_KEY_NUM						_T("NUM")
 #define CONF_KEY_HMQ						_T("HMQ")
+#define CONF_KEY_EVEN						_T("EVEN")
+#define CONF_KEY_VIDEOWND				_T("VIDEOWND")
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")
@@ -101,6 +105,12 @@ typedef enum DatabaseType {
 typedef enum HKDeviceType {
 	DEVICE_TYPE_JMQ = 0,	//解码器
 	DEVICE_TYPE_HMQ = 1	//合码器
+};
+
+//是否隔行解码
+typedef enum HKDecodeEven {
+	DECODE_EVEN_NO = 0,	//逐行解码
+	DECODE_EVEN_YES = 1	//隔行解码
 };
 
 //通道配置

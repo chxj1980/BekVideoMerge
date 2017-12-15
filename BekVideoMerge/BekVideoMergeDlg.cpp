@@ -106,7 +106,12 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 
 	L_DEBUG(_T("CBekVideoMergeDlg OnInitDialog\n"));
 
-	videoMergeManager.StartWork();
+	if (!videoMergeManager.StartWork())
+	{
+		L_ERROR(_T("videoMergeManager.StartWork failed, Exit\n"));
+		CDialog::DestroyWindow();
+		return FALSE;
+	}
 
 	if (!tcpServer.InitSockS(m_hWnd, LISTENING_PORT_TCP, WM_SOCKET_TCP, 0))
 	{

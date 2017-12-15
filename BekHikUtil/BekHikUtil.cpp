@@ -145,3 +145,102 @@ bool CBekHikUtil::SetAutoReboot(int userId, int byDate, int byHour, int byMinute
 	return true;
 }
 
+bool CBekHikUtil::SetDecChanEnable(int userId, int byChanNo)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (userId < 0 || byChanNo <= 0)
+	{
+		L_ERROR(_T("Parameter error, userId=%d, byChanNo=%d\n"), userId, byChanNo);
+		return false;
+	}
+
+	try
+	{
+		DWORD dwEnable = -1;
+		if (!NET_DVR_MatrixGetDecChanEnable(userId, byChanNo, &dwEnable))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_MatrixGetDecChanEnable failed, errorCode=%d\n"), errorCode);
+			return false;
+		}
+
+		if (0 == dwEnable)	//0表示通道关闭
+		{
+			if (!NET_DVR_MatrixSetDecChanEnable(userId, byChanNo, 1))
+			{
+				int errorCode = NET_DVR_GetLastError();
+				L_ERROR(_T("NET_DVR_MatrixSetDecChanEnable failed, errorCode=%d\n"), errorCode);
+				return false;
+			}
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("SetDecChanEnable catch an error\n"));
+		return false;
+	}
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+bool CBekHikUtil::GetDisplayCfg(int userId, int dispChan, NET_DVR_MATRIX_VOUTCFG vOutCfg)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (userId < 0 || dispChan <= 0)
+	{
+		L_ERROR(_T("Parameter error, userId=%d, dispChan=%d\n"), userId, dispChan);
+		return false;
+	}
+
+	try
+	{
+		memset(&vOutCfg, 0, sizeof(NET_DVR_MATRIX_VOUTCFG));
+		if (!NET_DVR_MatrixGetDisplayCfg_V41(userId, dispChan, &vOutCfg))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_MatrixGetDisplayCfg_V41 failed, errorCode=%d\n"), errorCode);
+			return false;
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("GetDisplayCfg catch an error\n"));
+		return false;
+	}
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+bool CBekHikUtil::SetDisplayCfg(int userId, int dispChan, NET_DVR_MATRIX_VOUTCFG vOutCfg)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (userId < 0 || dispChan <= 0)
+	{
+		L_ERROR(_T("Parameter error, userId=%d, dispChan=%d\n"), userId, dispChan);
+		return false;
+	}
+
+	try
+	{
+		if (!NET_DVR_MatrixSetDisplayCfg_V41(userId, dispChan, &vOutCfg))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_MatrixSetDisplayCfg_V41 failed, errorCode=%d\n"), errorCode);
+			return false;
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("SetDisplayCfg catch an error\n"));
+		return false;
+	}
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+

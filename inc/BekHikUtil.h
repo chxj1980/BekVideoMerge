@@ -58,6 +58,35 @@ public:
 	*	 - true	操作成功
 	*/
 	static DLL_HIKUTIL_API bool WINAPI  SetAutoReboot(int userId, int byDate, int byHour, int byMinute);
+
+	/** @brief 开启解码通道
+	*	@param[in]	userId		登录id
+	*	@param[in]	byChanNo		解码通道号
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  SetDecChanEnable(int userId, int byChanNo);
+
+	/** @brief 获取显示通道配置
+	*	@param[in]	userId		登录id
+	*	@param[in]	dispChan		显示通道号
+	*	@param[in]	vOutCfg		显示通道配置
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  GetDisplayCfg(int userId, int dispChan, NET_DVR_MATRIX_VOUTCFG vOutCfg);
+
+	/** @brief 配置显示通道
+	*	@param[in]	userId		登录id
+	*	@param[in]	dispChan		显示通道号
+	*	@param[in]	vOutCfg		显示通道配置
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  SetDisplayCfg(int userId, int dispChan, NET_DVR_MATRIX_VOUTCFG vOutCfg);
 };
 
 

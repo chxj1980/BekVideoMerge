@@ -48,6 +48,15 @@
     <ClInclude Include="CarManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TranscodingBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StudentInfoReflesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapReflesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BekVideoMerge.cpp">
@@ -71,6 +80,15 @@
     <ClCompile Include="CarManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TranscodingBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StudentInfoReflesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapReflesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BekVideoMerge.rc">
@@ -84,6 +102,12 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\BekVideoMerge.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Background.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

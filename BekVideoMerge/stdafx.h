@@ -50,6 +50,7 @@ using namespace std;
 #include "Common/WinUtils.h"
 #include "Common/StringUtils.h"
 #include "Common/Base64Utils.h"
+#include "Common/ThreadUtils.h"
 #pragma comment(lib, "CommonDll.lib")
 
 //Hikvision
@@ -71,6 +72,9 @@ using namespace Gdiplus;
 #pragma warning(disable: 4146)
 #pragma warning(disable: 4244)
 #import "ado/msado15.dll" no_namespace rename("EOF", "adoEOF")
+
+//临时保存为PNG，不发送到合码器
+//#define __DEBUG_SAVE_PNG__
 
 #ifdef _UNICODE
 #if defined _M_IX86

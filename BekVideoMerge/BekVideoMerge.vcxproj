@@ -194,10 +194,13 @@
     <ClInclude Include="BekVideoMergeDlg.h" />
     <ClInclude Include="CarManager.h" />
     <ClInclude Include="Function.h" />
+    <ClInclude Include="MapReflesh.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StudentInfoReflesh.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TCPSockz.h" />
+    <ClInclude Include="TranscodingBase.h" />
     <ClInclude Include="VideoMergeManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -205,13 +208,16 @@
     <ClCompile Include="BekVideoMergeDlg.cpp" />
     <ClCompile Include="CarManager.cpp" />
     <ClCompile Include="Function.cpp" />
+    <ClCompile Include="MapReflesh.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StudentInfoReflesh.cpp" />
     <ClCompile Include="TCPSockz.cpp" />
+    <ClCompile Include="TranscodingBase.cpp" />
     <ClCompile Include="VideoMergeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -221,7 +227,9 @@
     <None Include="res\BekVideoMerge.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\Background.bmp" />
     <Image Include="res\BekVideoMerge.ico" />
+    <Image Include="res\bitmap1.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

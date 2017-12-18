@@ -116,6 +116,16 @@ public:
 	*	 - true	操作成功
 	*/
 	static DLL_HIKUTIL_API bool WINAPI  StopDynamicDecode(int userId, int decChan);
+
+	/** @brief 被动解码时发送文件流数据
+	*	@param[in]	lpHandle		窗口操作句柄
+	*	@param[in]	sendBuf		文件流
+	*	@param[in]	dwSize		文件流大小
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  MatrixSendData(int lpHandle, char *sendBuf, DWORD dwSize);
 };
 
 

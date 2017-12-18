@@ -364,3 +364,33 @@ bool CBekHikUtil::StopDynamicDecode(int userId, int decChan)
 	return true;
 }
 
+bool CBekHikUtil::MatrixSendData(int lpHandle, char *sendBuf, DWORD dwSize)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (lpHandle < 0)
+	{
+		L_ERROR(_T("Parameter error, lpHandle=%d\n"), lpHandle);
+		return false;
+	}
+
+	try
+	{
+		if (!NET_DVR_MatrixSendData(lpHandle, sendBuf, dwSize))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_MatrixStopDynamic failed, errorCode=%d\n"), errorCode);
+			return false;
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("StopDynamicDecode catch an error\n"));
+		return false;
+	}
+
+	L_DEBUG(_T("MatrixSendData success, lpHandle=%d\n"), lpHandle);
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+

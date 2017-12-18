@@ -513,9 +513,10 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			//考车初始化
 			if (0 == m_mapCarManagers.count(nCarNo))
 			{
-				CCarManager carManager;
-				carManager.InitCar(userId, nCarNo, byDecChan);
-				m_mapCarManagers[nCarNo] = carManager;
+				//CCarManager carManager;
+				//carManager.InitCar(userId, nCarNo, byDecChan);
+				//m_mapCarManagers[nCarNo] = carManager;
+				m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
 			}
 		}
 	}
@@ -608,9 +609,10 @@ bool CVideoMergeManager::InitBNCChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			//考车初始化
 			if (0 == m_mapCarManagers.count(nCarNo))
 			{
-				CCarManager carManager;
-				carManager.InitCar(userId, nCarNo, byDecChan);
-				m_mapCarManagers[nCarNo] = carManager;
+				//CCarManager carManager;
+				//carManager.InitCar(userId, nCarNo, byDecChan);
+				//m_mapCarManagers[nCarNo] = carManager;
+				m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
 			}
 		}
 	}
@@ -651,6 +653,12 @@ bool CVideoMergeManager::Run()
 		}
 		
 		//被动解码
+		LONG lStudentInfoHandle = -1;
+		LONG lMapHandle = -1;
+		if (it->second.StartPassiveDecode(2, lStudentInfoHandle) && it->second.StartPassiveDecode(3, lMapHandle))
+		{
+			it->second.InitPassiveMode(lStudentInfoHandle, lMapHandle);
+		}
 	}
 
 	return true;

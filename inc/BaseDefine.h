@@ -11,6 +11,9 @@
 //显示通道关联的解码通道个数
 #define DISPLAY_CHAN_NUMS		4
 
+#define VIDEO_WIDTH	352
+#define VIDEO_HEIGHT	288
+
 //配置文件
 #define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
 #define CONF_PATH_DB						_T("\\conf\\HS_CONF_DB.ini")
@@ -29,6 +32,12 @@
 #define CONF_KEY_HMQ						_T("HMQ")
 #define CONF_KEY_EVEN						_T("EVEN")
 #define CONF_KEY_VIDEOWND				_T("VIDEOWND")
+
+//资源文件
+#define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
+#define IMG_PATH_TBK							_T("\\res\\tbk.skin")
+#define IMG_PATH_MAPN						_T("\\res\\MAPN.skin")
+#define IMG_PATH_XMP_MARK			_T("\\res\\xmpmark.skin")
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")

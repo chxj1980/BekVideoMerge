@@ -6,11 +6,16 @@
 CCarManager::CCarManager()
 {
 	m_nUserId = -1;
-	m_nCarNo = 0;
+	m_nCarNo = -1;
+	m_nStudentInfoHandle = -1;
+	m_nMapHandle = -1;
+
+	m_wsProgramPath = _T("");
 }
 
 CCarManager::~CCarManager()
 {
+	
 }
 
 void CCarManager::InitCar(int userId, int carNo, BYTE (&decChan)[DISPLAY_CHAN_NUMS])
@@ -21,6 +26,20 @@ void CCarManager::InitCar(int userId, int carNo, BYTE (&decChan)[DISPLAY_CHAN_NU
 	{
 		m_decChan[i] = decChan[i];
 	}
+
+	CWinUtils::GetCurrentProcessPath(m_wsProgramPath);
+}
+
+void CCarManager::InitPassiveMode(int studentInfoHandle, int mapHandle)
+{
+	m_nStudentInfoHandle = studentInfoHandle;
+	m_nMapHandle = mapHandle;
+
+	m_studentInfoRefleshClass.Init(m_wsProgramPath, m_nCarNo, m_nStudentInfoHandle);
+	m_studentInfoRefleshClass.StartWork();
+
+	m_mapRefleshClass.Init(m_wsProgramPath, m_nCarNo, m_nMapHandle);
+	m_mapRefleshClass.StartWork();
 }
 
 //¿ªÆô¶¯Ì¬½âÂë
@@ -40,3 +59,13 @@ bool CCarManager::StopDynamicDecode(int wnd)
 {
 	return CBekHikUtil::StopDynamicDecode(m_nUserId, m_decChan[wnd]);
 }
+
+void CCarManager::InitStudentInfoPic()
+{
+	
+}
+
+void CCarManager::InitMapPic()
+{
+}
+

@@ -13,6 +13,10 @@ public:
 
 public:
 	bool StartWork();
+	bool HandleExamData(wstring buf);	//处理考试过程数据
+
+protected:
+	static BOOL HandleExamDataThreadProc(LPVOID parameter, HANDLE stopEvent);
 
 private:
 	void InitParameter();	//参数初始化

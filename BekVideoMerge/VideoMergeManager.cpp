@@ -56,6 +56,20 @@ bool CVideoMergeManager::StartWork()
 	return true;
 }
 
+bool CVideoMergeManager::HandleExamData(wstring buf)
+{
+
+
+	return true;
+} 
+
+BOOL CVideoMergeManager::HandleExamDataThreadProc(LPVOID parameter, HANDLE stopEvent)
+{
+	
+	
+	return TRUE;
+}
+
 void CVideoMergeManager::InitParameter()
 {
 	L_TRACE_ENTER(_T("\n"));

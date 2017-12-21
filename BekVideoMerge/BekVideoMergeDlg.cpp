@@ -203,6 +203,9 @@ LRESULT CBekVideoMergeDlg::OnSocketTCP(WPARAM wParam, LPARAM lParam)
 		CStringUtils::ASCII2Unicode(strRecv, wsRecv);
 		L_DEBUG(_T("TCPServer Receive = %s\n"), wsRecv.c_str());
 		tcpServer.SendToClient(sock, (char*)strRecv.c_str());
+
+
+
 		break;
 	}
 	case FD_CLOSE: 

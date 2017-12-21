@@ -3,7 +3,7 @@
 #ifndef __BEK_HIK_UTIL_H__
 #define __BEK_HIK_UTIL_H__
 
-
+#include "BaseDefine.h"
 
 #ifndef DLL_HIKUTIL_API
 #define DLL_HIKUTIL_API __declspec(dllexport)
@@ -58,6 +58,74 @@ public:
 	*	 - true	操作成功
 	*/
 	static DLL_HIKUTIL_API bool WINAPI  SetAutoReboot(int userId, int byDate, int byHour, int byMinute);
+
+	/** @brief 开启解码通道
+	*	@param[in]	userId		登录id
+	*	@param[in]	byChanNo		解码通道号
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  SetDecChanEnable(int userId, int byChanNo);
+
+	/** @brief 获取显示通道配置
+	*	@param[in]	userId		登录id
+	*	@param[in]	dispChan		显示通道号
+	*	@param[in]	vOutCfg		显示通道配置
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  GetDisplayCfg(int userId, int dispChan, NET_DVR_MATRIX_VOUTCFG vOutCfg);
+
+	/** @brief 配置显示通道
+	*	@param[in]	userId		登录id
+	*	@param[in]	dispChan		显示通道号
+	*	@param[in]	vOutCfg		显示通道配置
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  SetDisplayCfg(int userId, int dispChan, NET_DVR_MATRIX_VOUTCFG vOutCfg);
+
+	/** @brief 配置动态解码
+	*	@param[in]	userId		登录id
+	*	@param[in]	decChan		解码通道号
+	*	@param[in]	videoChan	NVR/DVR通道信息
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  StartDynamicDecode(int userId, int decChan, CHANNEL_CONFIG videoChan);
+
+	/** @brief 配置被动解码
+	*	@param[in]	userId		登录id
+	*	@param[in]	decChan		解码通道号
+	*	@param[out]	lpHandle	被动解码操作句柄
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  StartPassiveDecode(int userId, int decChan, LONG &lpHandle);
+
+	/** @brief 停止动态解码
+	*	@param[in]	userId		登录id
+	*	@param[in]	decChan		解码通道号
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  StopDynamicDecode(int userId, int decChan);
+
+	/** @brief 被动解码时发送文件流数据
+	*	@param[in]	lpHandle		窗口操作句柄
+	*	@param[in]	sendBuf		文件流
+	*	@param[in]	dwSize		文件流大小
+	*	@return  返回操作结果
+	*	 - false 操作失败
+	*	 - true	操作成功
+	*/
+	static DLL_HIKUTIL_API bool WINAPI  MatrixSendData(int lpHandle, char *sendBuf, DWORD dwSize);
 };
 
 

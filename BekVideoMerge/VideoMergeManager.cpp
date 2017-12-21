@@ -1,15 +1,14 @@
 #include "stdafx.h"
 #include "VideoMergeManager.h"
 
-#include "Function.h"
-
 #define MODULE_NAME	_T("CVideoMergeManager")
 
 CVideoMergeManager::CVideoMergeManager()
 {
 	m_wsProgramPath = _T("");
+	m_mapCarManagers.clear();
 	m_mapChannels.clear();
-	m_mapErrorDatas.clear();
+	m_mapItems.clear();
 }
 
 CVideoMergeManager::~CVideoMergeManager()
@@ -29,13 +28,13 @@ bool CVideoMergeManager::StartWork()
 	}
 
 	//读取视频通道配置信息
-	if (!InitChannel())
+	if (!InitVideoChannel())
 	{
 		return false;
 	}
 
 	//读取项目编号信息、扣分编号信息
-	if (!InitErrorData())
+	if (!InitItems())
 	{
 		return false;
 	}
@@ -46,9 +45,29 @@ bool CVideoMergeManager::StartWork()
 		return false;
 	}
 
+	//开始运行
+	if (!Run())
+	{
+		return false;
+	}
+
 	L_TRACE_LEAVE(_T("\n"));
 
 	return true;
+}
+
+bool CVideoMergeManager::HandleExamData(wstring buf)
+{
+
+
+	return true;
+} 
+
+BOOL CVideoMergeManager::HandleExamDataThreadProc(LPVOID parameter, HANDLE stopEvent)
+{
+	
+	
+	return TRUE;
 }
 
 void CVideoMergeManager::InitParameter()
@@ -158,8 +177,8 @@ bool CVideoMergeManager::InitDB()
 	return true;
 }
 
-//从数据库读取通道配置
-bool CVideoMergeManager::InitChannel()
+//从数据库读取视频通道配置
+bool CVideoMergeManager::InitVideoChannel()
 {
 	L_TRACE_ENTER(_T("\n"));
 	m_mapChannels.clear();
@@ -242,7 +261,7 @@ bool CVideoMergeManager::InitChannel()
 					vat = pSet->GetCollect(DB_FIELD_MEDIAIP);
 					if (vat.vt != NULL)
 					{
-						strncpy(m_mapChannels[wsKey].szMideaIP, (LPCSTR)(_bstr_t)vat, 16);
+						strncpy(m_mapChannels[wsKey].szMediaIP, (LPCSTR)(_bstr_t)vat, 16);
 					}
 				}
 				pSet->MoveNext();
@@ -251,7 +270,7 @@ bool CVideoMergeManager::InitChannel()
 	}
 	catch (...)
 	{
-		L_ERROR(_T("InitChannel catch an error\n"));
+		L_ERROR(_T("InitVideoChannel catch an error\n"));
 		return false;
 	}
 
@@ -262,10 +281,10 @@ bool CVideoMergeManager::InitChannel()
 }
 
 //从数据库读取项目编号信息和扣分编号信息
-bool CVideoMergeManager::InitErrorData()
+bool CVideoMergeManager::InitItems()
 {
 	L_TRACE_ENTER(_T("\n"));
-	m_mapErrorDatas.clear();
+	m_mapItems.clear();
 
 	try
 	{
@@ -290,12 +309,12 @@ bool CVideoMergeManager::InitErrorData()
 					vat = pSet->GetCollect(DB_FIELD_KFLX);
 					if (vat.vt != NULL)
 					{
-						strncpy(m_mapErrorDatas[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 10);
+						strncpy(m_mapItems[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 10);
 					}
 					vat = pSet->GetCollect(DB_FIELD_KCFS);
 					if (vat.vt != NULL)
 					{
-						m_mapErrorDatas[wsNo].ikcfs = atoi((_bstr_t)vat);
+						m_mapItems[wsNo].ikcfs = atoi((_bstr_t)vat);
 					}
 				}
 
@@ -305,11 +324,11 @@ bool CVideoMergeManager::InitErrorData()
 	}
 	catch (...)
 	{
-		L_ERROR(_T("InitErrorData catch an error\n"));
+		L_ERROR(_T("InitItems catch an error\n"));
 		return false;
 	}
 
-	L_INFO(_T("Read ErrorData infos from database end, count = %d\n"), m_mapErrorDatas.size());
+	L_INFO(_T("Read m_mapItems from database end, count = %d\n"), m_mapItems.size());
 
 	L_TRACE_LEAVE(_T("\n"));
 	return true;
@@ -331,26 +350,22 @@ bool CVideoMergeManager::InitDevice()
 		//从配置文件读取相关配置
 		wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
 		wstring wsCarConfPath = m_wsProgramPath + CONF_PATH_CAR;
+		wstring wsDisplayConfPath = m_wsProgramPath + CONF_PATH_DISPLAY;
 		int nHKDeviceType = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_HMQ, 0, wsEnvConfPath.c_str());	//解码设备类型
 		int nNum = GetPrivateProfileInt(CONF_SECTION_JMQ, CONF_KEY_NUM, 0, wsCarConfPath.c_str());	//解码器数量
-		if (DEVICE_TYPE_JMQ == nHKDeviceType)
-		{
-			L_INFO(_T("Hikvison device type : JMQ, count=%d\n"), nNum);
-		}
-		else if (DEVICE_TYPE_HMQ == nHKDeviceType)
-		{
-			L_INFO(_T("Hikvison device type : HMQ, count=%d\n"), nNum);
-		}
-		else
-		{
-			L_ERROR(_T("Unknown Hikvison device type, HMQ = %d, Please check config file : %s\n"), nHKDeviceType, wsEnvConfPath);
-			return false;
-		}
 
-		for (int i = 1; i <= nNum; i++)
+		//取子窗口和解码通道的对应关系
+		for (int nDisplayNo = 0; nDisplayNo < DISPLAY_CHAN_NUMS; nDisplayNo++)
+		{
+			wstring wsKey = CStringUtils::Format(_T("DISPLAY%d"), nDisplayNo + 1);
+			m_displayChan[nDisplayNo] = GetPrivateProfileInt(CONF_SECTION_CONFIG, wsKey.c_str(), nDisplayNo, wsDisplayConfPath.c_str());
+		}
+		m_audioWindow = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_VIDEOWND, 1, wsDisplayConfPath.c_str());
+
+		for (int nDeviceNo = 1; nDeviceNo <= nNum; nDeviceNo++)
 		{
 			TCHAR buf[MAX_PATH];
-			wstring key = CStringUtils::Format(_T("%d"), i);
+			wstring key = CStringUtils::Format(_T("%d"), nDeviceNo);
 			if (GetPrivateProfileString(CONF_SECTION_JMQ, key.c_str(), _T(""), buf, sizeof(buf)/sizeof(TCHAR), wsCarConfPath.c_str()))
 			{
 				//解析设备IP、用户名、密码、端口
@@ -360,7 +375,7 @@ bool CVideoMergeManager::InitDevice()
 				CStringUtils::SplitString(wsSource, separator, vecWstr);
 				if (vecWstr.size() != 4)
 				{
-					L_ERROR(_T("JMQ Config error, No=%d, value=%s\n"), i, wsSource);
+					L_ERROR(_T("JMQ Config error, No=%d, value=%s\n"), nDeviceNo, wsSource.c_str());
 					return false;
 				}
 				wstring wsIP = vecWstr[0];
@@ -372,7 +387,7 @@ bool CVideoMergeManager::InitDevice()
 				int nPort = atoi(sPort.c_str());
 				if (wsIP.empty() || wsUsername.empty() || wsPassword.empty() || nPort <= 0)
 				{
-					L_ERROR(_T("JMQ Config error, No=%d, value=%s\n"), i, wsSource);
+					L_ERROR(_T("JMQ Config error, No=%d, value=%s\n"), nDeviceNo, wsSource.c_str());
 					return false;
 				}
 
@@ -396,7 +411,28 @@ bool CVideoMergeManager::InitDevice()
 				//设置定时重启
 				CBekHikUtil::SetAutoReboot(nUserId, 7, 5, 9);
 
-
+				//初始化显示通道和解码通道
+				if (DEVICE_TYPE_HMQ == nHKDeviceType)
+				{
+					if (!InitDVIChannel(nUserId, nDeviceNo, struDecAbility))
+					{
+						L_ERROR(_T("InitDVIChannel failed\n"));
+						return false;
+					}
+				}
+				else if (DEVICE_TYPE_JMQ == nHKDeviceType)
+				{
+					if (!InitBNCChannel(nUserId, nDeviceNo, struDecAbility))
+					{
+						L_ERROR(_T("InitDVIChannel failed\n"));
+						return false;
+					}
+				}
+				else
+				{
+					L_ERROR(_T("Unknown Hikvison device type, HMQ = %d, Please check config file : %s\n"), nHKDeviceType, wsEnvConfPath);
+					return false;
+				}
 			}
 		}
 
@@ -408,5 +444,249 @@ bool CVideoMergeManager::InitDevice()
 	}
 
 	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+//合码器通道检测及初始化
+bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX_ABILITY_V41 struDecAbility)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (userId <0 || deviceNo <= 0)
+	{
+		L_ERROR(_T("InitDVIChannel parameter error, userId=%d, deviceNo=%d\n"), userId, deviceNo);
+		return false;
+	}
+
+	try
+	{
+		//从配置文件读取相关配置
+		wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
+		wstring wsCarConfPath = m_wsProgramPath + CONF_PATH_CAR;
+		wstring wsDisplayConfPath = m_wsProgramPath + CONF_PATH_DISPLAY;
+		int nEven = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_EVEN, 0, wsDisplayConfPath.c_str());	//是否隔行解码
+
+		wstring wsSection = CStringUtils::Format(_T("JMQ%d"), deviceNo);
+		for (int nDviChanNo = 0; nDviChanNo < struDecAbility.struDviInfo.byChanNums; nDviChanNo++)	//DVI通道循环
+		{
+			if ((DECODE_EVEN_YES == nEven) && (1 == nDviChanNo % 2))	//隔行解码
+			{
+				continue;
+			}
+
+			wstring wsKey = CStringUtils::Format(_T("BNC%d"), nDviChanNo + 1);
+			int nCarNo = GetPrivateProfileInt(wsSection.c_str(), wsKey.c_str(), 0, wsCarConfPath.c_str());
+			if (nCarNo <= 0)
+			{
+				L_INFO(_T("%s of %s not configured\n"), wsKey.c_str(), wsSection.c_str());
+				continue;
+			}
+
+			//开启解码通道
+			BYTE byDecChan[DISPLAY_CHAN_NUMS];	//显示通道对应的解码通道
+			for (int j = 0; j < DISPLAY_CHAN_NUMS; j++)
+			{
+				byDecChan[j] = struDecAbility.byStartChan + nDviChanNo * DISPLAY_CHAN_NUMS + j;
+				int chanNo = byDecChan[j];
+				if (!CBekHikUtil::SetDecChanEnable(userId, chanNo))
+				{
+					L_ERROR(_T("Enable %s of %s failed\n"), wsKey.c_str(), wsSection.c_str());
+					return false;
+				}
+			}
+
+			//配置显示通道
+			NET_DVR_MATRIX_VOUTCFG vOutCfg;
+			memset(&vOutCfg, 0, sizeof(NET_DVR_MATRIX_VOUTCFG));
+			DWORD dwDispChan = struDecAbility.struDviInfo.byStartChan + nDviChanNo;	//显示通道
+			if (!CBekHikUtil::GetDisplayCfg(userId, dwDispChan, vOutCfg))
+			{
+				return false;
+			}
+			if (DISPLAY_CHAN_NUMS != vOutCfg.dwWindowMode)	//画面分割模式
+			{
+				vOutCfg.dwWindowMode = DISPLAY_CHAN_NUMS;
+			}
+			for (int nDecChanNo = 0; nDecChanNo < DISPLAY_CHAN_NUMS; nDecChanNo++)	//子窗口关联的解码通道
+			{
+				if (vOutCfg.byJoinDecChan[nDecChanNo] != byDecChan[m_displayChan[nDecChanNo]])
+				{
+					vOutCfg.byJoinDecChan[nDecChanNo] = byDecChan[m_displayChan[nDecChanNo]];
+				}
+			}
+			vOutCfg.byAudio = 1;	//音频
+			vOutCfg.byAudioWindowIdx = m_audioWindow;	//音频窗口
+			vOutCfg.byVedioFormat = 1;	//视频制式：1- NTSC，2- PAL				//这项配置与解码器不同
+			vOutCfg.dwResolution = 67207228;													//这项配置与解码器不同
+			vOutCfg.byScale = 0;	//真实
+			if (!CBekHikUtil::SetDisplayCfg(userId, dwDispChan, vOutCfg))
+			{
+				return false;
+			}
+
+			//考车初始化
+			if (0 == m_mapCarManagers.count(nCarNo))
+			{
+				//CCarManager carManager;
+				//carManager.InitCar(userId, nCarNo, byDecChan);
+				//m_mapCarManagers[nCarNo] = carManager;
+				m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
+			}
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("InitDVIChannel catch an error\n"));
+		return false;
+	}
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+//解码器通道检测及初始化
+bool CVideoMergeManager::InitBNCChannel(int userId, int deviceNo, NET_DVR_MATRIX_ABILITY_V41 struDecAbility)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (userId < 0 || deviceNo <= 0)
+	{
+		L_ERROR(_T("InitBNCChannel parameter error, userId=%d, deviceNo=%d\n"), userId, deviceNo);
+		return false;
+	}
+
+	try
+	{
+		//从配置文件读取相关配置
+		wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
+		wstring wsCarConfPath = m_wsProgramPath + CONF_PATH_CAR;
+		wstring wsDisplayConfPath = m_wsProgramPath + CONF_PATH_DISPLAY;
+		int nEven = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_EVEN, 0, wsDisplayConfPath.c_str());	//是否隔行解码
+
+		wstring wsSection = CStringUtils::Format(_T("JMQ%d"), deviceNo);
+		for (int nBncChanNo = 0; nBncChanNo < struDecAbility.struBncInfo.byChanNums; nBncChanNo++)	//BNC通道循环
+		{
+			if ((DECODE_EVEN_YES == nEven) && (1 == nBncChanNo % 2))	//隔行解码
+			{
+				continue;
+			}
+
+			wstring wsKey = CStringUtils::Format(_T("BNC%d"), nBncChanNo + 1);
+			int nCarNo = GetPrivateProfileInt(wsSection.c_str(), wsKey.c_str(), 0, wsCarConfPath.c_str());
+			if (nCarNo <= 0)
+			{
+				L_INFO(_T("%s of %s not configured\n"), wsKey.c_str(), wsSection.c_str());
+				continue;
+			}
+
+			//开启解码通道
+			BYTE byDecChan[DISPLAY_CHAN_NUMS];	//显示通道对应的解码通道
+			for (int j = 0; j < DISPLAY_CHAN_NUMS; j++)
+			{
+				byDecChan[j] = (BYTE)(struDecAbility.byStartChan + nBncChanNo * DISPLAY_CHAN_NUMS + j);
+				if (!CBekHikUtil::SetDecChanEnable(userId, byDecChan[j]))
+				{
+					L_ERROR(_T("Enable %s of %s failed\n"), wsKey.c_str(), wsSection.c_str());
+					return false;
+				}
+			}
+
+			//配置显示通道
+			NET_DVR_MATRIX_VOUTCFG vOutCfg;
+			memset(&vOutCfg, 0, sizeof(NET_DVR_MATRIX_VOUTCFG));
+			DWORD dwDispChan = struDecAbility.struBncInfo.byStartChan + nBncChanNo;	//显示通道
+			if (!CBekHikUtil::GetDisplayCfg(userId, dwDispChan, vOutCfg))
+			{
+				return false;
+			}
+			if (DISPLAY_CHAN_NUMS != vOutCfg.dwWindowMode)	//画面分割模式
+			{
+				vOutCfg.dwWindowMode = DISPLAY_CHAN_NUMS;
+			}
+			for (int nDecChanNo = 0; nDecChanNo < DISPLAY_CHAN_NUMS; nDecChanNo++)	//子窗口关联的解码通道
+			{
+				if (vOutCfg.byJoinDecChan[nDecChanNo] != byDecChan[m_displayChan[nDecChanNo]])
+				{
+					vOutCfg.byJoinDecChan[nDecChanNo] = byDecChan[m_displayChan[nDecChanNo]];
+				}
+			}
+			vOutCfg.byAudio = 1;	//音频
+			vOutCfg.byAudioWindowIdx = m_audioWindow;	//音频窗口
+			vOutCfg.byVedioFormat = 2;	//视频制式：1- NTSC，2- PAL			//这项配置与合码器不同
+			vOutCfg.dwResolution = 0;																//这项配置与合码器不同
+			vOutCfg.byScale = 0;	//真实
+			if (!CBekHikUtil::SetDisplayCfg(userId, dwDispChan, vOutCfg))
+			{
+				return false;
+			}
+
+			//考车初始化
+			if (0 == m_mapCarManagers.count(nCarNo))
+			{
+				//CCarManager carManager;
+				//carManager.InitCar(userId, nCarNo, byDecChan);
+				//m_mapCarManagers[nCarNo] = carManager;
+				m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
+			}
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("InitBNCChannel catch an error\n"));
+		return false;
+	}
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+bool CVideoMergeManager::Run()
+{
+	CHANNEL_CONFIG channel;
+	map<int, CCarManager>::iterator it;
+	for (it = m_mapCarManagers.begin(); it != m_mapCarManagers.end(); it++)
+	{
+		//车载视频动态解码
+		wstring key = CStringUtils::Format(_T("考车%d_1"), it->first);
+		if (!GetVideoChannel(key, channel))
+		{
+			L_INFO(_T("Video channel 1 of car %d not configured\n"), it->first);
+		}
+		else
+		{
+			it->second.StartDynamicDecode(channel, 0);
+		}
+		key = CStringUtils::Format(_T("考车%d_2"), it->first);
+		if (!GetVideoChannel(key, channel))
+		{
+			L_INFO(_T("Video channel 2 of car %d not configured\n"), it->first);
+		}
+		else
+		{
+			it->second.StartDynamicDecode(channel, 1);
+		}
+		
+		//被动解码
+		LONG lStudentInfoHandle = -1;
+		LONG lMapHandle = -1;
+		if (it->second.StartPassiveDecode(2, lStudentInfoHandle) && it->second.StartPassiveDecode(3, lMapHandle))
+		{
+			it->second.InitPassiveMode(lStudentInfoHandle, lMapHandle);
+		}
+	}
+
+	return true;
+}
+
+//根据编号查找视频通道信息
+bool CVideoMergeManager::GetVideoChannel(wstring key, CHANNEL_CONFIG &videoChannel)
+{
+	map<wstring, CHANNEL_CONFIG>::iterator it = m_mapChannels.find(key);
+	if (m_mapChannels.end() == it)
+	{
+		return false;
+	}
+
+	videoChannel = it->second;
 	return true;
 }

@@ -106,23 +106,30 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 
 	L_DEBUG(_T("CBekVideoMergeDlg OnInitDialog\n"));
 
-	videoMergeManager.StartWork();
+	if (!videoMergeManager.StartWork())
+	{
+		L_ERROR(_T("videoMergeManager.StartWork failed, Exit\n"));
+		CDialog::OnCancel();
+		//CDialog::DestroyWindow();
+		return FALSE;
+	}
 
 	if (!tcpServer.InitSockS(m_hWnd, LISTENING_PORT_TCP, WM_SOCKET_TCP, 0))
 	{
 		L_ERROR(_T("tcpServer.InitSockS failed, Exit.\n"));
-		CDialog::DestroyWindow();
+		CDialog::OnCancel();
+		//CDialog::DestroyWindow();
 		return FALSE;
 	}
 	if (!udpServer.InitSockU(m_hWnd, LISTENING_PORT_UDP, WM_SOCKET_UDP))
 	{
 		L_ERROR(_T("udpServer.InitSockU failed, Exit.\n"));
-		CDialog::DestroyWindow();
+		CDialog::OnCancel();
+		//CDialog::DestroyWindow();
 		return FALSE;
 	}
 
-
-	
+	L_INFO(_T("CBekVideoMergeDlg OnInitDialog Success\n"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -196,6 +203,9 @@ LRESULT CBekVideoMergeDlg::OnSocketTCP(WPARAM wParam, LPARAM lParam)
 		CStringUtils::ASCII2Unicode(strRecv, wsRecv);
 		L_DEBUG(_T("TCPServer Receive = %s\n"), wsRecv.c_str());
 		tcpServer.SendToClient(sock, (char*)strRecv.c_str());
+
+
+
 		break;
 	}
 	case FD_CLOSE: 

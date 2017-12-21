@@ -8,6 +8,11 @@
 #define  LISTENING_PORT_TCP		6708
 //UDP 监听端口
 #define  LISTENING_PORT_UDP		6709
+//显示通道关联的解码通道个数
+#define DISPLAY_CHAN_NUMS		4
+
+#define VIDEO_WIDTH	352
+#define VIDEO_HEIGHT	288
 
 //配置文件
 #define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
@@ -25,6 +30,14 @@
 #define CONF_KEY_SQLORACLE			_T("SQLORACLE")
 #define CONF_KEY_NUM						_T("NUM")
 #define CONF_KEY_HMQ						_T("HMQ")
+#define CONF_KEY_EVEN						_T("EVEN")
+#define CONF_KEY_VIDEOWND				_T("VIDEOWND")
+
+//资源文件
+#define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
+#define IMG_PATH_TBK							_T("\\res\\tbk.skin")
+#define IMG_PATH_MAPN						_T("\\res\\MAPN.skin")
+#define IMG_PATH_XMP_MARK			_T("\\res\\xmpmark.skin")
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")
@@ -103,6 +116,12 @@ typedef enum HKDeviceType {
 	DEVICE_TYPE_HMQ = 1	//合码器
 };
 
+//是否隔行解码
+typedef enum HKDecodeEven {
+	DECODE_EVEN_NO = 0,	//逐行解码
+	DECODE_EVEN_YES = 1	//隔行解码
+};
+
 //通道配置
 typedef struct tagCHANNEL_CONFIG
 {
@@ -112,7 +131,7 @@ typedef struct tagCHANNEL_CONFIG
 	char szPassword[16];	//密码
 	WORD dwPort;		//端口号
 	WORD dwChannel;		//通道号
-	char szMideaIP[16];		//流媒体IP
+	char szMediaIP[16];		//流媒体IP
 	int  nStreamType;	//码流类型 0 主码流 1 子码流
 }CHANNEL_CONFIG, *pCHANNEL_CONFIG;
 

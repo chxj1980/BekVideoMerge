@@ -190,16 +190,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\Function.h" />
+    <ClInclude Include="..\inc\TCPSockz.h" />
     <ClInclude Include="BekVideoWall.h" />
     <ClInclude Include="BekVideoWallDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TCPSockz.h" />
     <ClInclude Include="WallVideoMerge.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Function.cpp" />
+    <ClCompile Include="..\src\TCPSockz.cpp" />
     <ClCompile Include="BekVideoWall.cpp" />
     <ClCompile Include="BekVideoWallDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -208,7 +209,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TCPSockz.cpp" />
     <ClCompile Include="WallVideoMerge.cpp" />
   </ItemGroup>
   <ItemGroup>

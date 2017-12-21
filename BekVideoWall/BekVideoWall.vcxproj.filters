@@ -33,13 +33,13 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TCPSockz.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WallVideoMerge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\Function.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\TCPSockz.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,13 +53,13 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TCPSockz.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="WallVideoMerge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Function.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TCPSockz.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

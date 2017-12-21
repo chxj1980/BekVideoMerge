@@ -8,6 +8,8 @@
 #define  LISTENING_PORT_TCP		6708
 //UDP 监听端口
 #define  LISTENING_PORT_UDP		6709
+//电视墙视频叠加服务监听的TCP端口
+#define LISTENING_PORT_TCP_WALL	6800
 //显示通道关联的解码通道个数
 #define DISPLAY_CHAN_NUMS		4
 
@@ -16,6 +18,7 @@
 
 //配置文件
 #define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
+#define LOG_CONF_BEKVIDEOWALL	_T("BekVideoWall_logconf.ini")
 #define CONF_PATH_DB						_T("\\conf\\HS_CONF_DB.ini")
 #define CONF_PATH_MAP						_T("\\conf\\HS_CONF_MAP.ini")
 #define CONF_PATH_ENV						_T("\\conf\\HS_CONF_ENV.ini")
@@ -88,6 +91,7 @@
 
 #define WM_SOCKET_TCP	   WM_USER + 1001
 #define WM_SOCKET_UDP	   WM_USER + 1002
+#define WM_SOCKET_TCP_WALL WM_USER + 1003
 
 typedef enum PACKTYPE {
 	SOCKZREEOR,

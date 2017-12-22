@@ -127,6 +127,13 @@ typedef enum HKDecodeEven {
 	DECODE_EVEN_YES = 1	//隔行解码
 };
 
+//摄像头编号
+typedef enum CameraNoLocation {
+	CAMERA_NO_MAIN_DRIVING = 1,	//主驾摄像头
+	CAMERA_NO_COPILOT = 2,	//副驾摄像头
+	CAMERA_NO_CAR_FRONT = 3	//车前摄像头
+};
+
 //通道配置
 typedef struct tagCHANNEL_CONFIG
 {

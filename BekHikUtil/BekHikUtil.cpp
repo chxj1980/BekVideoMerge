@@ -287,8 +287,10 @@ bool CBekHikUtil::StartDynamicDecode(int userId, int decChan, CHANNEL_CONFIG vid
 			return false;
 		}
 
+		wstring wsAddress = _T("");
+		CStringUtils::ASCII2Unicode(videoChan.szDeviceIP, wsAddress);
 		L_INFO(_T("StartDynamicDecode success, decChan=%d, srcAddress=%s, sourceTran=%d\n"), 
-			decChan, struStreamCfgV41.uDecStreamMode.struDecStreamDev.struStreamMediaSvrCfg.byAddress, videoChan.dwChannel);
+			decChan, wsAddress.c_str(), videoChan.dwChannel);
 	}
 	catch (...)
 	{

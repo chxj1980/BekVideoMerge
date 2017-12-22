@@ -104,7 +104,13 @@ BOOL CBekVideoWallDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 
 	L_DEBUG(_T("CBekVideoWallDlg OnInitDialog\n"));
-
+	if (!wallVideoMerge.StartWork())
+	{
+		L_ERROR(_T("wallVideoMerge.StartWork failed, Exit\n"));
+		CDialog::OnCancel();
+		//CDialog::DestroyWindow();
+		return FALSE;
+	}
 	if (!tcpServer.InitSockS(m_hWnd, LISTENING_PORT_TCP_WALL, WM_SOCKET_TCP_WALL, 0))
 	{
 		L_ERROR(_T("tcpServer.InitSockS failed, Exit.\n"));
@@ -113,6 +119,7 @@ BOOL CBekVideoWallDlg::OnInitDialog()
 		return FALSE;
 	}
 
+	L_INFO(_T("CBekVideoWallDlg OnInitDialog Success\n"));
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 

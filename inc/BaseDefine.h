@@ -23,6 +23,7 @@
 #define CONF_PATH_MAP						_T("\\conf\\HS_CONF_MAP.ini")
 #define CONF_PATH_ENV						_T("\\conf\\HS_CONF_ENV.ini")
 #define CONF_PATH_CAR 						_T("\\conf\\HS_CONF_CAR.ini")
+#define CONF_PATH_CAR_WALL			_T("\\conf\\HS_CONF_CAR_WALL.ini")
 #define CONF_PATH_DISPLAY				_T("\\conf\\HS_CONF_DISPLAY.ini")
 #define CONF_SECTION_CONFIG			_T("CONFIG")
 #define CONF_SECTION_JMQ				_T("JMQ")	

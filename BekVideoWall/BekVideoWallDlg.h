@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "WallVideoMerge.h"
 
 // CBekVideoWallDlg dialog
 class CBekVideoWallDlg : public CDialogEx
@@ -34,5 +35,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CWallVideoMerge wallVideoMerge;
 	CTCPSockz tcpServer;
 };

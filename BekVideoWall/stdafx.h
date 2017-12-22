@@ -56,6 +56,7 @@ using namespace std;
 //Hikvision
 #include "hikvision/inc/HCNetSDK.h"
 #include "BekHikUtil.h"
+#pragma comment(lib, "hikvision/lib/HCNetSDK.lib")
 #pragma comment(lib, "BekHikUtil.lib")
 
 //Socket

@@ -193,6 +193,7 @@
     <ClInclude Include="..\inc\TCPSockz.h" />
     <ClInclude Include="BekVideoWall.h" />
     <ClInclude Include="BekVideoWallDlg.h" />
+    <ClInclude Include="EncodeManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="..\src\TCPSockz.cpp" />
     <ClCompile Include="BekVideoWall.cpp" />
     <ClCompile Include="BekVideoWallDlg.cpp" />
+    <ClCompile Include="EncodeManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

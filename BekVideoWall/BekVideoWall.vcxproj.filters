@@ -18,10 +18,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BekVideoMerge.h">
+    <ClInclude Include="BekVideoWall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BekVideoMergeDlg.h">
+    <ClInclude Include="BekVideoWallDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -33,22 +33,7 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\BaseDefine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoMergeManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CarManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TranscodingBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StudentInfoReflesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapReflesh.h">
+    <ClInclude Include="WallVideoMerge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\Function.h">
@@ -57,30 +42,21 @@
     <ClInclude Include="..\inc\TCPSockz.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EncodeManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BekVideoMerge.cpp">
+    <ClCompile Include="BekVideoWall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BekVideoMergeDlg.cpp">
+    <ClCompile Include="BekVideoWallDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoMergeManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CarManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TranscodingBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StudentInfoReflesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MapReflesh.cpp">
+    <ClCompile Include="WallVideoMerge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Function.cpp">
@@ -89,25 +65,22 @@
     <ClCompile Include="..\src\TCPSockz.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EncodeManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="BekVideoMerge.rc">
+    <ResourceCompile Include="BekVideoWall.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\BekVideoMerge.rc2">
+    <None Include="res\BekVideoWall.rc2">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\BekVideoMerge.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\bitmap1.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\Background.bmp">
+    <Image Include="res\BekVideoWall.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

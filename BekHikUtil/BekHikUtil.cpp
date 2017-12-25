@@ -286,6 +286,11 @@ bool CBekHikUtil::StartDynamicDecode(int userId, int decChan, CHANNEL_CONFIG vid
 			L_ERROR(_T("NET_DVR_MatrixStartDynamic_V41 failed, errorCode=%d\n"), errorCode);
 			return false;
 		}
+
+		wstring wsAddress = _T("");
+		CStringUtils::ASCII2Unicode(videoChan.szDeviceIP, wsAddress);
+		L_INFO(_T("StartDynamicDecode success, decChan=%d, srcAddress=%s, sourceTran=%d\n"), 
+			decChan, wsAddress.c_str(), videoChan.dwChannel);
 	}
 	catch (...)
 	{
@@ -293,7 +298,6 @@ bool CBekHikUtil::StartDynamicDecode(int userId, int decChan, CHANNEL_CONFIG vid
 		return false;
 	}
 
-	L_INFO(_T("StartDynamicDecode success, decChan=%d\n"), decChan);
 	L_TRACE_LEAVE(_T("\n"));
 	return true;
 }

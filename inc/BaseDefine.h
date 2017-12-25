@@ -8,6 +8,8 @@
 #define  LISTENING_PORT_TCP		6708
 //UDP 监听端口
 #define  LISTENING_PORT_UDP		6709
+//电视墙视频叠加服务监听的TCP端口
+#define LISTENING_PORT_TCP_WALL	6800
 //显示通道关联的解码通道个数
 #define DISPLAY_CHAN_NUMS		4
 
@@ -16,10 +18,12 @@
 
 //配置文件
 #define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
+#define LOG_CONF_BEKVIDEOWALL	_T("BekVideoWall_logconf.ini")
 #define CONF_PATH_DB						_T("\\conf\\HS_CONF_DB.ini")
 #define CONF_PATH_MAP						_T("\\conf\\HS_CONF_MAP.ini")
 #define CONF_PATH_ENV						_T("\\conf\\HS_CONF_ENV.ini")
 #define CONF_PATH_CAR 						_T("\\conf\\HS_CONF_CAR.ini")
+#define CONF_PATH_CAR_WALL			_T("\\conf\\HS_CONF_CAR_WALL.ini")
 #define CONF_PATH_DISPLAY				_T("\\conf\\HS_CONF_DISPLAY.ini")
 #define CONF_SECTION_CONFIG			_T("CONFIG")
 #define CONF_SECTION_JMQ				_T("JMQ")	
@@ -88,6 +92,7 @@
 
 #define WM_SOCKET_TCP	   WM_USER + 1001
 #define WM_SOCKET_UDP	   WM_USER + 1002
+#define WM_SOCKET_TCP_WALL WM_USER + 1003
 
 typedef enum PACKTYPE {
 	SOCKZREEOR,
@@ -120,6 +125,13 @@ typedef enum HKDeviceType {
 typedef enum HKDecodeEven {
 	DECODE_EVEN_NO = 0,	//逐行解码
 	DECODE_EVEN_YES = 1	//隔行解码
+};
+
+//摄像头编号
+typedef enum CameraNoLocation {
+	CAMERA_NO_MAIN_DRIVING = 1,	//主驾摄像头
+	CAMERA_NO_COPILOT = 2,	//副驾摄像头
+	CAMERA_NO_CAR_FRONT = 3	//车前摄像头
 };
 
 //通道配置

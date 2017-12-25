@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{51D63208-4855-472B-BD6A-0578FBB3D44B}</ProjectGuid>
-    <RootNamespace>BekVideoMerge</RootNamespace>
+    <ProjectGuid>{3EA12D86-584F-48E7-ABBB-B792498253B8}</ProjectGuid>
+    <RootNamespace>BekVideoWall</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
@@ -76,7 +76,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>D:\Users\Hqw\Documents\Work\北科舟宇\project\code\BekVideoMerge\inc;D:\Users\Hqw\Documents\Work\北科舟宇\project\code\BekVideoMerge\3rdparty;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Users\Hqw\Documents\Work\北科舟宇\project\code\BekVideoMerge\lib;D:\Users\Hqw\Documents\Work\北科舟宇\project\code\BekVideoMerge\3rdparty;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\Users\Hqw\Documents\Work\北科舟宇\project\code\BekVideoMerge\3rdparty;D:\Users\Hqw\Documents\Work\北科舟宇\project\code\BekVideoMerge\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -189,47 +189,38 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\inc\BaseDefine.h" />
     <ClInclude Include="..\inc\Function.h" />
     <ClInclude Include="..\inc\TCPSockz.h" />
-    <ClInclude Include="BekVideoMerge.h" />
-    <ClInclude Include="BekVideoMergeDlg.h" />
-    <ClInclude Include="CarManager.h" />
-    <ClInclude Include="MapReflesh.h" />
+    <ClInclude Include="BekVideoWall.h" />
+    <ClInclude Include="BekVideoWallDlg.h" />
+    <ClInclude Include="EncodeManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StudentInfoReflesh.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TranscodingBase.h" />
-    <ClInclude Include="VideoMergeManager.h" />
+    <ClInclude Include="WallVideoMerge.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Function.cpp" />
     <ClCompile Include="..\src\TCPSockz.cpp" />
-    <ClCompile Include="BekVideoMerge.cpp" />
-    <ClCompile Include="BekVideoMergeDlg.cpp" />
-    <ClCompile Include="CarManager.cpp" />
-    <ClCompile Include="MapReflesh.cpp" />
+    <ClCompile Include="BekVideoWall.cpp" />
+    <ClCompile Include="BekVideoWallDlg.cpp" />
+    <ClCompile Include="EncodeManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="StudentInfoReflesh.cpp" />
-    <ClCompile Include="TranscodingBase.cpp" />
-    <ClCompile Include="VideoMergeManager.cpp" />
+    <ClCompile Include="WallVideoMerge.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="BekVideoMerge.rc" />
+    <ResourceCompile Include="BekVideoWall.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\BekVideoMerge.rc2" />
+    <None Include="res\BekVideoWall.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Background.bmp" />
-    <Image Include="res\BekVideoMerge.ico" />
-    <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\BekVideoWall.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

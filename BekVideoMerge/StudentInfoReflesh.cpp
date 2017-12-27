@@ -5,6 +5,7 @@
 
 CStudentInfoReflesh::CStudentInfoReflesh()
 {
+	
 }
 
 CStudentInfoReflesh::~CStudentInfoReflesh()
@@ -21,6 +22,8 @@ void CStudentInfoReflesh::StartWork()
 	m_studentInfoRefleshThread = CreateIThreadInstance(StudentInfoRefleshThreadProc, LPVOID(this));
 	m_studentInfoRefleshThread->StartMainThread();
 }
+
+
 
 BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 {
@@ -48,11 +51,8 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 		{
 			graphics.DrawImage(imgBk, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));	//遮罩
 
-#ifdef __DEBUG_SAVE_PNG__
-			studentInfoRefleshClass->SavePngFile();
-#else
-			studentInfoRefleshClass->SendDataToHikDevice();
-#endif
+			//刷新四合一界面
+			studentInfoRefleshClass->Reflesh();
 
 			Sleep(1000);
 

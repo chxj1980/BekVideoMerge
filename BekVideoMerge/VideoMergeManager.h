@@ -13,7 +13,8 @@ public:
 
 public:
 	bool StartWork();
-	bool HandleExamData(wstring buf);	//处理考试过程数据
+	bool HandleExamSignal(wstring buf);	//处理考试过程信息数据
+	bool HandleCarSignal(int carNo, char* buf);		//处理车载信号数据
 
 protected:
 	static BOOL HandleExamDataThreadProc(LPVOID parameter, HANDLE stopEvent);
@@ -28,6 +29,7 @@ private:
 	bool InitBNCChannel(int userId, int deviceNo, NET_DVR_MATRIX_ABILITY_V41 struDecAbility);	//解码器BNC通道检测及初始化
 	bool Run();
 	bool GetVideoChannel(wstring key, CHANNEL_CONFIG &videoChannel);	//根据编号查找视频通道信息
+	bool GetCarManager(int carNo);	//根据考车号查找考车管理类
 
 private:
 	_ConnectionPtr m_pDB;	//数据库连接指针

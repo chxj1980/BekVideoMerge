@@ -18,7 +18,7 @@
 
 //配置文件
 #define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
-#define LOG_CONF_BEKVIDEOWALL	_T("BekVideoWall_logconf.ini")
+#define LOG_CONF_BEKVIDEOWALL		_T("BekVideoWall_logconf.ini")
 #define CONF_PATH_DB						_T("\\conf\\HS_CONF_DB.ini")
 #define CONF_PATH_MAP						_T("\\conf\\HS_CONF_MAP.ini")
 #define CONF_PATH_ENV						_T("\\conf\\HS_CONF_ENV.ini")
@@ -36,12 +36,21 @@
 #define CONF_KEY_HMQ						_T("HMQ")
 #define CONF_KEY_EVEN						_T("EVEN")
 #define CONF_KEY_VIDEOWND				_T("VIDEOWND")
+#define CONF_KEY_LOADMAP				_T("LOADMAP")
+#define CONF_KEY_DRAWCAR				_T("DRAWCAR")
+#define CONF_KEY_MAXX						_T("MAXX")
+#define CONF_KEY_MINX						_T("MINX")
+#define CONF_KEY_MAXY						_T("MAXY")
+#define CONF_KEY_MINY						_T("MINY")
+#define CONF_KEY_ZOOMIN					_T("ZOOMIN")
+#define CONF_KEY_SPLITWIDTH			_T("SPLITWIDTH")
 
 //资源文件
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
 #define IMG_PATH_TBK							_T("\\res\\tbk.skin")
 #define IMG_PATH_MAPN						_T("\\res\\MAPN.skin")
 #define IMG_PATH_XMP_MARK			_T("\\res\\xmpmark.skin")
+#define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")
@@ -153,5 +162,15 @@ typedef struct tagERROR_DATA
 	char errorlx[26];
 	int ikcfs;
 }ERROR_DATA, *pERROR_DATA;
+
+//车载信号（包含GPS信号和原车信号）
+typedef struct tagCarSignal
+{
+	double dX;		//横坐标
+	double dY;		//纵坐标
+	float fDirectionAngle;		//方向角
+	float fSpeed;	//速度
+	float fMileage;		//里程
+}CarSignal, *pCarSignal;
 
 #endif

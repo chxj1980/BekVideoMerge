@@ -9,8 +9,8 @@ CCarManager::CCarManager()
 	m_nCarNo = -1;
 	m_nStudentInfoHandle = -1;
 	m_nMapHandle = -1;
-
 	m_wsProgramPath = _T("");
+	m_bDrawMap = false;
 }
 
 CCarManager::~CCarManager()
@@ -28,6 +28,13 @@ void CCarManager::InitCar(int userId, int carNo, BYTE (&decChan)[DISPLAY_CHAN_NU
 	}
 
 	CWinUtils::GetCurrentProcessPath(m_wsProgramPath);
+
+	wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
+	int nDrawMap = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_LOADMAP, 0, wsEnvConfPath.c_str());
+	if (1 == nDrawMap)
+	{
+		m_bDrawMap = true;
+	}
 }
 
 void CCarManager::InitPassiveMode(int studentInfoHandle, int mapHandle)
@@ -58,6 +65,21 @@ bool CCarManager::StartPassiveDecode(int wnd, LONG &lpHandle)
 bool CCarManager::StopDynamicDecode(int wnd)
 {
 	return CBekHikUtil::StopDynamicDecode(m_nUserId, m_decChan[wnd]);
+}
+
+//处理车载信号
+bool CCarManager::HandleCarSignal(char *buf)
+{
+	memcpy((char *)&m_carSignal, buf, sizeof(CarSignal));
+	L_DEBUG(_T("CarManager HandleCarSignal, carNo=%d, x=%lf, y=%lf, angle=%lf, speed=%lf, mileage=%lf\n"),
+		m_nCarNo, m_carSignal.dX, m_carSignal.dY, m_carSignal.fDirectionAngle, m_carSignal.fSpeed, m_carSignal.fMileage);
+
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.SetCarSignal(m_carSignal);
+	}
+
+	return true;
 }
 
 void CCarManager::InitStudentInfoPic()

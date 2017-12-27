@@ -17,12 +17,12 @@ public:
 
 public:
 	bool Init(wstring path, int carNo, int lpHanble);
-	void SavePngFile();
-	bool SendDataToHikDevice();
+	void Reflesh();
 
 public:
 	CDC m_DC;
 	wstring m_wsProgramPath;
+	int m_nCarNo;
 
 
 private:
@@ -30,6 +30,8 @@ private:
 	bool WriteAVIFile(wstring aviFilePath);
 	bool Transcode(wstring aviFilePath, wstring yuvFilePath);
 	bool MatrixSendData(wstring yuvFilePath);
+	void SavePngFile();
+	bool SendDataToHikDevice();
 
 private:
 	CBitmap m_bmpBackground;
@@ -40,7 +42,6 @@ private:
 	AVICOMPRESSOPTIONS pCompressOption;
 	AVICOMPRESSOPTIONS FAR * opts[1];// = {&pCompressOption};
 
-	int m_nCarNo;
 	int m_lpHandle;
 };
 

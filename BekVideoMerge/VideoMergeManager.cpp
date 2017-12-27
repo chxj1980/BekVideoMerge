@@ -56,12 +56,25 @@ bool CVideoMergeManager::StartWork()
 	return true;
 }
 
-bool CVideoMergeManager::HandleExamData(wstring buf)
+bool CVideoMergeManager::HandleExamSignal(wstring buf)
 {
 
 
 	return true;
 } 
+
+bool CVideoMergeManager::HandleCarSignal(int carNo, char* buf)
+{
+	if (!GetCarManager(carNo))
+	{
+		L_ERROR(_T("HandleCarSignal error, car%d not found\n"), carNo);
+		return false;
+	}
+
+	m_mapCarManagers[carNo].HandleCarSignal(buf);
+
+	return true;
+}
 
 BOOL CVideoMergeManager::HandleExamDataThreadProc(LPVOID parameter, HANDLE stopEvent)
 {
@@ -688,5 +701,15 @@ bool CVideoMergeManager::GetVideoChannel(wstring key, CHANNEL_CONFIG &videoChann
 	}
 
 	videoChannel = it->second;
+	return true;
+}
+
+//根据考车号查找考车管理类
+bool CVideoMergeManager::GetCarManager(int carNo)
+{
+	if (0 == m_mapCarManagers.count(carNo))
+	{
+		return false;
+	}
 	return true;
 }

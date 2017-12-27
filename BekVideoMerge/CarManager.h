@@ -17,6 +17,7 @@ public:
 	bool StartDynamicDecode(CHANNEL_CONFIG channel, int wnd);	//启动动态解码
 	bool StartPassiveDecode(int wnd, LONG &lpHandle);						//启动被动解码
 	bool StopDynamicDecode(int wnd);													//停止动态解码
+	bool HandleCarSignal(char *buf);		//处理车载信号
 
 private:
 	void InitStudentInfoPic();
@@ -28,10 +29,12 @@ private:
 	int m_nStudentInfoHandle;		//考生信息画面的被动解码句柄
 	int m_nMapHandle;		//实时轨迹画面的被动解码句柄
 	BYTE m_decChan[DISPLAY_CHAN_NUMS];	//考车所对应的解码通道号
-	wstring m_wsProgramPath;
+	wstring m_wsProgramPath;		//主程序路径
+	bool m_bDrawMap;	//是否绘制地图
 
 	CStudentInfoReflesh m_studentInfoRefleshClass;
 	CMapReflesh m_mapRefleshClass;
+	CarSignal m_carSignal;		//车载信号
 };
 #endif
 

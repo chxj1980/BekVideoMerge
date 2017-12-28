@@ -13,6 +13,7 @@ public:
 public:
 	void StartWork();
 	void SetCarSignal(CarSignal signal);
+	void Handle17C51();
 
 protected:
 	static BOOL MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent);
@@ -22,6 +23,7 @@ private:
 	void DrawBackground(Graphics *graphics);	//绘制背景
 	bool GetCarRelativeCoordinate(CarSignal signal, int &x, int &y);
 	void DrawMap(Graphics *graphics, int carX, int carY);	//绘制地图
+	void DrawStatus(CarSignal carSignal);	//绘制状态信息
 
 private:
 	IThread* m_mapRefleshThread;
@@ -37,6 +39,14 @@ private:
 	int m_mapWidth;
 	int m_mapHeight;
 	int m_mapSplitWidth;
+
+	bool m_bBigCar;		//大车的项目牌与小车不一样
+	int m_nKskm;	//考试科目
+
+	bool m_bStartExam;	//开始考试
+	wstring m_wsExamStatus;	//考试状态描述
+	int m_nDisplayDelays;		//考试结束后延迟一段时间再结束画面
+	CTime m_startTime;	//考试开始时间
 };
 
 #endif

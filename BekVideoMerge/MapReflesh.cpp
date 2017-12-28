@@ -17,6 +17,13 @@ CMapReflesh::CMapReflesh()
 	m_mapWidth = 0;
 	m_mapHeight = 0;
 	m_mapSplitWidth = 0;
+
+	m_bBigCar = false;
+	m_nKskm = 2;
+
+	m_bStartExam = true;
+	m_wsExamStatus = _T("");
+	m_nDisplayDelays = 0;
 }
 
 CMapReflesh::~CMapReflesh()
@@ -51,6 +58,16 @@ void CMapReflesh::LoadMapConfig()
 	if (1 == nDrawCar)
 	{
 		m_bDrawCar = true;
+	}
+
+	//考试科目
+	m_nKskm = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_KSKM, 2, wsEnvConfPath.c_str());
+
+	//是否是大车程序
+	int nBigCar = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_BIGCAR, 0, wsEnvConfPath.c_str());
+	if (1 == nBigCar)
+	{
+		m_bBigCar = true;
 	}
 
 	m_mapMaxX = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_MAXX, 0, wsMapConfPath.c_str());
@@ -92,9 +109,21 @@ bool CMapReflesh::GetCarRelativeCoordinate(CarSignal signal, int &x, int &y)
 
 void CMapReflesh::SetCarSignal(CarSignal signal)
 {
-	EnterCriticalSection(&this->m_carSignalLock);
-	m_carSignal = signal;
-	LeaveCriticalSection(&this->m_carSignalLock);
+	if (m_bStartExam)
+	{
+		EnterCriticalSection(&this->m_carSignalLock);
+		m_carSignal = signal;
+		LeaveCriticalSection(&this->m_carSignalLock);
+	}
+}
+
+void CMapReflesh::Handle17C51()
+{
+	m_bStartExam = true;
+	m_wsExamStatus = _T("考试开始");
+	m_startTime = CTime::GetCurrentTime();
+
+	SetEvent(m_refleshEvent);
 }
 
 BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
@@ -104,42 +133,50 @@ BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 	CMapReflesh *mapRefleshClass = (CMapReflesh*)parameter;
 
 	Graphics graphics(mapRefleshClass->m_DC.GetSafeHdc());
-	CFont font;
-	font.CreateFontW(20, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, 0, ANSI_CHARSET,
-		OUT_STROKE_PRECIS, CLIP_STROKE_PRECIS,
-		DRAFT_QUALITY, VARIABLE_PITCH | FF_SWISS, _T("宋体"));
-	mapRefleshClass->m_DC.SetBkMode(TRANSPARENT);	//透明
+	
 
 	while (true)
 	{
-		//DWORD dwRet = WaitForSingleObject(mapRefleshClass->m_refleshEvent, INFINITE);
-		//if (WAIT_OBJECT_0 == dwRet)
+		DWORD dwRet = WaitForSingleObject(mapRefleshClass->m_refleshEvent, INFINITE);
+		if (WAIT_OBJECT_0 == dwRet)
 		{
-			//获取车辆实时位置
-			int nCarRelativeX = 0;
-			int nCarRelativeY = 0;
-			EnterCriticalSection(&mapRefleshClass->m_carSignalLock);
-			CarSignal carSignal = mapRefleshClass->m_carSignal;
-			LeaveCriticalSection(&mapRefleshClass->m_carSignalLock);
-			mapRefleshClass->GetCarRelativeCoordinate(carSignal, nCarRelativeX, nCarRelativeY);
+			if (mapRefleshClass->m_bStartExam || mapRefleshClass->m_nDisplayDelays > 0)
+			{
+				//获取车辆实时位置
+				int nCarRelativeX = 0;
+				int nCarRelativeY = 0;
+				EnterCriticalSection(&mapRefleshClass->m_carSignalLock);
+				CarSignal carSignal = mapRefleshClass->m_carSignal;
+				LeaveCriticalSection(&mapRefleshClass->m_carSignalLock);
+				mapRefleshClass->GetCarRelativeCoordinate(carSignal, nCarRelativeX, nCarRelativeY);
 
-			//绘制地图
-			mapRefleshClass->DrawMap(&graphics, nCarRelativeX, nCarRelativeY);
+				//绘制地图
+				mapRefleshClass->DrawMap(&graphics, nCarRelativeX, nCarRelativeY);
 
-			//绘制背景，叠加在地图上
-			mapRefleshClass->DrawBackground(&graphics);
+				//绘制背景，叠加在地图上
+				mapRefleshClass->DrawBackground(&graphics);
 
+				//绘制项目实时状态信息
+				mapRefleshClass->DrawStatus(carSignal);
 
-			//刷新四合一界面
-			mapRefleshClass->Reflesh();
+				//刷新四合一界面
+				mapRefleshClass->Reflesh();
 
-			Sleep(1000);
+				Sleep(1000);
+
+				//考试结束后，继续显示一段时间
+				if (mapRefleshClass->m_nDisplayDelays > 0)
+				{
+					mapRefleshClass->m_nDisplayDelays -= 1;
+				}
+
+				SetEvent(mapRefleshClass->m_refleshEvent);
+			}
 		}
 
 	}
 
 EXIT:
-	font.DeleteObject();
 	L_INFO(_T("MapRefleshThreadProc Exit\n"));
 	return TRUE;
 }
@@ -149,17 +186,46 @@ void CMapReflesh::DrawBackground(Graphics *graphics)
 {
 	try
 	{
-		wstring wsImgBackground = m_wsProgramPath + IMG_PATH_MAP_BACKGROUND;
-		if (!CWinUtils::FileExists(wsImgBackground))
+		wstring wsXMBackground = m_wsProgramPath + IMG_PATH_XM_BACKGROUND;
+		if (!CWinUtils::FileExists(wsXMBackground))
 		{
-			L_ERROR(_T("wsImgBackground not exist, file name = %s\n"), wsImgBackground.c_str());
+			L_ERROR(_T("wsXMBackground not exist, file name = %s\n"), wsXMBackground.c_str());
+			return;
+		}
+		wstring wsXMList = m_wsProgramPath + IMG_PATH_XM_LIST;
+		if (!CWinUtils::FileExists(wsXMList))
+		{
+			L_ERROR(_T("wsXMList not exist, file name = %s\n"), wsXMList.c_str());
+			return;
+		}
+		wstring wsMapBackground = m_wsProgramPath + IMG_PATH_MAP_BACKGROUND;
+		if (!CWinUtils::FileExists(wsMapBackground))
+		{
+			L_ERROR(_T("wsMapBackground not exist, file name = %s\n"), wsMapBackground.c_str());
 			return;
 		}
 
-		Image *imgMapBackground = Image::FromFile(wsImgBackground.c_str());
+		//项目牌背景
+		Image *imgXMBackground = Image::FromFile(wsXMBackground.c_str());	
+		graphics->DrawImage(imgXMBackground, Rect(264, 0, 88, 288), 264, 0, 88, 288, UnitPixel);
 
-		graphics->DrawImage(imgMapBackground, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));
+		//项目牌列表
+		Image *imgXMList = Image::FromFile(wsXMList.c_str());
+		if (KSKM_3 == m_nKskm || m_bBigCar)
+		{
+			graphics->DrawImage(imgXMList, Rect(264, 0, 88, 288), 0, 0, 88, 288, UnitPixel);
+		}
+		else
+		{
+			graphics->DrawImage(imgXMList, Rect(264, 36, 88, 252), 0, 0, 88, 252, UnitPixel);
+		}
 
+		//地图背景
+		Image *imgMapBackground = Image::FromFile(wsMapBackground.c_str());	
+		graphics->DrawImage(imgMapBackground, Rect(0, 0, VIDEO_WIDTH - 88, VIDEO_HEIGHT));
+
+		delete imgXMBackground;
+		delete imgXMList;
 		delete imgMapBackground;
 	}
 	catch (...)
@@ -224,8 +290,8 @@ void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
 		int relativeX = carX % m_mapSplitWidth + m_mapSplitWidth;
 		int relativeY = carY % m_mapSplitWidth + m_mapSplitWidth;
 		L_DEBUG(_T("car relative cordirate in ninemaps, x=%d, y=%d\n"), relativeX, relativeY);
-		graphics->DrawImage(&bm, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT), 
-			(relativeX - VIDEO_WIDTH / 2), (relativeY - VIDEO_HEIGHT / 2), VIDEO_WIDTH, VIDEO_HEIGHT, UnitPixel);
+		graphics->DrawImage(&bm, Rect(0, 0, VIDEO_WIDTH - 88, VIDEO_HEIGHT), 
+			(relativeX - (VIDEO_WIDTH - 88) / 2), (relativeY - VIDEO_HEIGHT / 2), VIDEO_WIDTH - 88, VIDEO_HEIGHT, UnitPixel);
 
 		delete imgLeftTop;
 		delete imgTop;
@@ -243,4 +309,46 @@ void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
 		L_ERROR(_T("DrawMap catch an error.\n"));
 	}
 
+}
+
+//绘制状态信息
+void CMapReflesh::DrawStatus(CarSignal carSignal)
+{
+	try
+	{
+		CFont font;
+		font.CreateFont(20, 0, 0, 0, FW_BOLD, TRUE, FALSE, 0, ANSI_CHARSET,
+			OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+			DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("微软雅黑"));
+		m_DC.SetBkMode(TRANSPARENT);	//透明
+		m_DC.SetTextColor(RGB(255, 255, 255));
+
+		//项目状态信息，显示在title
+		m_DC.DrawText(m_wsExamStatus.c_str(), CRect(0, 0, VIDEO_WIDTH - 88, 30), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+
+		//速度
+		wstring wsSpeed = CStringUtils::Format(_T("%4.1f km/h"), carSignal.fSpeed);
+		m_DC.DrawText(wsSpeed.c_str(), CRect(0, 236, 73, 262), DT_RIGHT | DT_SINGLELINE | DT_VCENTER);
+
+		//里程
+		wstring wsMileage = CStringUtils::Format(_T("%6.1f m"), carSignal.fMileage);
+		m_DC.DrawText(wsMileage.c_str(), CRect(0, 262, 73, 288), DT_RIGHT | DT_SINGLELINE | DT_VCENTER);
+
+		//成绩
+		//fix me
+		wstring wsScore = CStringUtils::Format(_T("成绩:%d"), 100);
+		m_DC.DrawText(wsScore.c_str(), CRect(198, 236, 264, 262), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+
+		//时间
+		CTimeSpan span = CTime::GetCurrentTime() - m_startTime;
+		wstring wsTimeSpan = CStringUtils::Format(_T("%d%d:%d%d:%d%d"), span.GetHours() / 10, span.GetHours() % 10,
+			span.GetMinutes() / 10, span.GetMinutes() % 10, span.GetSeconds() / 10, span.GetSeconds() % 10);
+		m_DC.DrawText(wsTimeSpan.c_str(), CRect(198, 262, 264, 288), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+
+		font.DeleteObject();
+	}
+	catch (...)
+	{
+		L_ERROR(_T("DrawStatus catch an error.\n"));
+	}
 }

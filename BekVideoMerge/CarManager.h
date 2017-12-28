@@ -18,6 +18,7 @@ public:
 	bool StartPassiveDecode(int wnd, LONG &lpHandle);						//启动被动解码
 	bool StopDynamicDecode(int wnd);													//停止动态解码
 	bool HandleCarSignal(CarSignal signal);		//处理车载信号
+	bool Handle17C51(StudentInfo studentInfo);	//考试开始
 
 private:
 	void InitStudentInfoPic();

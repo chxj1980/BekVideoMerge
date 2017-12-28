@@ -78,6 +78,17 @@ bool CCarManager::HandleCarSignal(CarSignal signal)
 	return true;
 }
 
+//¿¼ÊÔ¿ªÊ¼
+bool CCarManager::Handle17C51(StudentInfo studentInfo)
+{
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.Handle17C51();
+	}
+	
+	return true;
+}
+
 void CCarManager::InitStudentInfoPic()
 {
 	

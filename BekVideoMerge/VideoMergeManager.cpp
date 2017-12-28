@@ -65,11 +65,11 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 {
 	vector<wstring> vecWstr;
 	CStringUtils::SplitString(buf, _T("*"), vecWstr);
-	if (8 != vecWstr.size() && 9 != vecWstr.size())
-	{
-		L_ERROR(_T("HandleExamSignal error, exam signal data error, buf=%s\n"), buf.c_str());
-		return false;
-	}
+	//if (8 != vecWstr.size() && 9 != vecWstr.size())
+	//{
+	//	L_ERROR(_T("HandleExamSignal error, exam signal data error, buf=%s\n"), buf.c_str());
+	//	return false;
+	//}
 
 	try
 	{
@@ -95,6 +95,8 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 		{
 			StudentInfo studentInfo;
 			GetStudentInfo(wsCertificateNo, studentInfo);
+
+			m_mapCarManagers[nCarNo].Handle17C51(studentInfo);
 			
 			break;
 		}
@@ -118,6 +120,8 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				}
 			}
 
+
+
 			break;
 		}
 
@@ -131,6 +135,8 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				return false;
 			}
 			
+
+
 			wsXmNo = vecNos[0];
 			wsJudgeNo = vecNos[1];
 
@@ -142,7 +148,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 			wsXmNo = vecWstr[5];
 
 			wstring key = _T("");
-			if (2 == m_nKskm)	
+			if (KSKM_2 == m_nKskm)	
 			{
 				key = CAMERA_KM2_PUBLIC;	//科目二项目结束时，切换到远景视频
 			}
@@ -878,6 +884,8 @@ bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, StudentInfo &stud
 					on 代理人=驾校编号 left join SysCfg on 考车号=项目 where 准考证明编号='") + certificateNo + _T("'");
 		}
 
+		L_DEBUG(_T("GetStudentInfo sql : %s\n"), wsSql.c_str());
+
 		VARIANT cnt;
 		cnt.vt = VT_INT;
 		_RecordsetPtr pSet = m_pDB->Execute((_bstr_t)wsSql.c_str(), &cnt, adCmdUnknown);
@@ -958,6 +966,8 @@ bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, StudentInfo &stud
 					wstring examReasonNo = (_bstr_t)vat;
 					studentInfo.wsExamReason = GetExamReason(examReasonNo);
 				}
+
+				studentInfo.wsCertificateNo = certificateNo;
 
 				pSet->MoveNext();
 			}

@@ -52,13 +52,13 @@ using namespace std;
 #define CONF_KEY_SPLITWIDTH			_T("SPLITWIDTH")
 #define CONF_KEY_KSKM						_T("KSKM")
 #define CONF_KEY_WND2						_T("WND2")
+#define CONF_KEY_BIGCAR					_T("BIGCAR")
 
 //资源文件
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
-#define IMG_PATH_TBK							_T("\\res\\tbk.skin")
-#define IMG_PATH_MAPN						_T("\\res\\MAPN.skin")
-#define IMG_PATH_XMP_MARK			_T("\\res\\xmpmark.skin")
 #define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
+#define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
+#define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
 
 //数据库
@@ -131,6 +131,12 @@ typedef enum PACKTYPE {
 typedef enum DatabaseType {
 	DB_ORACLE = 0,
 	DB_SQL = 1
+};
+
+//考试科目
+typedef enum KSKMType {
+	KSKM_2 = 2,
+	KSKM_3 = 3
 };
 
 //解码设备类型
@@ -208,30 +214,6 @@ typedef struct tagCarSignal
 
 }CarSignal, *pCarSignal;
 
-////考试过程信号
-//typedef struct tagExamSignal
-//{
-//	int nCarNo;	//考车号
-//	int nSignalType;	//信号类型，见枚举类型 ExamSignalType
-//	int nScore;	//考试得分
-//
-//	wstring wsXmNo;	//项目编号
-//	wstring wsJudgeNo;	//扣分编号
-//	wstring wsCertificateNo;		//准考证明编号
-//	wstring wsTime;	//时间
-//
-//	tagExamSignal()
-//	{
-//		nCarNo = 0;
-//		nSignalType = 0;
-//		nScore = 0;
-//		wsXmNo = _T("");
-//		wsJudgeNo = _T("");
-//		wsCertificateNo = _T("");
-//		wsTime = _T("");
-//	}
-//}ExamSignal, *pExamSignal;
-
 //fix me
 //需要增加照片信息
 //考生信息 
@@ -249,6 +231,7 @@ typedef struct tagStudentInfo
 	wstring wsExaminer;   //考试员1
 	wstring wsExamReason;   //考试原因
 	wstring wsDayCount;    //当日次数
+	wstring wsCertificateNo;		//准考证明编号
 
 	tagStudentInfo()
 	{
@@ -264,6 +247,7 @@ typedef struct tagStudentInfo
 		wsExaminer = _T("");
 		wsExamReason = _T("");
 		wsDayCount = _T("");
+		wsCertificateNo = _T("");
 	}
 }StudentInfo, *pStudentInfo;
 

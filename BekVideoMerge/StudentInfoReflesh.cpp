@@ -39,9 +39,6 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 		DRAFT_QUALITY, VARIABLE_PITCH | FF_SWISS, _T("宋体"));
 	studentInfoRefleshClass->m_DC.SetBkMode(TRANSPARENT);	//透明
 
-	wstring wsImgPathTbk = studentInfoRefleshClass->m_wsProgramPath + IMG_PATH_TBK;
-	imgBk = Image::FromFile(wsImgPathTbk.c_str());
-
 	while (true)
 	{
 		DWORD dwRet = WaitForSingleObject(stopEvent, 1000);
@@ -49,7 +46,7 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 		{
 		case WAIT_TIMEOUT:
 		{
-			graphics.DrawImage(imgBk, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));	//遮罩
+			//graphics.DrawImage(imgBk, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));	//遮罩
 
 			//刷新四合一界面
 			studentInfoRefleshClass->Reflesh();

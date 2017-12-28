@@ -17,7 +17,7 @@ public:
 	bool StartDynamicDecode(CHANNEL_CONFIG channel, int wnd);	//启动动态解码
 	bool StartPassiveDecode(int wnd, LONG &lpHandle);						//启动被动解码
 	bool StopDynamicDecode(int wnd);													//停止动态解码
-	bool HandleCarSignal(char *buf);		//处理车载信号
+	bool HandleCarSignal(CarSignal signal);		//处理车载信号
 
 private:
 	void InitStudentInfoPic();
@@ -34,7 +34,6 @@ private:
 
 	CStudentInfoReflesh m_studentInfoRefleshClass;
 	CMapReflesh m_mapRefleshClass;
-	CarSignal m_carSignal;		//车载信号
 };
 #endif
 

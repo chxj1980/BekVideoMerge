@@ -3,6 +3,9 @@
 #ifndef __BASE_DEFINE_H__
 #define  __BASE_DEFINE_H__
 
+#include <string>
+using namespace std;
+
 #define  LISTENING_ADDRESS	_T("0.0.0.0")
 //TCP 监听端口
 #define  LISTENING_PORT_TCP		6708
@@ -15,6 +18,9 @@
 
 #define VIDEO_WIDTH	352
 #define VIDEO_HEIGHT	288
+
+//科目二远景摄像头编号
+#define CAMERA_KM2_PUBLIC				_T("10086_1")
 
 //配置文件
 #define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
@@ -44,12 +50,15 @@
 #define CONF_KEY_MINY						_T("MINY")
 #define CONF_KEY_ZOOMIN					_T("ZOOMIN")
 #define CONF_KEY_SPLITWIDTH			_T("SPLITWIDTH")
+#define CONF_KEY_KSKM						_T("KSKM")
+#define CONF_KEY_WND2						_T("WND2")
 
 //资源文件
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
 #define IMG_PATH_TBK							_T("\\res\\tbk.skin")
 #define IMG_PATH_MAPN						_T("\\res\\MAPN.skin")
 #define IMG_PATH_XMP_MARK			_T("\\res\\xmpmark.skin")
+#define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
 
 //数据库
@@ -136,11 +145,27 @@ typedef enum HKDecodeEven {
 	DECODE_EVEN_YES = 1	//隔行解码
 };
 
-//摄像头编号
-typedef enum CameraNoLocation {
-	CAMERA_NO_MAIN_DRIVING = 1,	//主驾摄像头
-	CAMERA_NO_COPILOT = 2,	//副驾摄像头
-	CAMERA_NO_CAR_FRONT = 3	//车前摄像头
+//考车摄像头编号
+typedef enum CarCameraNoLocation {
+	CAR_CAMERA_NO_MAIN_DRIVING = 1,	//主驾摄像头
+	CAR_CAMERA_NO_COPILOT = 2,	//副驾摄像头
+	CAR_CAMERA_NO_CAR_FRONT = 3,	//车前摄像头
+	CAR_CAMERA_NO_MERGE = 10,	//合成后的视频
+};
+
+//项目摄像头编号
+typedef enum XmCameraNoLocation {
+	XM_CAMERA_NO_1 = 1,		//项目1号摄像头
+};
+
+//考试过程信号类型
+typedef enum ExamSignalType {
+	SIGNAL_TYPE_UNKNOWN = 0,		//错误信号
+	SIGNAL_TYPE_17C51 = 1,	//考试开始
+	SIGNAL_TYPE_17C52 = 2,	//项目开始
+	SIGNAL_TYPE_17C53 = 3,	//项目扣分
+	SIGNAL_TYPE_17C55 = 5,	//项目结束
+	SIGNAL_TYPE_17C56 = 6,	//考试结束 
 };
 
 //通道配置
@@ -171,6 +196,75 @@ typedef struct tagCarSignal
 	float fDirectionAngle;		//方向角
 	float fSpeed;	//速度
 	float fMileage;		//里程
+
+	tagCarSignal()
+	{
+		dX = 0.0;
+		dY = 0.0;
+		fDirectionAngle = 0.0;
+		fSpeed = 0.0;
+		fMileage = 0.0;
+	}
+
 }CarSignal, *pCarSignal;
+
+////考试过程信号
+//typedef struct tagExamSignal
+//{
+//	int nCarNo;	//考车号
+//	int nSignalType;	//信号类型，见枚举类型 ExamSignalType
+//	int nScore;	//考试得分
+//
+//	wstring wsXmNo;	//项目编号
+//	wstring wsJudgeNo;	//扣分编号
+//	wstring wsCertificateNo;		//准考证明编号
+//	wstring wsTime;	//时间
+//
+//	tagExamSignal()
+//	{
+//		nCarNo = 0;
+//		nSignalType = 0;
+//		nScore = 0;
+//		wsXmNo = _T("");
+//		wsJudgeNo = _T("");
+//		wsCertificateNo = _T("");
+//		wsTime = _T("");
+//	}
+//}ExamSignal, *pExamSignal;
+
+//fix me
+//需要增加照片信息
+//考生信息 
+typedef struct tagStudentInfo
+{
+	wstring wsCarNo;    //考车号
+	wstring wsRemarks;     //备注（车牌号）
+	wstring wsCarType;		//考试车型
+	wstring wsName;		//姓名
+	wstring wsGender;		//性别
+	wstring wsDate;		//日期
+	wstring wsSerialNo;		//流水号
+	wstring wsID;		//身份证明编号
+	wstring wsDrivingSchool;		//驾校名称
+	wstring wsExaminer;   //考试员1
+	wstring wsExamReason;   //考试原因
+	wstring wsDayCount;    //当日次数
+
+	tagStudentInfo()
+	{
+		wsCarNo = _T("");
+		wsRemarks = _T("");
+		wsCarType = _T("");
+		wsName = _T("");
+		wsGender = _T("");
+		wsDate = _T("");
+		wsSerialNo = _T("");
+		wsID = _T("");
+		wsDrivingSchool = _T("");
+		wsExaminer = _T("");
+		wsExamReason = _T("");
+		wsDayCount = _T("");
+	}
+}StudentInfo, *pStudentInfo;
 
 #endif

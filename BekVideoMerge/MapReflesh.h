@@ -19,8 +19,9 @@ protected:
 
 private:
 	void LoadMapConfig();
+	void DrawBackground(Graphics *graphics);	//ªÊ÷∆±≥æ∞
 	bool GetCarRelativeCoordinate(CarSignal signal, int &x, int &y);
-	void DrawMap(Graphics *graphics, int carX, int carY);
+	void DrawMap(Graphics *graphics, int carX, int carY);	//ªÊ÷∆µÿÕº
 
 private:
 	IThread* m_mapRefleshThread;

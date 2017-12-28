@@ -68,15 +68,11 @@ bool CCarManager::StopDynamicDecode(int wnd)
 }
 
 //处理车载信号
-bool CCarManager::HandleCarSignal(char *buf)
+bool CCarManager::HandleCarSignal(CarSignal signal)
 {
-	memcpy((char *)&m_carSignal, buf, sizeof(CarSignal));
-	L_DEBUG(_T("CarManager HandleCarSignal, carNo=%d, x=%lf, y=%lf, angle=%lf, speed=%lf, mileage=%lf\n"),
-		m_nCarNo, m_carSignal.dX, m_carSignal.dY, m_carSignal.fDirectionAngle, m_carSignal.fSpeed, m_carSignal.fMileage);
-
 	if (m_bDrawMap)
 	{
-		m_mapRefleshClass.SetCarSignal(m_carSignal);
+		m_mapRefleshClass.SetCarSignal(signal);
 	}
 
 	return true;

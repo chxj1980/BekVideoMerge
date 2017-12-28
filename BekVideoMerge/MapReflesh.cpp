@@ -105,34 +105,30 @@ BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 
 	Graphics graphics(mapRefleshClass->m_DC.GetSafeHdc());
 	CFont font;
-	Image *imgMap;
 	font.CreateFontW(20, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, 0, ANSI_CHARSET,
 		OUT_STROKE_PRECIS, CLIP_STROKE_PRECIS,
 		DRAFT_QUALITY, VARIABLE_PITCH | FF_SWISS, _T("宋体"));
 	mapRefleshClass->m_DC.SetBkMode(TRANSPARENT);	//透明
 
-	wstring wsImgPathMap = mapRefleshClass->m_wsProgramPath + IMG_PATH_XMP_MARK;
-	imgMap = Image::FromFile(wsImgPathMap.c_str());
-
 	while (true)
 	{
-		DWORD dwRet = WaitForSingleObject(mapRefleshClass->m_refleshEvent, INFINITE);
-		if (WAIT_OBJECT_0 == dwRet)
+		//DWORD dwRet = WaitForSingleObject(mapRefleshClass->m_refleshEvent, INFINITE);
+		//if (WAIT_OBJECT_0 == dwRet)
 		{
-			EnterCriticalSection(&mapRefleshClass->m_carSignalLock);
-			CarSignal carSignal = mapRefleshClass->m_carSignal;
-			LeaveCriticalSection(&mapRefleshClass->m_carSignalLock);
-
 			//获取车辆实时位置
 			int nCarRelativeX = 0;
 			int nCarRelativeY = 0;
+			EnterCriticalSection(&mapRefleshClass->m_carSignalLock);
+			CarSignal carSignal = mapRefleshClass->m_carSignal;
+			LeaveCriticalSection(&mapRefleshClass->m_carSignalLock);
 			mapRefleshClass->GetCarRelativeCoordinate(carSignal, nCarRelativeX, nCarRelativeY);
 
 			//绘制地图
 			mapRefleshClass->DrawMap(&graphics, nCarRelativeX, nCarRelativeY);
 
-			
-			//graphics.DrawImage(imgMap, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));	//遮罩
+			//绘制背景，叠加在地图上
+			mapRefleshClass->DrawBackground(&graphics);
+
 
 			//刷新四合一界面
 			mapRefleshClass->Reflesh();
@@ -148,6 +144,31 @@ EXIT:
 	return TRUE;
 }
 
+//绘制背景
+void CMapReflesh::DrawBackground(Graphics *graphics)
+{
+	try
+	{
+		wstring wsImgBackground = m_wsProgramPath + IMG_PATH_MAP_BACKGROUND;
+		if (!CWinUtils::FileExists(wsImgBackground))
+		{
+			L_ERROR(_T("wsImgBackground not exist, file name = %s\n"), wsImgBackground.c_str());
+			return;
+		}
+
+		Image *imgMapBackground = Image::FromFile(wsImgBackground.c_str());
+
+		graphics->DrawImage(imgMapBackground, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));
+
+		delete imgMapBackground;
+	}
+	catch (...)
+	{
+		L_ERROR(_T("DrawBackground catch an error.\n"));
+	}
+}
+
+//绘制地图
 void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
 {
 	try

@@ -89,6 +89,17 @@ bool CCarManager::Handle17C51(StudentInfo studentInfo)
 	return true;
 }
 
+//øº ‘Ω· ¯
+bool CCarManager::Handle17C56(bool bPass, int nScore)
+{
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.Handle17C56(bPass, nScore);
+	}
+
+	return true;
+}
+
 void CCarManager::InitStudentInfoPic()
 {
 	

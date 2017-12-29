@@ -22,6 +22,15 @@ using namespace std;
 //科目二远景摄像头编号
 #define CAMERA_KM2_PUBLIC				_T("10086_1")
 
+//考试合格分数
+#define  EXAM_TOTAL_SCORE							100
+#define  EXAM_PASS_SCORE_KM2					80
+#define  EXAM_PASS_SCORE_KM2_BIGCAR		90
+#define  EXAM_PASS_SCORE_KM3					90
+
+//考试结束后，画面延迟显示一段时间
+#define  DISPLAY_DELAY_SECONDS					30
+
 //配置文件
 #define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
 #define LOG_CONF_BEKVIDEOWALL		_T("BekVideoWall_logconf.ini")

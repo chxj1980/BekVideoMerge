@@ -24,6 +24,7 @@ CMapReflesh::CMapReflesh()
 	m_bStartExam = true;
 	m_wsExamStatus = _T("");
 	m_nDisplayDelays = 0;
+	m_nCurrentScore = EXAM_TOTAL_SCORE;
 }
 
 CMapReflesh::~CMapReflesh()
@@ -122,8 +123,27 @@ void CMapReflesh::Handle17C51()
 	m_bStartExam = true;
 	m_wsExamStatus = _T("考试开始");
 	m_startTime = CTime::GetCurrentTime();
+	m_nDisplayDelays = 0;
 
 	SetEvent(m_refleshEvent);
+}
+
+void CMapReflesh::Handle17C56(bool bPass, int nScore)
+{
+	m_bStartExam = false;	//考试结束
+	m_bPass = bPass;	//考试是否通过
+	m_nCurrentScore = nScore;	//考试得分
+	m_nDisplayDelays = DISPLAY_DELAY_SECONDS; //延迟显示一段时间
+	m_endTime = CTime::GetCurrentTime();
+
+	if (m_bPass)
+	{
+		m_wsExamStatus = _T("考试合格");
+	}
+	else
+	{
+		m_wsExamStatus = _T("考试不合格");
+	}
 }
 
 BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
@@ -335,12 +355,19 @@ void CMapReflesh::DrawStatus(CarSignal carSignal)
 		m_DC.DrawText(wsMileage.c_str(), CRect(0, 262, 73, 288), DT_RIGHT | DT_SINGLELINE | DT_VCENTER);
 
 		//成绩
-		//fix me
-		wstring wsScore = CStringUtils::Format(_T("成绩:%d"), 100);
+		wstring wsScore = CStringUtils::Format(_T("成绩:%d"), m_nCurrentScore);
 		m_DC.DrawText(wsScore.c_str(), CRect(198, 236, 264, 262), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
 
 		//时间
-		CTimeSpan span = CTime::GetCurrentTime() - m_startTime;
+		CTimeSpan span;
+		if (m_bStartExam)
+		{
+			span = CTime::GetCurrentTime() - m_startTime;
+		}
+		else
+		{
+			span = m_endTime - m_startTime;
+		}
 		wstring wsTimeSpan = CStringUtils::Format(_T("%d%d:%d%d:%d%d"), span.GetHours() / 10, span.GetHours() % 10,
 			span.GetMinutes() / 10, span.GetMinutes() % 10, span.GetSeconds() / 10, span.GetSeconds() % 10);
 		m_DC.DrawText(wsTimeSpan.c_str(), CRect(198, 262, 264, 288), DT_LEFT | DT_SINGLELINE | DT_VCENTER);

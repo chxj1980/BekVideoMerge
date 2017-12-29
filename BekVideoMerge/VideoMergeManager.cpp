@@ -10,9 +10,10 @@ CVideoMergeManager::CVideoMergeManager()
 	m_mapChannels.clear();
 	m_mapItems.clear();
 
-	m_nKskm = 2;
+	m_nKskm = 0;
 	m_nDBType = 0;
 	m_bDynamicVideo = false;
+	m_bBigCar = false;
 }
 
 CVideoMergeManager::~CVideoMergeManager()
@@ -180,6 +181,26 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				nCarNo = 0;
 			}
 
+			int nPassScore = 0;	//考试合格分数
+			if (KSKM_2 == m_nKskm)
+			{
+				if (m_bBigCar)
+				{
+					nPassScore = EXAM_PASS_SCORE_KM2_BIGCAR;
+				}
+				else
+				{
+					nPassScore = EXAM_PASS_SCORE_KM2;
+				}
+			}
+			else
+			{
+				nPassScore = EXAM_PASS_SCORE_KM3;
+			}
+
+			bool bPass = (nScore >= nPassScore);
+			m_mapCarManagers[nCarNo].Handle17C56(bPass, nScore);
+
 			break;
 		}
 		
@@ -232,6 +253,13 @@ void CVideoMergeManager::InitParameter()
 	//数据库类型
 	m_nDBType = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_SQLORACLE, 0, wsEnvConfPath.c_str());
 	L_INFO(_T("m_nDBType=%d\n"), m_nDBType);
+
+	//车型是否是大车
+	int nBigCar = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_BIGCAR, 0, wsEnvConfPath.c_str());
+	if (1 == nBigCar)
+	{
+		m_bBigCar = true;
+	}
 
 	//画面二是否做动态切换
 	int nWnd2 = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_WND2, 0, wsDisplayConfPath.c_str());

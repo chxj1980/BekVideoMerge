@@ -42,6 +42,7 @@ private:
 	int m_nKskm;	//考试科目
 	int m_nDBType;	//数据库类型
 	bool m_bDynamicVideo;	//画面二是否做动态切换
+	bool m_bBigCar;		//大车科目二合格分数不一样
 };
 
 #endif

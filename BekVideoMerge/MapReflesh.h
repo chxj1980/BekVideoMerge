@@ -14,6 +14,7 @@ public:
 	void StartWork();
 	void SetCarSignal(CarSignal signal);
 	void Handle17C51();
+	void Handle17C56(bool bPass, int nScore);
 
 protected:
 	static BOOL MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent);
@@ -44,9 +45,12 @@ private:
 	int m_nKskm;	//考试科目
 
 	bool m_bStartExam;	//开始考试
-	wstring m_wsExamStatus;	//考试状态描述
+	bool m_bPass;		//考试是否通过
 	int m_nDisplayDelays;		//考试结束后延迟一段时间再结束画面
+	int m_nCurrentScore;	//当前得分
+	wstring m_wsExamStatus;	//考试状态描述
 	CTime m_startTime;	//考试开始时间
+	CTime m_endTime;		//考试结束时间
 };
 
 #endif

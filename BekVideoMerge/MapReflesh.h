@@ -14,6 +14,7 @@ public:
 	void StartWork();
 	void SetCarSignal(CarSignal signal);
 	void Handle17C51();
+	void Handle17C53(ERROR_DATA judgeInfo);
 	void Handle17C56(bool bPass, int nScore);
 
 protected:
@@ -24,6 +25,7 @@ private:
 	void DrawBackground(Graphics *graphics);	//绘制背景
 	bool GetCarRelativeCoordinate(CarSignal signal, int &x, int &y);
 	void DrawMap(Graphics *graphics, int carX, int carY);	//绘制地图
+	void DrawCar(Graphics *graphics, float angle);	//绘制车模型
 	void DrawStatus(CarSignal carSignal);	//绘制状态信息
 
 private:
@@ -51,6 +53,7 @@ private:
 	wstring m_wsExamStatus;	//考试状态描述
 	CTime m_startTime;	//考试开始时间
 	CTime m_endTime;		//考试结束时间
+	map<int, ERROR_DATA> m_mapJudgeInfos;	//扣分信息
 };
 
 #endif

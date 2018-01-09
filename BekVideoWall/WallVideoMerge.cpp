@@ -566,20 +566,20 @@ bool CWallVideoMerge::Run()
 	for (it = m_mapCarEncoders.begin(); it != m_mapCarEncoders.end(); it++)
 	{
 		wstring key = _T("");
-		key = CStringUtils::Format(_T("考车%d_%d"), it->first, CAMERA_NO_COPILOT);		//副驾摄像头
+		key = CStringUtils::Format(_T("考车%d_%d"), it->first, CAR_CAMERA_NO_COPILOT);		//副驾摄像头
 		if (!GetVideoChannel(key, channel))
 		{
-			L_ERROR(_T("Video channel %d of car %d not configured\n"), CAMERA_NO_COPILOT, it->first);
+			L_ERROR(_T("Video channel %d of car %d not configured\n"), CAR_CAMERA_NO_COPILOT, it->first);
 		}
 		else
 		{
 			it->second.StartCarEncode(channel);
 		}
 
-		key = CStringUtils::Format(_T("考车%d_%d"), it->first, CAMERA_NO_CAR_FRONT);	//车前摄像头
+		key = CStringUtils::Format(_T("考车%d_%d"), it->first, CAR_CAMERA_NO_CAR_FRONT);	//车前摄像头
 		if (!GetVideoChannel(key, channel))
 		{
-			L_ERROR(_T("Video channel %d of car %d not configured\n"), CAMERA_NO_CAR_FRONT, it->first);
+			L_ERROR(_T("Video channel %d of car %d not configured\n"), CAR_CAMERA_NO_CAR_FRONT, it->first);
 		}
 		else
 		{

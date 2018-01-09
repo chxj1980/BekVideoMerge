@@ -68,6 +68,7 @@ using namespace std;
 #define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
 #define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
 #define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
+#define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
 
 //Êý¾Ý¿â

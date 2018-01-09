@@ -25,6 +25,7 @@ CMapReflesh::CMapReflesh()
 	m_wsExamStatus = _T("");
 	m_nDisplayDelays = 0;
 	m_nCurrentScore = EXAM_TOTAL_SCORE;
+	m_mapJudgeInfos.clear();
 }
 
 CMapReflesh::~CMapReflesh()
@@ -124,8 +125,21 @@ void CMapReflesh::Handle17C51()
 	m_wsExamStatus = _T("考试开始");
 	m_startTime = CTime::GetCurrentTime();
 	m_nDisplayDelays = 0;
+	m_mapJudgeInfos.clear();
 
 	SetEvent(m_refleshEvent);
+}
+
+void CMapReflesh::Handle17C53(ERROR_DATA judgeInfo)
+{
+	int nIndex = m_mapJudgeInfos.size();
+	m_mapJudgeInfos[nIndex] = judgeInfo;
+
+	m_nCurrentScore -= judgeInfo.ikcfs;
+	if (m_nCurrentScore < 0)
+	{
+		m_nCurrentScore = 0;
+	}
 }
 
 void CMapReflesh::Handle17C56(bool bPass, int nScore)
@@ -175,6 +189,12 @@ BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 
 				//绘制背景，叠加在地图上
 				mapRefleshClass->DrawBackground(&graphics);
+
+				//绘制车模型
+				if (mapRefleshClass -> m_bDrawCar)
+				{
+					mapRefleshClass->DrawCar(&graphics, carSignal.fDirectionAngle);
+				}
 
 				//绘制项目实时状态信息
 				mapRefleshClass->DrawStatus(carSignal);
@@ -322,7 +342,7 @@ void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
 		delete imgLeftBottom;
 		delete imgBottom;
 		delete imgRightBottom;
-		
+		delete gNineMaps;
 	}
 	catch (...)
 	{
@@ -331,16 +351,42 @@ void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
 
 }
 
+//绘制车模型
+void CMapReflesh::DrawCar(Graphics *graphics, float angle)
+{
+	graphics->TranslateTransform((VIDEO_WIDTH - 88) / 2, VIDEO_HEIGHT / 2);
+	graphics->RotateTransform(angle);
+	graphics->TranslateTransform(-(VIDEO_WIDTH - 88) / 2, -VIDEO_HEIGHT / 2);
+
+	wstring wsImgCar = m_wsProgramPath + IMG_PATH_CAR_SKIN;
+	if (!CWinUtils::FileExists(wsImgCar))
+	{
+		L_ERROR(_T("wsImgCar not exist, file name = %s\n"), wsImgCar.c_str());
+		return;
+	}
+
+	Image *imgCar = Image::FromFile(wsImgCar.c_str());
+	graphics->DrawImage(imgCar, Rect(0, 0, VIDEO_WIDTH - 88, VIDEO_HEIGHT), 
+		88 / 2, 0, VIDEO_WIDTH - 88, VIDEO_HEIGHT, UnitPixel);
+	graphics->ResetTransform();
+
+	delete imgCar;
+}
+
 //绘制状态信息
 void CMapReflesh::DrawStatus(CarSignal carSignal)
 {
 	try
 	{
 		CFont font;
-		font.CreateFont(20, 0, 0, 0, FW_BOLD, TRUE, FALSE, 0, ANSI_CHARSET,
-			OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-			DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("微软雅黑"));
+		//font.CreateFont(13, 0, 0, 0, FW_BOLD, TRUE, FALSE, 0, ANSI_CHARSET,
+		//	OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+		//	DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("宋体"));
+		font.CreateFont(13, 0, 0, 0, FW_NORMAL, FALSE, FALSE, 0, ANSI_CHARSET,
+			OUT_STROKE_PRECIS, CLIP_STROKE_PRECIS,
+			DRAFT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("宋体"));
 		m_DC.SetBkMode(TRANSPARENT);	//透明
+		m_DC.SelectObject(&font);
 		m_DC.SetTextColor(RGB(255, 255, 255));
 
 		//项目状态信息，显示在title
@@ -371,6 +417,19 @@ void CMapReflesh::DrawStatus(CarSignal carSignal)
 		wstring wsTimeSpan = CStringUtils::Format(_T("%d%d:%d%d:%d%d"), span.GetHours() / 10, span.GetHours() % 10,
 			span.GetMinutes() / 10, span.GetMinutes() % 10, span.GetSeconds() / 10, span.GetSeconds() % 10);
 		m_DC.DrawText(wsTimeSpan.c_str(), CRect(198, 262, 264, 288), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+
+		//扣分信息
+		m_DC.SetTextColor(RGB(255, 0, 0));
+		for (int i = 0; i < 3; i++)
+		{
+			if (0 == m_mapJudgeInfos.count(i))
+			{
+				break;
+			}
+			ERROR_DATA judgeInfo = m_mapJudgeInfos[i];
+			wstring wsJudgeMsg = CStringUtils::Format(_T("[%d] %s 扣%d分"), i + 1, judgeInfo.errorlx, judgeInfo.ikcfs);
+			m_DC.DrawText(wsJudgeMsg.c_str(), CRect(5, 215-i*20, 260, 235-i*20), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+		}
 
 		font.DeleteObject();
 	}

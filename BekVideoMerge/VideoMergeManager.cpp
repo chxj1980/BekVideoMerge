@@ -136,10 +136,18 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				return false;
 			}
 			
-
-
 			wsXmNo = vecNos[0];
 			wsJudgeNo = vecNos[1];
+
+			if (0 == m_mapItems.count(wsJudgeNo))
+			{
+				L_ERROR(_T("Judgement number : %s not exist."), wsJudgeNo);
+			}
+			else
+			{
+				ERROR_DATA judgeInfo = m_mapItems[wsJudgeNo];
+				m_mapCarManagers[nCarNo].Handle17C53(judgeInfo);
+			}
 
 			break;
 		}

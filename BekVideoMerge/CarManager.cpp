@@ -89,6 +89,17 @@ bool CCarManager::Handle17C51(StudentInfo studentInfo)
 	return true;
 }
 
+//项目扣分
+bool CCarManager::Handle17C53(ERROR_DATA judgeInfo)
+{
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.Handle17C53(judgeInfo);
+	}
+
+	return true;
+}
+
 //考试结束
 bool CCarManager::Handle17C56(bool bPass, int nScore)
 {

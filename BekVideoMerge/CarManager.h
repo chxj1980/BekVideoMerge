@@ -19,7 +19,9 @@ public:
 	bool StopDynamicDecode(int wnd);													//停止动态解码
 	bool HandleCarSignal(CarSignal signal);		//处理车载信号
 	bool Handle17C51(StudentInfo studentInfo);	//考试开始
+	bool Handle17C52(int xmNo, wstring xmName);	//项目开始
 	bool Handle17C53(ERROR_DATA judgeInfo);	//项目扣分 
+	bool Handle17C55(int xmNo, wstring xmName);	//项目结束
 	bool Handle17C56(bool bPass, int nScore);	//考试结束
 
 private:

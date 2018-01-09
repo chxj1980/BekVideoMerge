@@ -14,7 +14,9 @@ public:
 	void StartWork();
 	void SetCarSignal(CarSignal signal);
 	void Handle17C51();
+	void Handle17C52(int xmNo, wstring xmName);
 	void Handle17C53(ERROR_DATA judgeInfo);
+	void Handle17C55(int xmNo, wstring xmName);
 	void Handle17C56(bool bPass, int nScore);
 
 protected:
@@ -54,6 +56,8 @@ private:
 	CTime m_startTime;	//考试开始时间
 	CTime m_endTime;		//考试结束时间
 	map<int, ERROR_DATA> m_mapJudgeInfos;	//扣分信息
+	int m_nStartXmStatus;		//标识哪些项目已经开始
+	int m_nEndXmStatus;		//标识哪些项目已经结束
 };
 
 #endif

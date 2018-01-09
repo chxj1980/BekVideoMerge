@@ -121,8 +121,16 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				}
 			}
 
-
-
+			if (0 == m_mapItems.count(wsXmNo))
+			{
+				L_ERROR(_T("xm NO : %s not found\n"), wsXmNo.c_str());
+				break;
+			}
+			int nXmNo = _wtoi(wsXmNo.c_str());
+			wstring wsXmName = _T("");
+			CStringUtils::ASCII2Unicode(m_mapItems[wsXmNo].errorlx, wsXmName);
+			m_mapCarManagers[nCarNo].Handle17C52(nXmNo, wsXmName);
+		
 			break;
 		}
 
@@ -177,6 +185,16 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 			{
 				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 1);
 			}
+
+			if (0 == m_mapItems.count(wsXmNo))
+			{
+				L_ERROR(_T("xm NO : %s not found\n"), wsXmNo.c_str());
+				break;
+			}
+			int nXmNo = _wtoi(wsXmNo.c_str());
+			wstring wsXmName = _T("");
+			CStringUtils::ASCII2Unicode(m_mapItems[wsXmNo].errorlx, wsXmName);
+			m_mapCarManagers[nCarNo].Handle17C55(nXmNo, wsXmName);
 
 			break;
 		}

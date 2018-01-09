@@ -118,6 +118,7 @@ using namespace std;
 #define  DB_VALUE_KSYYWZ					_T("øº ‘‘≠“Ú£∫Œ¥÷™")
 
 
+
 #define WM_SOCKET_TCP	   WM_USER + 1001
 #define WM_SOCKET_UDP	   WM_USER + 1002
 #define WM_SOCKET_TCP_WALL WM_USER + 1003

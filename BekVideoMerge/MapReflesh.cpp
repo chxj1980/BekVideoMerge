@@ -26,6 +26,9 @@ CMapReflesh::CMapReflesh()
 	m_nDisplayDelays = 0;
 	m_nCurrentScore = EXAM_TOTAL_SCORE;
 	m_mapJudgeInfos.clear();
+
+	m_nStartXmStatus = 0;
+	m_nEndXmStatus = 0;
 }
 
 CMapReflesh::~CMapReflesh()
@@ -126,8 +129,197 @@ void CMapReflesh::Handle17C51()
 	m_startTime = CTime::GetCurrentTime();
 	m_nDisplayDelays = 0;
 	m_mapJudgeInfos.clear();
+	m_nStartXmStatus = 0;
+	m_nEndXmStatus = 0;
 
 	SetEvent(m_refleshEvent);
+}
+
+void CMapReflesh::Handle17C52(int xmNo, wstring xmName)
+{
+	m_wsExamStatus = xmName;
+	
+	//fix me
+	//编号修改为宏定义
+	if (KSKM_2 == m_nKskm)	//科目二
+	{
+		int nType = xmNo / 1000;
+
+		if (!m_bBigCar)
+		{
+			if (201 == nType)
+			{
+				m_nStartXmStatus |= 0x0001;
+			}
+			else if (204 == nType)
+			{
+				m_nStartXmStatus |= 0x0002;
+			}
+			else if (203 == nType)
+			{
+				m_nStartXmStatus |= 0x0004;
+			}
+			else if (206 == nType)
+			{
+				m_nStartXmStatus |= 0x0008;
+			}
+			else if (207 == nType)
+			{
+				m_nStartXmStatus |= 0x0010;
+			}
+			else if (214 == nType)
+			{
+				m_nStartXmStatus |= 0x0040;
+			}
+			else if (215 == nType)
+			{
+				m_nStartXmStatus |= 0x0020;
+			}
+			else if (216 == nType)
+			{
+				m_nStartXmStatus |= 0x0020;
+			}
+		}
+		else
+		{
+			if (202 == nType)
+			{
+				m_nStartXmStatus |= 0x0001;
+			}
+			else if (204 == nType)
+			{
+				m_nStartXmStatus |= 0x0002;
+			}
+			else if (203 == nType)
+			{
+				m_nStartXmStatus |= 0x0004;
+			}
+			else if (205 == nType)
+			{
+				m_nStartXmStatus |= 0x0008;
+			}
+			else if (209 == nType)
+			{
+				m_nStartXmStatus |= 0x0010;
+			}
+			else if (208 == nType)
+			{
+				m_nStartXmStatus |= 0x0020;
+			}
+			else if (207 == nType)
+			{
+				m_nStartXmStatus |= 0x0040;
+			}
+			else if (206 == nType)
+			{
+				m_nStartXmStatus |= 0x0080;
+			}
+			else if (210 == nType)
+			{
+				m_nStartXmStatus |= 0x0100;
+			}
+			else if (211 == nType)
+			{
+				m_nStartXmStatus |= 0x0200;
+			}
+			else if (213 == nType)
+			{
+				m_nStartXmStatus |= 0x0400;
+			}
+			else if (216 == nType)
+			{
+				m_nStartXmStatus |= 0x0800;
+			}
+			else if (215 == nType)
+			{
+				m_nStartXmStatus |= 0x1000;
+			}
+			else if (214 == nType)
+			{
+				m_nStartXmStatus |= 0x2000;
+			}
+			else if (212 == nType)
+			{
+				m_nStartXmStatus |= 0x4000;
+			}
+			else if (217 == nType)
+			{
+				m_nStartXmStatus |= 0x8000;
+			}
+		}
+	}
+	else  //科目三
+	{
+		if (201 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0001;
+		}
+		else if (202 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0002;
+		}
+		else if (203 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0004;
+		}
+		else if (204 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0010;
+		}
+		else if (205 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0040;
+		}
+		else if (206 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0200;
+		}
+		else if (207 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0400;
+		}
+		else if (208 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0800;
+		}
+		else if (209 == xmNo)
+		{
+			m_nStartXmStatus |= 0x1000;
+		}
+		else if (210 == xmNo)
+		{
+			m_nStartXmStatus |= 0x2000;
+		}
+		else if (211 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0020;
+		}
+		else if (212 == xmNo)
+		{
+			m_nStartXmStatus |= 0x4000;
+		}
+		else if (213 == xmNo)
+		{
+			m_nStartXmStatus |= 0x8000;
+		}
+		else if (214 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0080;
+		}
+		else if (215 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0100;
+		}
+		else if (216 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0040;
+		}
+		else if (217 == xmNo)
+		{
+			m_nStartXmStatus |= 0x0008;
+		}
+	}
+
 }
 
 void CMapReflesh::Handle17C53(ERROR_DATA judgeInfo)
@@ -140,6 +332,11 @@ void CMapReflesh::Handle17C53(ERROR_DATA judgeInfo)
 	{
 		m_nCurrentScore = 0;
 	}
+}
+
+void CMapReflesh::Handle17C55(int xmNo, wstring xmName)
+{
+	//int nXmNo = _wtoi(xmNo.c_str());
 }
 
 void CMapReflesh::Handle17C56(bool bPass, int nScore)

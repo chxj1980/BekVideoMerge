@@ -14,7 +14,11 @@ using namespace std;
 //电视墙视频叠加服务监听的TCP端口
 #define LISTENING_PORT_TCP_WALL	6800
 //显示通道关联的解码通道个数
-#define DISPLAY_CHAN_NUMS		4
+#define DISPLAY_CHAN_NUMS		6
+
+//合码器显示通道长宽
+#define DISPLAY_CHAN_WIDTH	1920
+#define DISPLAY_CHAN_HEIGHT	1920
 
 #define VIDEO_WIDTH	352
 #define VIDEO_HEIGHT	288

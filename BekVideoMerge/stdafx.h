@@ -57,6 +57,7 @@ using namespace std;
 #include "hikvision/inc/HCNetSDK.h"
 #include "BekHikUtil.h"
 #pragma comment(lib, "BekHikUtil.lib")
+#pragma comment(lib, "hikvision/lib/HCNetSDK.lib")
 
 //gdiplus
 #include "gdiplus/inc/GdiPlus.h"

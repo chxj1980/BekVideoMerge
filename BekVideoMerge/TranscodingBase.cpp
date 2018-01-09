@@ -85,6 +85,15 @@ bool CTranscodingBase::Init(wstring path, int carNo, int lpHanble)
 	return true;
 }
 
+void CTranscodingBase::Reflesh()
+{
+#ifdef __DEBUG_SAVE_PNG__
+	SavePngFile();
+#else
+	SendDataToHikDevice();
+#endif
+}
+
 bool CTranscodingBase::SendDataToHikDevice()
 {
 	wstring wsVideoPath = m_wsProgramPath + _T("\\video");

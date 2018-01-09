@@ -12,12 +12,15 @@ public:
 
 public:
 	void StartWork();
+	
 
 protected:
 	static BOOL StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE stopEvent);
 
 private:
 	IThread* m_studentInfoRefleshThread;
+	
+	
 };
 
 #endif

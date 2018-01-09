@@ -9,8 +9,8 @@ CCarManager::CCarManager()
 	m_nCarNo = -1;
 	m_nStudentInfoHandle = -1;
 	m_nMapHandle = -1;
-
 	m_wsProgramPath = _T("");
+	m_bDrawMap = false;
 }
 
 CCarManager::~CCarManager()
@@ -28,6 +28,13 @@ void CCarManager::InitCar(int userId, int carNo, BYTE (&decChan)[DISPLAY_CHAN_NU
 	}
 
 	CWinUtils::GetCurrentProcessPath(m_wsProgramPath);
+
+	wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
+	int nDrawMap = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_LOADMAP, 0, wsEnvConfPath.c_str());
+	if (1 == nDrawMap)
+	{
+		m_bDrawMap = true;
+	}
 }
 
 void CCarManager::InitPassiveMode(int studentInfoHandle, int mapHandle)
@@ -58,6 +65,72 @@ bool CCarManager::StartPassiveDecode(int wnd, LONG &lpHandle)
 bool CCarManager::StopDynamicDecode(int wnd)
 {
 	return CBekHikUtil::StopDynamicDecode(m_nUserId, m_decChan[wnd]);
+}
+
+//处理车载信号
+bool CCarManager::HandleCarSignal(CarSignal signal)
+{
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.SetCarSignal(signal);
+	}
+
+	return true;
+}
+
+//考试开始
+bool CCarManager::Handle17C51(StudentInfo studentInfo)
+{
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.Handle17C51();
+	}
+	
+	return true;
+}
+
+//项目开始
+bool CCarManager::Handle17C52(int xmNo, wstring xmName)
+{
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.Handle17C52(xmNo, xmName);
+	}
+	
+	return true;
+}
+
+//项目扣分
+bool CCarManager::Handle17C53(ERROR_DATA judgeInfo)
+{
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.Handle17C53(judgeInfo);
+	}
+
+	return true;
+}
+
+//项目结束
+bool CCarManager::Handle17C55(int xmNo, wstring xmName)
+{
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.Handle17C55(xmNo, xmName);
+	}
+
+	return true;
+}
+
+//考试结束
+bool CCarManager::Handle17C56(bool bPass, int nScore)
+{
+	if (m_bDrawMap)
+	{
+		m_mapRefleshClass.Handle17C56(bPass, nScore);
+	}
+
+	return true;
 }
 
 void CCarManager::InitStudentInfoPic()

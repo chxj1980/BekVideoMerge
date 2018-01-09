@@ -9,6 +9,11 @@ CVideoMergeManager::CVideoMergeManager()
 	m_mapCarManagers.clear();
 	m_mapChannels.clear();
 	m_mapItems.clear();
+
+	m_nKskm = 0;
+	m_nDBType = 0;
+	m_bDynamicVideo = false;
+	m_bBigCar = false;
 }
 
 CVideoMergeManager::~CVideoMergeManager()
@@ -56,18 +61,205 @@ bool CVideoMergeManager::StartWork()
 	return true;
 }
 
-bool CVideoMergeManager::HandleExamData(wstring buf)
+//处理考试过程信号
+bool CVideoMergeManager::HandleExamSignal(wstring buf)
 {
+	vector<wstring> vecWstr;
+	CStringUtils::SplitString(buf, _T("*"), vecWstr);
+	//if (8 != vecWstr.size() && 9 != vecWstr.size())
+	//{
+	//	L_ERROR(_T("HandleExamSignal error, exam signal data error, buf=%s\n"), buf.c_str());
+	//	return false;
+	//}
 
+	try
+	{
+		int nCarNo = _wtoi(vecWstr[1].c_str());	//考车号
+		if (!GetCarManager(nCarNo))
+		{
+			L_ERROR(_T("HandleExamSignal error, car%d not found\n"), nCarNo);
+			return false;
+		}
+
+		wstring wsCertificateNo = vecWstr[6];	//准考证明编号
+		wstring wsTime = vecWstr[7];	//时间
+
+		//以下几个变量只有特定信号类型才会传入
+		wstring wsXmNo = _T("");	//项目编号
+		wstring wsJudgeNo = _T("");	//扣分编号
+		int nScore = 0;		//考试得分
+
+		int nSignalType = _wtoi(vecWstr[2].c_str());	//考试过程信号类型
+		switch (nSignalType)
+		{
+		case SIGNAL_TYPE_17C51:	//考试开始，没有特殊字段要处理
+		{
+			StudentInfo studentInfo;
+			GetStudentInfo(wsCertificateNo, studentInfo);
+
+			m_mapCarManagers[nCarNo].Handle17C51(studentInfo);
+			
+			break;
+		}
+
+		case SIGNAL_TYPE_17C52:	//项目开始，取项目编号
+		{
+			wsXmNo = vecWstr[5];
+
+			//动态切换到对应的项目视频
+			if (m_bDynamicVideo)
+			{
+				CHANNEL_CONFIG channel;
+				wstring key = wsXmNo + CStringUtils::Format(_T("_%d"), XM_CAMERA_NO_1);
+				if (!GetVideoChannel(key, channel))
+				{
+					L_INFO(_T("Video channel %s not configured\n"), key.c_str());
+				}
+				else
+				{
+					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 1);
+				}
+			}
+
+			if (0 == m_mapItems.count(wsXmNo))
+			{
+				L_ERROR(_T("xm NO : %s not found\n"), wsXmNo.c_str());
+				break;
+			}
+			int nXmNo = _wtoi(wsXmNo.c_str());
+			wstring wsXmName = _T("");
+			CStringUtils::ASCII2Unicode(m_mapItems[wsXmNo].errorlx, wsXmName);
+			m_mapCarManagers[nCarNo].Handle17C52(nXmNo, wsXmName);
+		
+			break;
+		}
+
+		case SIGNAL_TYPE_17C53:	//项目扣分，取项目编号和扣分编号
+		{
+			vector<wstring> vecNos;
+			CStringUtils::SplitString(vecWstr[5], _T("@"), vecNos);
+			if (2 != vecNos.size())
+			{
+				L_ERROR(_T("CVideoMergeManager HandleExamSignal catch an error, exam signal data error, buf=%s\n"), buf.c_str());
+				return false;
+			}
+			
+			wsXmNo = vecNos[0];
+			wsJudgeNo = vecNos[1];
+
+			if (0 == m_mapItems.count(wsJudgeNo))
+			{
+				L_ERROR(_T("Judgement number : %s not exist."), wsJudgeNo);
+			}
+			else
+			{
+				ERROR_DATA judgeInfo = m_mapItems[wsJudgeNo];
+				m_mapCarManagers[nCarNo].Handle17C53(judgeInfo);
+			}
+
+			break;
+		}
+
+		case SIGNAL_TYPE_17C55:	//项目结束，取项目编号
+		{
+			wsXmNo = vecWstr[5];
+
+			wstring key = _T("");
+			if (KSKM_2 == m_nKskm)	
+			{
+				key = CAMERA_KM2_PUBLIC;	//科目二项目结束时，切换到远景视频
+			}
+			else
+			{
+				//fix me
+				//旧的软件，这里科目三车前摄像头编号配置为2，后续应该统一调整为3，参考枚举类型CarCameraNoLocation
+				key = CStringUtils::Format(_T("考车%d_2"), nCarNo);	//科目三项目结束时切换为车前摄像头
+			}
+
+			CHANNEL_CONFIG channel;
+			if (!GetVideoChannel(key, channel))
+			{
+				L_INFO(_T("Video channel %s not configured\n"), key.c_str());
+			}
+			else
+			{
+				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 1);
+			}
+
+			if (0 == m_mapItems.count(wsXmNo))
+			{
+				L_ERROR(_T("xm NO : %s not found\n"), wsXmNo.c_str());
+				break;
+			}
+			int nXmNo = _wtoi(wsXmNo.c_str());
+			wstring wsXmName = _T("");
+			CStringUtils::ASCII2Unicode(m_mapItems[wsXmNo].errorlx, wsXmName);
+			m_mapCarManagers[nCarNo].Handle17C55(nXmNo, wsXmName);
+
+			break;
+		}
+
+		case SIGNAL_TYPE_17C56:	//考试结束，取考试得分
+		{
+			nScore = _wtoi(vecWstr[5].c_str());
+			if (nScore < 0)
+			{
+				nCarNo = 0;
+			}
+
+			int nPassScore = 0;	//考试合格分数
+			if (KSKM_2 == m_nKskm)
+			{
+				if (m_bBigCar)
+				{
+					nPassScore = EXAM_PASS_SCORE_KM2_BIGCAR;
+				}
+				else
+				{
+					nPassScore = EXAM_PASS_SCORE_KM2;
+				}
+			}
+			else
+			{
+				nPassScore = EXAM_PASS_SCORE_KM3;
+			}
+
+			bool bPass = (nScore >= nPassScore);
+			m_mapCarManagers[nCarNo].Handle17C56(bPass, nScore);
+
+			break;
+		}
+		
+		default:
+			break;
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("CVideoMergeManager HandleExamSignal catch an error, exam signal data error, buf=%s\n"), buf.c_str());
+		return false;
+	}
 
 	return true;
 } 
 
-BOOL CVideoMergeManager::HandleExamDataThreadProc(LPVOID parameter, HANDLE stopEvent)
+//处理车载信号
+bool CVideoMergeManager::HandleCarSignal(int carNo, char* buf)
 {
-	
-	
-	return TRUE;
+	if (!GetCarManager(carNo))
+	{
+		L_ERROR(_T("HandleCarSignal error, car%d not found\n"), carNo);
+		return false;
+	}
+
+	CarSignal signal;
+	memcpy((char *)&signal, buf, sizeof(CarSignal));
+	L_DEBUG(_T("CVideoMergeManager HandleCarSignal, carNo=%d, x=%lf, y=%lf, angle=%lf, speed=%lf, mileage=%lf\n"),
+		carNo, signal.dX, signal.dY, signal.fDirectionAngle, signal.fSpeed, signal.fMileage);
+
+	m_mapCarManagers[carNo].HandleCarSignal(signal);
+
+	return true;
 }
 
 void CVideoMergeManager::InitParameter()
@@ -76,6 +268,31 @@ void CVideoMergeManager::InitParameter()
 
 	CWinUtils::GetCurrentProcessPath(m_wsProgramPath);
 	L_DEBUG(_T("m_sProgramPath=%s\n"), m_wsProgramPath.c_str());
+
+	wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
+	wstring wsDisplayConfPath = m_wsProgramPath + CONF_PATH_DISPLAY;
+
+	//考试科目
+	m_nKskm = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_KSKM, 2, wsEnvConfPath.c_str());
+	L_INFO(_T("m_nKskm=%d\n"), m_nKskm);
+
+	//数据库类型
+	m_nDBType = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_SQLORACLE, 0, wsEnvConfPath.c_str());
+	L_INFO(_T("m_nDBType=%d\n"), m_nDBType);
+
+	//车型是否是大车
+	int nBigCar = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_BIGCAR, 0, wsEnvConfPath.c_str());
+	if (1 == nBigCar)
+	{
+		m_bBigCar = true;
+	}
+
+	//画面二是否做动态切换
+	int nWnd2 = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_WND2, 0, wsDisplayConfPath.c_str());
+	if (1 == nWnd2)
+	{
+		m_bDynamicVideo = true;
+	}
 
 	L_TRACE_LEAVE(_T("\n"));
 }
@@ -95,7 +312,6 @@ bool CVideoMergeManager::InitDB()
 		wstring wsDBUsername = _T("");	//数据库用户名
 		wstring wsDBPassword = _T("");		//数据库密码
 		wstring wsDBInstance = _T("");		//数据库实例
-		int nDBType = 0;		//数据库类型
 		if (GetPrivateProfileString(CONF_SECTION_CONFIG, CONF_KEY_DBADDRESS, _T(""),
 			buf, sizeof(buf) / sizeof(TCHAR), wsDBConfPath.c_str()))
 		{
@@ -116,7 +332,6 @@ bool CVideoMergeManager::InitDB()
 		{
 			wsDBInstance = Base64Decode(buf);
 		}
-		nDBType = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_SQLORACLE, 0, wsEnvConfPath.c_str());
 		
 		L_DEBUG(_T("wsDBAddress=%s, wsDBUsername=%s, wsDBPassword=%s, wsDBInstance=%s\n"), 
 			wsDBAddress.c_str(), wsDBUsername.c_str(), wsDBPassword.c_str(), wsDBInstance.c_str());
@@ -128,14 +343,14 @@ bool CVideoMergeManager::InitDB()
 
 		//根据数据库类型编写数据库连接字符串
 		wstring wsConnection = _T("");
-		if (DB_ORACLE == nDBType)
+		if (DB_ORACLE == m_nDBType)
 		{
 			L_INFO(_T("Database Type : Oracle\n"));
 			wsConnection = CStringUtils::Format(
 				_T("Provider=MSDAORA.1;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=%s)(PORT=%s))(CONNECT_DATA=(SERVICE_NAME=%s)));User ID=%s;Password=%s"),
 				wsDBAddress.c_str(), _T("1521"), wsDBInstance.c_str(), wsDBUsername.c_str(), wsDBPassword.c_str());
 		}
-		else if (DB_SQL == nDBType)
+		else if (DB_SQL == m_nDBType)
 		{
 			L_INFO(_T("Database Type : Sql Server\n"));
 			wsConnection = CStringUtils::Format(
@@ -689,4 +904,168 @@ bool CVideoMergeManager::GetVideoChannel(wstring key, CHANNEL_CONFIG &videoChann
 
 	videoChannel = it->second;
 	return true;
+}
+
+//根据考车号查找考车管理类
+bool CVideoMergeManager::GetCarManager(int carNo)
+{
+	if (0 == m_mapCarManagers.count(carNo))
+	{
+		return false;
+	}
+	return true;
+}
+
+//从数据库查询考生信息
+bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, StudentInfo &studentInfo)
+{
+	L_TRACE_ENTER(_T("\n"));
+	
+	try
+	{
+		wstring wsSql = _T("");
+		
+		if (DB_ORACLE == m_nDBType)
+		{
+			wsSql = _T("select 考车号,SysCfg.备注,考试车型,姓名,性别,to_char(sysdate,'yyyy-mm-dd') as MYDATE, \
+					流水号,身份证明编号,驾校名称,考试员1,考试原因,准考证明编号,当日次数 from StudentInfo left join SchoolInfo \
+					on 代理人=驾校编号 left join SysCfg on 考车号=项目 where 准考证明编号='") + certificateNo + _T("'");
+		}
+		else if (DB_SQL == m_nDBType)
+		{
+			wsSql = _T("select 考车号,SysCfg.备注,考试车型,姓名,性别,(Select CONVERT(varchar(100), GETDATE(), 23)) as MYDATE, \
+					流水号,身份证明编号,驾校名称,考试员1,考试原因,准考证明编号,当日次数 from StudentInfo left join SchoolInfo \
+					on 代理人=驾校编号 left join SysCfg on 考车号=项目 where 准考证明编号='") + certificateNo + _T("'");
+		}
+
+		L_DEBUG(_T("GetStudentInfo sql : %s\n"), wsSql.c_str());
+
+		VARIANT cnt;
+		cnt.vt = VT_INT;
+		_RecordsetPtr pSet = m_pDB->Execute((_bstr_t)wsSql.c_str(), &cnt, adCmdUnknown);
+		_variant_t vat;
+		if (pSet != NULL && !pSet->adoEOF)
+		{
+			while (!pSet->adoEOF)
+			{
+				vat = pSet->GetCollect(DB_FIELD_KCH);	//考车号
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsCarNo = (_bstr_t)vat;
+				}
+				
+				vat = pSet->GetCollect(DB_FIELD_BZ);	//备注，车牌号
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsRemarks = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(DB_FIELD_KSCX);	//考试车型
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsCarType = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(DB_FIELD_XINGMING);	//姓名
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsName = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(DB_FIELD_XB);	//性别
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsGender = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(_T("MYDATE"));	//日期
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsDate = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(DB_FIELD_LSH);	//流水号
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsSerialNo = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(DB_FIELD_SFZMBH);	//身份证明编号
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsID = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(DB_FIELD_JXMC);	//驾校名称
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsDrivingSchool = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(DB_FIELD_KSY1);	//考试员1
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsExaminer = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(DB_FIELD_DRCS);	//当日次数
+				if (vat.vt != NULL)
+				{
+					studentInfo.wsDayCount = (_bstr_t)vat;
+				}
+
+				vat = pSet->GetCollect(DB_FIELD_KSYY);	//考试原因
+				if (vat.vt != NULL)
+				{
+					wstring examReasonNo = (_bstr_t)vat;
+					studentInfo.wsExamReason = GetExamReason(examReasonNo);
+				}
+
+				studentInfo.wsCertificateNo = certificateNo;
+
+				pSet->MoveNext();
+			}
+
+			pSet->Close();
+			pSet.Release();
+		}
+	
+	}
+	catch (...)
+	{
+		L_ERROR(_T("GetStudentInfo catch an error, return false\n"));
+		return false;
+	}
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}
+
+//根据考试原因编号，获取考试原因
+wstring CVideoMergeManager::GetExamReason(wstring code)
+{
+	wstring wsRet = _T("");
+
+	if (DB_VALUE_A == code)
+	{
+		wsRet = code + _T("-") + DB_VALUE_CK;    //A-初考
+	}
+	else if (DB_VALUE_B == code)
+	{
+		wsRet = code + _T("-") + DB_VALUE_ZJ;    //B-增驾
+	}
+	else if (DB_VALUE_F == code)
+	{
+		wsRet = code + _T("-") + DB_VALUE_MFXX;    //F-满分学习
+	}
+	else if (DB_VALUE_D == code)
+	{
+		wsRet = code + _T("-") + DB_VALUE_BK;    //D-补考
+	}
+	else
+	{
+		wsRet = DB_VALUE_KSYYWZ;    //考试原因:未知
+	}
+
+	return wsRet;
 }

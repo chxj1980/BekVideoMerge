@@ -204,7 +204,7 @@ LRESULT CBekVideoMergeDlg::OnSocketTCP(WPARAM wParam, LPARAM lParam)
 		L_DEBUG(_T("TCPServer Receive = %s\n"), wsRecv.c_str());
 		tcpServer.SendToClient(sock, (char*)strRecv.c_str());
 
-
+		videoMergeManager.HandleExamSignal(wsRecv);
 
 		break;
 	}
@@ -233,8 +233,7 @@ LRESULT CBekVideoMergeDlg::OnSocketUDP(WPARAM wParam, LPARAM lParam)
 		{
 		case GNSSDATA:
 		{
-			int k = 0;
-			//jmqmanager.OnGnssData(recvbuf, ikch);//处理UDP数据 经纬度等信息
+			videoMergeManager.HandleCarSignal(nCarNo, recvBuf);
 			break;
 		}
 		default:

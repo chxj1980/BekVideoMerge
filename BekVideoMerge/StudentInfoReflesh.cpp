@@ -5,7 +5,15 @@
 
 CStudentInfoReflesh::CStudentInfoReflesh()
 {
-	
+	m_refleshEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+	m_nWidth = DISPLAY_CHAN_WIDTH / 3;
+	m_nHeight = DISPLAY_CHAN_HEIGHT / 3;
+
+	m_bStartExam = false;
+	m_bEndExam = false;
+	m_bPass = false;
+	m_nDisplayDelays = 0;
 }
 
 CStudentInfoReflesh::~CStudentInfoReflesh()
@@ -23,7 +31,25 @@ void CStudentInfoReflesh::StartWork()
 	m_studentInfoRefleshThread->StartMainThread();
 }
 
+void CStudentInfoReflesh::Handle17C51(StudentInfo studentInfo)
+{
+	m_studentInfo = studentInfo;
 
+	m_bStartExam = true;
+	m_bEndExam = false;
+	m_nDisplayDelays = 0;
+
+	SetEvent(m_refleshEvent);
+}
+
+void CStudentInfoReflesh::Handle17C56(bool bPass)
+{
+	m_bPass = bPass;
+
+	m_bStartExam = false;
+	m_bEndExam = true;
+	m_nDisplayDelays = DISPLAY_DELAY_SECONDS;
+}
 
 BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 {
@@ -32,36 +58,61 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 	CStudentInfoReflesh *studentInfoRefleshClass = (CStudentInfoReflesh*)parameter;
 
 	Graphics graphics(studentInfoRefleshClass->m_DC.GetSafeHdc());
-	CFont font;
-	Image *imgBk;
-	font.CreateFontW(20, 0, 0, 0, FW_MEDIUM, FALSE, FALSE, 0, ANSI_CHARSET,
-		OUT_STROKE_PRECIS, CLIP_STROKE_PRECIS,
-		DRAFT_QUALITY, VARIABLE_PITCH | FF_SWISS, _T("宋体"));
-	studentInfoRefleshClass->m_DC.SetBkMode(TRANSPARENT);	//透明
 
 	while (true)
 	{
-		DWORD dwRet = WaitForSingleObject(stopEvent, 1000);
-		switch (dwRet)
+		DWORD dwRet = WaitForSingleObject(studentInfoRefleshClass->m_refleshEvent, INFINITE);
+		if (WAIT_OBJECT_0 == dwRet)
 		{
-		case WAIT_TIMEOUT:
-		{
-			//graphics.DrawImage(imgBk, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));	//遮罩
+			if (studentInfoRefleshClass->m_bStartExam || studentInfoRefleshClass->m_nDisplayDelays > 0)
+			{
+				//这里进行一些绘制工作
+				studentInfoRefleshClass->DrawBackground(&graphics);
 
-			//刷新四合一界面
-			studentInfoRefleshClass->Reflesh();
+				//刷新四合一界面
+				studentInfoRefleshClass->Reflesh();
 
-			Sleep(1000);
+				Sleep(1000);
 
-			break;
+				//考试结束后，继续显示一段时间
+				if (studentInfoRefleshClass->m_nDisplayDelays > 0)
+				{
+					studentInfoRefleshClass->m_nDisplayDelays -= 1;
+				}
+
+				SetEvent(studentInfoRefleshClass->m_refleshEvent);
+			}
 		}
 
-		default:
-			goto EXIT;
-		}
 	}
 
 EXIT:
 	L_INFO(_T("StudentInfoRefleshThreadProc Exit\n"));
 	return TRUE;
+}
+
+//绘制背景
+void CStudentInfoReflesh::DrawBackground(Graphics *graphics)
+{
+	try
+	{
+		wstring wsStuBackground = m_wsProgramPath + IMG_PATH_STUDENT_BACKGROUND;
+		if (!CWinUtils::FileExists(wsStuBackground))
+		{
+			L_ERROR(_T("wsStuBackground not exist, file name = %s\n"), wsStuBackground.c_str());
+			return;
+		}
+
+		//fix me，坐标写死了
+		//项目牌背景
+		Image *imgStuBackground = Image::FromFile(wsStuBackground.c_str());
+		graphics->DrawImage(imgStuBackground, Rect(0, 0, 352, 288), 0, 0, 352, 288, UnitPixel);
+		
+
+		delete imgStuBackground;
+	}
+	catch (...)
+	{
+		L_ERROR(_T("DrawBackground catch an error.\n"));
+	}
 }

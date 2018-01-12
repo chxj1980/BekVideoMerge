@@ -49,6 +49,7 @@ private:
 	int m_nKskm;	//考试科目
 
 	bool m_bStartExam;	//开始考试
+	bool m_bEndExam;	//结束考试
 	bool m_bPass;		//考试是否通过
 	int m_nDisplayDelays;		//考试结束后延迟一段时间再结束画面
 	int m_nCurrentScore;	//当前得分

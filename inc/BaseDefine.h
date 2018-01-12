@@ -14,7 +14,11 @@ using namespace std;
 //电视墙视频叠加服务监听的TCP端口
 #define LISTENING_PORT_TCP_WALL	6800
 //显示通道关联的解码通道个数
-#define DISPLAY_CHAN_NUMS		4
+#define DISPLAY_CHAN_NUMS		6
+
+//合码器显示通道长宽
+#define DISPLAY_CHAN_WIDTH	1920
+#define DISPLAY_CHAN_HEIGHT	1920
 
 #define VIDEO_WIDTH	352
 #define VIDEO_HEIGHT	288
@@ -67,6 +71,7 @@ using namespace std;
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
 #define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
 #define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
+#define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.skin")
 #define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")

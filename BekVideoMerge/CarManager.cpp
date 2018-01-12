@@ -81,10 +81,8 @@ bool CCarManager::HandleCarSignal(CarSignal signal)
 //¿¼ÊÔ¿ªÊ¼
 bool CCarManager::Handle17C51(StudentInfo studentInfo)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.Handle17C51();
-	}
+	m_studentInfoRefleshClass.Handle17C51(studentInfo);
+	m_mapRefleshClass.Handle17C51();
 	
 	return true;
 }
@@ -125,10 +123,7 @@ bool CCarManager::Handle17C55(int xmNo, wstring xmName)
 //¿¼ÊÔ½áÊø
 bool CCarManager::Handle17C56(bool bPass, int nScore)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.Handle17C56(bPass, nScore);
-	}
+	m_mapRefleshClass.Handle17C56(bPass, nScore);
 
 	return true;
 }

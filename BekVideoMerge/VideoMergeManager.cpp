@@ -117,7 +117,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				}
 				else
 				{
-					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 1);
+					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 5);
 				}
 			}
 
@@ -183,7 +183,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 			}
 			else
 			{
-				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 1);
+				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 5);
 			}
 
 			if (0 == m_mapItems.count(wsXmNo))
@@ -662,7 +662,7 @@ bool CVideoMergeManager::InitDevice()
 	return true;
 }
 
-//合码器通道检测及初始化
+/*//合码器通道检测及初始化
 bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX_ABILITY_V41 struDecAbility)
 {
 	L_TRACE_ENTER(_T("\n"));
@@ -748,6 +748,264 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 				m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
 			}
 		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("InitDVIChannel catch an error\n"));
+		return false;
+	}
+
+	L_TRACE_LEAVE(_T("\n"));
+	return true;
+}*/
+
+//合码器通道检测及初始化
+bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX_ABILITY_V41 struDecAbility)
+{
+	L_TRACE_ENTER(_T("\n"));
+
+	if (userId < 0 || deviceNo <= 0)
+	{
+		L_ERROR(_T("InitDVIChannel parameter error, userId=%d, deviceNo=%d\n"), userId, deviceNo);
+		return false;
+	}
+
+	try
+	{
+		//从配置文件读取相关配置
+		map<int, int> mapDviCar;
+		map<int, int> mapIndexCar;
+		wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
+		wstring wsCarConfPath = m_wsProgramPath + CONF_PATH_CAR;
+		wstring wsSection = CStringUtils::Format(_T("JMQ%d"), deviceNo);
+		int nCarIndex = 0;
+		for (int nDviChanNo = 0; nDviChanNo < struDecAbility.struDviInfo.byChanNums; nDviChanNo++)	//DVI通道循环
+		{
+			wstring wsKey = CStringUtils::Format(_T("BNC%d"), nDviChanNo + 1);
+			int nCarNo = GetPrivateProfileInt(wsSection.c_str(), wsKey.c_str(), 0, wsCarConfPath.c_str());
+			if (nCarNo <= 0)
+			{
+				L_INFO(_T("%s of %s not configured\n"), wsKey.c_str(), wsSection.c_str());
+				continue;
+			}
+
+			if (0 == mapDviCar.count(nDviChanNo))
+			{
+				mapDviCar[nDviChanNo] = nCarNo;
+			}
+			if (0 == mapIndexCar.count(nCarIndex))
+			{
+				mapIndexCar[nCarIndex++] = nCarNo;
+			}
+		}
+
+		//关闭电视墙全部窗口
+		if (!NET_DVR_RemoteControl(userId, NET_DVR_CLOSE_ALL_WND, NULL, NULL))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_RemoteControl NET_DVR_CLOSE_ALL_WND fail, errorCode=%d\n"), errorCode);
+			return false;
+		}
+
+		//取显示输出号
+		DWORD dwRet = -1;
+		NET_DVR_DISPLAYCFG struDisplayCfg = { 0 };
+		struDisplayCfg.dwSize = sizeof(NET_DVR_DISPLAYCFG);
+		if (!NET_DVR_GetDVRConfig(userId, NET_DVR_GET_VIDEOWALLDISPLAYNO, 0, &struDisplayCfg,
+			sizeof(struDisplayCfg), &dwRet))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_GetDVRConfig NET_DVR_GET_VIDEOWALLDISPLAYNO fail, errorCode=%d\n"), errorCode);
+			return false;
+		}
+
+		//关联电视墙显示窗口
+		DWORD dwWallNo = 1 << 24;	//墙号
+		DWORD dwDispNum = mapDviCar.size();
+		DWORD *pDispChan = new DWORD[dwDispNum];
+		memset(pDispChan, 0, dwDispNum * sizeof(DWORD));
+		int nDispIndex = 0;
+		for (map<int, int>::iterator it = mapDviCar.begin(); it != mapDviCar.end(); it++)
+		{
+			try
+			{
+				int nChan = (it->first);
+				DWORD dwDisplayNo = struDisplayCfg.struDisplayParam[nChan].dwDisplayNo;
+				pDispChan[nDispIndex++] = dwDisplayNo;
+			}
+			catch (...)
+			{
+				L_ERROR(_T("chan %d not exist"), it->first);
+				delete[] pDispChan;
+				return false;
+			}
+		}
+
+		/*//获取电视墙的一些显示参数
+		DWORD *pStatus = new DWORD[dwDispNum];
+		NET_DVR_WALLOUTPUTPARAM *pStruWallOutput = new NET_DVR_WALLOUTPUTPARAM[dwDispNum];
+		if (!NET_DVR_GetDeviceConfig(userId, NET_DVR_WALLOUTPUT_GET, dwDispNum, pDispChan, sizeof(DWORD) * dwDispNum,
+			pStatus, pStruWallOutput, dwDispNum * sizeof(NET_DVR_WALLOUTPUTPARAM)))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_GetDeviceConfig NET_DVR_WALLOUTPUT_GET fail, errorCode=%d\n"), errorCode);
+		}
+		for (int i = 0; i < dwDispNum; i++)
+		{
+			pStruWallOutput[i].dwResolution = _1080P_60HZ;
+		}
+		if (!NET_DVR_SetDeviceConfig(userId, NET_DVR_WALLOUTPUT_SET, dwDispNum, pDispChan,
+			sizeof(DWORD) * dwDispNum, pStatus, pStruWallOutput, dwDispNum * sizeof(NET_DVR_WALLOUTPUTPARAM)))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_GetDeviceConfig NET_DVR_WALLOUTPUT_SET fail, errorCode=%d\n"), errorCode);
+		}
+		delete[]pStruWallOutput;
+		delete[]pStatus;*/
+
+		DWORD *pDispStatus = new DWORD[dwDispNum];
+		NET_DVR_VIDEOWALLDISPLAYPOSITION *pStruWallDispPos = new NET_DVR_VIDEOWALLDISPLAYPOSITION[dwDispNum];
+		memset(pDispStatus, 0, dwDispNum * sizeof(DWORD));
+		memset(pStruWallDispPos, 0, dwDispNum * sizeof(NET_DVR_VIDEOWALLDISPLAYPOSITION));
+		if (!NET_DVR_GetDeviceConfig(userId, NET_DVR_GET_VIDEOWALLDISPLAYPOSITION, dwDispNum, pDispChan,
+			sizeof(DWORD) * dwDispNum, pDispStatus, pStruWallDispPos, dwDispNum * sizeof(NET_DVR_VIDEOWALLDISPLAYPOSITION)))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_GetDeviceConfig NET_DVR_GET_VIDEOWALLDISPLAYPOSITION fail, errorCode=%d\n"), errorCode);
+			delete[] pStruWallDispPos;
+			delete[] pDispStatus;
+			delete[] pDispChan;
+			return false;
+		}
+
+		for (int i = 0; i < dwDispNum; i++)
+		{
+			pStruWallDispPos[i].byEnable = 1;
+			pStruWallDispPos[i].dwVideoWallNo = dwWallNo;
+			pStruWallDispPos[i].struRectCfg.dwXCoordinate = (i % 4) * DISPLAY_CHAN_WIDTH;	//电视墙每行放4个显示通道
+			pStruWallDispPos[i].struRectCfg.dwYCoordinate = (i / 4) * DISPLAY_CHAN_HEIGHT;
+			pStruWallDispPos[i].struRectCfg.dwWidth = DISPLAY_CHAN_WIDTH;
+			pStruWallDispPos[i].struRectCfg.dwHeight = DISPLAY_CHAN_HEIGHT;
+		}
+		if (!NET_DVR_SetDeviceConfig(userId, NET_DVR_SET_VIDEOWALLDISPLAYPOSITION, dwDispNum, pDispChan,
+			sizeof(DWORD) * dwDispNum, pDispStatus, pStruWallDispPos,
+			dwDispNum * sizeof(NET_DVR_VIDEOWALLDISPLAYPOSITION)))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_SetDeviceConfig NET_DVR_SET_VIDEOWALLDISPLAYPOSITION fail, errorCode=%d\n"), errorCode);
+			delete[] pStruWallDispPos;
+			delete[] pDispStatus;
+			delete[] pDispChan;
+			return false;
+		}
+
+		//开窗 ，每个显示通道开6个窗
+		int nWinCount = DISPLAY_CHAN_NUMS;
+		DWORD *pWinNo = new DWORD[nWinCount * dwDispNum];
+		DWORD *pRetWinNo = new DWORD[nWinCount * dwDispNum];
+		DWORD *pWinStatus = new DWORD[nWinCount * dwDispNum];
+		NET_DVR_VIDEOWALLWINDOWPOSITION *pStruWinPos = new NET_DVR_VIDEOWALLWINDOWPOSITION[nWinCount * dwDispNum];
+		memset(pWinNo, 0, nWinCount * dwDispNum * sizeof(DWORD));
+		memset(pRetWinNo, 0, nWinCount * dwDispNum * sizeof(DWORD));
+		memset(pWinStatus, 0, nWinCount * dwDispNum * sizeof(DWORD));
+		memset(pStruWinPos, 0, nWinCount * dwDispNum * sizeof(NET_DVR_VIDEOWALLWINDOWPOSITION));
+		for (int i = 0; i < (nWinCount * dwDispNum); i++)
+		{
+			pWinNo[i] = 1 << 24;		//开窗时不用传入窗口号，只需要传入墙号即可
+			pStruWinPos[i].dwSize = sizeof(NET_DVR_VIDEOWALLWINDOWPOSITION);
+			pStruWinPos[i].byEnable = 1;
+			if (0 == i % nWinCount)
+			{
+				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH;
+				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT;
+				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3 * 2;
+				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_WIDTH / 3 * 2;
+			}
+			else if (1 == i % nWinCount)
+			{
+				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH;
+				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
+				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
+			}
+			else if (2 == i % nWinCount)
+			{
+				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
+				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
+			}
+			else if (3 == i % nWinCount)
+			{
+				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
+				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
+				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
+			}
+			else if (4 == i % nWinCount)
+			{
+				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
+				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3;
+				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
+			}
+			else if (5 == i % nWinCount)
+			{
+				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
+				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT;
+				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
+			}
+		}
+		NET_DVR_IN_PARAM struInputParam = { 0 };
+		NET_DVR_OUT_PARAM struOutputParam = { 0 };
+		struInputParam.struCondBuf.pBuf = pWinNo;
+		struInputParam.struCondBuf.nLen = nWinCount * dwDispNum * sizeof(DWORD);
+		struInputParam.dwRecvTimeout = 5000;
+		struInputParam.struInParamBuf.pBuf = pStruWinPos;
+		struInputParam.struInParamBuf.nLen = nWinCount * dwDispNum * sizeof(NET_DVR_VIDEOWALLWINDOWPOSITION);
+		struOutputParam.lpStatusList = pWinStatus;
+		struOutputParam.struOutBuf.pBuf = pRetWinNo;
+		struOutputParam.struOutBuf.nLen = nWinCount * dwDispNum * sizeof(DWORD);
+		if (!NET_DVR_SetDeviceConfigEx(userId, NET_DVR_SET_VIDEOWALLWINDOWPOSITION, nWinCount * dwDispNum, &struInputParam,
+			&struOutputParam))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_SetDeviceConfigEx NET_DVR_SET_VIDEOWALLWINDOWPOSITION fail, errorCode=%d\n"), errorCode);
+			delete[] pWinNo;
+			delete[] pRetWinNo;
+			delete[] pWinStatus;
+			delete[] pStruWinPos;
+			delete[] pStruWallDispPos;
+			delete[] pDispStatus;
+			delete[] pDispChan;
+			return false;
+		}
+
+		//初始化考车对应通道信息
+		for (int i = 0; i < dwDispNum; i++)
+		{
+			int nCarNo = mapIndexCar[i];		//考车号
+
+			BYTE byDecChan[DISPLAY_CHAN_NUMS];	//显示通道对应的解码通道
+			for (int j = 0; j < DISPLAY_CHAN_NUMS; j++)
+			{
+				byDecChan[j] = pRetWinNo[nWinCount * i + j];
+			}
+
+			if (0 == m_mapCarManagers.count(nCarNo))
+			{
+				m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
+			}
+		}
+
+		delete[] pWinNo;
+		delete[] pRetWinNo;
+		delete[] pWinStatus;
+		delete[] pStruWinPos;
+		delete[] pStruWallDispPos;
+		delete[] pDispStatus;
+		delete[] pDispChan;
 	}
 	catch (...)
 	{
@@ -861,6 +1119,8 @@ bool CVideoMergeManager::Run()
 	map<int, CCarManager>::iterator it;
 	for (it = m_mapCarManagers.begin(); it != m_mapCarManagers.end(); it++)
 	{
+		//fix me 
+		//这里摄像头编号和窗口号索引是写死的
 		//车载视频动态解码
 		wstring key = CStringUtils::Format(_T("考车%d_1"), it->first);
 		if (!GetVideoChannel(key, channel))
@@ -869,7 +1129,7 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 0);
+			it->second.StartDynamicDecode(channel, 3);
 		}
 		key = CStringUtils::Format(_T("考车%d_2"), it->first);
 		if (!GetVideoChannel(key, channel))
@@ -878,13 +1138,22 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 1);
+			it->second.StartDynamicDecode(channel, 4);
+		}
+		key = CStringUtils::Format(_T("考车%d_3"), it->first);
+		if (!GetVideoChannel(key, channel))
+		{
+			L_INFO(_T("Video channel 3 of car %d not configured\n"), it->first);
+		}
+		else
+		{
+			it->second.StartDynamicDecode(channel, 5);
 		}
 		
 		//被动解码
 		LONG lStudentInfoHandle = -1;
 		LONG lMapHandle = -1;
-		if (it->second.StartPassiveDecode(2, lStudentInfoHandle) && it->second.StartPassiveDecode(3, lMapHandle))
+		if (it->second.StartPassiveDecode(0, lMapHandle) && it->second.StartPassiveDecode(1, lStudentInfoHandle))
 		{
 			it->second.InitPassiveMode(lStudentInfoHandle, lMapHandle);
 		}

@@ -13,6 +13,8 @@ public:
 
 public:
 	void InitCar(int userId, int carNo, BYTE(&decChan)[DISPLAY_CHAN_NUMS]);
+	void InitCar(int userId, int carNo, DWORD leftTop, DWORD leftBottom, DWORD middleBottom, DWORD rightBottom, 
+		DWORD rightMiddle, DWORD rightTop);
 	void InitPassiveMode(int studentInfoHandle, int mapHandle);			//初始化被动解码相关参数
 	bool StartDynamicDecode(CHANNEL_CONFIG channel, int wnd);	//启动动态解码
 	bool StartPassiveDecode(int wnd, LONG &lpHandle);						//启动被动解码

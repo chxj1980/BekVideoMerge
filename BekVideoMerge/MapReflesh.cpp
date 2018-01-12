@@ -21,7 +21,8 @@ CMapReflesh::CMapReflesh()
 	m_bBigCar = false;
 	m_nKskm = 2;
 
-	m_bStartExam = true;
+	m_bStartExam = false;
+	m_bEndExam = false;
 	m_wsExamStatus = _T("");
 	m_nDisplayDelays = 0;
 	m_nCurrentScore = EXAM_TOTAL_SCORE;
@@ -125,6 +126,7 @@ void CMapReflesh::SetCarSignal(CarSignal signal)
 void CMapReflesh::Handle17C51()
 {
 	m_bStartExam = true;
+	m_bEndExam = false;
 	m_wsExamStatus = _T("考试开始");
 	m_startTime = CTime::GetCurrentTime();
 	m_nDisplayDelays = 0;
@@ -342,6 +344,7 @@ void CMapReflesh::Handle17C55(int xmNo, wstring xmName)
 void CMapReflesh::Handle17C56(bool bPass, int nScore)
 {
 	m_bStartExam = false;	//考试结束
+	m_bEndExam = true;
 	m_bPass = bPass;	//考试是否通过
 	m_nCurrentScore = nScore;	//考试得分
 	m_nDisplayDelays = DISPLAY_DELAY_SECONDS; //延迟显示一段时间

@@ -117,7 +117,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				}
 				else
 				{
-					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 1);
+					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 5);
 				}
 			}
 
@@ -183,7 +183,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 			}
 			else
 			{
-				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 1);
+				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 5);
 			}
 
 			if (0 == m_mapItems.count(wsXmNo))
@@ -841,6 +841,28 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			}
 		}
 
+		/*//获取电视墙的一些显示参数
+		DWORD *pStatus = new DWORD[dwDispNum];
+		NET_DVR_WALLOUTPUTPARAM *pStruWallOutput = new NET_DVR_WALLOUTPUTPARAM[dwDispNum];
+		if (!NET_DVR_GetDeviceConfig(userId, NET_DVR_WALLOUTPUT_GET, dwDispNum, pDispChan, sizeof(DWORD) * dwDispNum,
+			pStatus, pStruWallOutput, dwDispNum * sizeof(NET_DVR_WALLOUTPUTPARAM)))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_GetDeviceConfig NET_DVR_WALLOUTPUT_GET fail, errorCode=%d\n"), errorCode);
+		}
+		for (int i = 0; i < dwDispNum; i++)
+		{
+			pStruWallOutput[i].dwResolution = _1080P_60HZ;
+		}
+		if (!NET_DVR_SetDeviceConfig(userId, NET_DVR_WALLOUTPUT_SET, dwDispNum, pDispChan,
+			sizeof(DWORD) * dwDispNum, pStatus, pStruWallOutput, dwDispNum * sizeof(NET_DVR_WALLOUTPUTPARAM)))
+		{
+			int errorCode = NET_DVR_GetLastError();
+			L_ERROR(_T("NET_DVR_GetDeviceConfig NET_DVR_WALLOUTPUT_SET fail, errorCode=%d\n"), errorCode);
+		}
+		delete[]pStruWallOutput;
+		delete[]pStatus;*/
+
 		DWORD *pDispStatus = new DWORD[dwDispNum];
 		NET_DVR_VIDEOWALLDISPLAYPOSITION *pStruWallDispPos = new NET_DVR_VIDEOWALLDISPLAYPOSITION[dwDispNum];
 		memset(pDispStatus, 0, dwDispNum * sizeof(DWORD));
@@ -1131,7 +1153,7 @@ bool CVideoMergeManager::Run()
 		//被动解码
 		LONG lStudentInfoHandle = -1;
 		LONG lMapHandle = -1;
-		if (it->second.StartPassiveDecode(0, lMapHandle) && it->second.StartPassiveDecode(2, lStudentInfoHandle))
+		if (it->second.StartPassiveDecode(0, lMapHandle) && it->second.StartPassiveDecode(1, lStudentInfoHandle))
 		{
 			it->second.InitPassiveMode(lStudentInfoHandle, lMapHandle);
 		}

@@ -10,7 +10,7 @@
     #endif
 #endif
 
-#ifndef __PLAYRECT_defined
+#ifndef __PLAYRECT_definedf
     #define __PLAYRECT_defined
     typedef struct __PLAYRECT
     {
@@ -333,7 +333,9 @@
 #define MAX_SIGNALLIGHT_NUM     6   //最大信号灯个数
 #define LEN_16                    16
 #define LEN_32                    32
+#define LEN_64                    64
 #define LEN_31                    31 
+#define	MAX_LINKAGE_CHAN_NUM      16  //报警联动的通道的最大数量
 #define MAX_CABINET_COUNT       8    //最大支持机柜数量
 #define MAX_ID_LEN              48
 #define MAX_PARKNO_LEN          16
@@ -354,6 +356,7 @@
 #define AUDIOTALKTYPE_G726         6
 #define AUDIOTALKTYPE_AAC         7
 #define AUDIOTALKTYPE_PCM         8
+#define AUDIOTALKTYPE_G722C       9
 
 //packet type
 #define FILE_HEAD            0 //file head
@@ -380,7 +383,8 @@
 #define MAX_SLAVE_CHANNEL_NUM    16   //最大从通道数量
 #define MAX_DEVDESC_LEN          64   //设备描述信息最大长度
 #define ILLEGAL_LEN       32      //违法代码长度
-
+#define MAX_TRUCK_AXLE_NUM      10      //货车轴最大数
+#define MAX_CATEGORY_LEN        8       //车牌附加信息最大字符
 
 
 #define MAX_SECRETKEY_LEN           512     //最大秘钥长度
@@ -900,13 +904,35 @@
 #define NET_ERR_BASEMAP_NOT_EXIST                   732 //底图图片不存在
 #define NET_ERR_LED_NOT_SUPPORT_VIRTUAL_LED         733 //LED屏幕不支持虚拟LED
 #define NET_ERR_LED_RESOLUTION_NOT_SUPPORT          734 //LED分辨率不支持
-#define NET_ERR_PLAN_OVERDUE                        735    //预案超期，不能再调用
+#define NET_ERR_PLAN_OVERDUE                        735 //预案超期，不能再调用
 #define NET_ERR_PROCESSER_MAX_SCREEN_BLK            736 //单个处理器接入的信号跨越的屏幕个数超限
+#define NET_ERR_WND_SIZE_TOO_SMALL                  737 //开窗窗口宽高太小
+#define NET_ERR_WND_SPLIT_NOT_SUPPORT_ROAM          738 //分屏窗口不支持漫游
+#define NET_ERR_OUTPUT_ONE_BOARD_ONE_WALL           739 //同一个子板的输出口只能绑定到同一面墙上
+#define NET_ERR_WND_CANNOT_LCD_AND_LED_OUTPUT       740 //窗口不能同时跨LCD和LED输出口
 
 #define NET_SDK_CANCEL_WND_TOPKEEP_ATTR_FIRST       751 //先取消置顶保持窗口的置顶保持属性才能进行置底操作
 #define NET_SDK_ERR_LED_SCREEN_CHECKING             752 //正在校正LED屏幕
 #define NET_SDK_ERR_NOT_SUPPORT_SINGLE_RESOLUTION   753 //LCD/LED输出口绑定之后不支持单个输出口的分辨率配置
-#define NET_SDK_ERR_LED_RESOLUTION_MISMATCHED       754 //该输出口的LED分辨率和其他输出口的LED分辨率不匹配
+#define NET_SDK_ERR_LED_RESOLUTION_MISMATCHED       754 //该输出口的LED分辨率和其他输出口的LED分辨率不匹配，需要满足同行等高、同列等宽
+
+
+#define NET_SDK_ERR_MAX_VIRTUAL_LED_WIDTH           755 //虚拟LED宽度超限，包括最大值和最小值[240,1920*36]
+#define NET_SDK_ERR_MAX_VIRTUAL_LED_IN_SCREEN       756 //单屏虚拟LED数量超限（2）
+#define NET_SDK_ERR_MAX_VIRTUAL_LED_IN_WALL         757 //单墙虚拟LED数量超限（4）
+#define NET_SDK_ERR_VIRTUAL_LED_OVERLAP             758 //虚拟LED重叠错误
+#define NET_SDK_ERR_VIRTUAL_LED_TYPE                759 //类型错误
+#define NET_SDK_ERR_VIRTUAL_LED_COLOUR              760 //颜色错误
+#define NET_SDK_ERR_VIRTUAL_LED_MOVE_DIRECTION      761 //移动方向错误
+#define NET_SDK_ERR_VIRTUAL_LED_MOVE_MODE           762 //移动模式错误
+#define NET_SDK_ERR_VIRTUAL_LED_MOVE_SPEED          763 //移动速度错误
+#define NET_SDK_ERR_VIRTUAL_LED_DISP_MODE           764 //显示模式有误
+#define NET_SDK_ERR_VIRTUAL_LED_NO                  765 //虚拟LED序号错误
+#define NET_SDK_ERR_VIRTUAL_LED_PARA                766 //虚拟LED参数配置错误，包括结构体内其他参数
+#define NET_SDK_ERR_BASEMAP_POSITION                767 //底图窗口宽高参数错误
+#define NET_SDK_ERR_BASEMAP_PICTURE_LEN             768 //底图图片长度超限
+#define NET_SDK_ERR_BASEMAP_PICTURE_RESOLUTION      769 //底图图片分辨率错误
+#define NET_SDK_ERR_BASEMAP_PICTURE_FORMAT          770 //底图图片格式错误
 
 #define NET_ERR_TERMINAL_BUSY                        780    //终端忙，终端处于会议中
 
@@ -1004,6 +1030,23 @@
 #define NET_DVR_HLC_NOTDISABLE_ERROR             882  //请先关闭所有通道当前日夜参数转换模式下的强光抑制
 
 #define NET_DVR_THERMOMETRY_REGION_OVERSTEP_ERROR         883  //测温区域越界
+
+
+#define NET_DVR_ERR_MODELING_DEVICEINTERNAL     884 //建模失败，设备内部错误
+#define NET_DVR_ERR_MODELING_FACE               885 //建模失败，人脸建模错误
+#define NET_DVR_ERR_MODELING_FACEGRADING        886 //建模失败，人脸质量评分错误
+#define NET_DVR_ERR_MODELING_FACEGFEATURE       887 //建模失败，特征点提取错误
+#define NET_DVR_ERR_MODELING_FACEGANALYZING     888 //建模失败，属性提取错误
+
+#define NET_DVR_ERR_STREAM_LIMIT                889 //码流性能超过上限，请减少取流路数
+#define NET_DVR_ERR_STREAM_DESCRIPTION          890 //请输入码流描述
+#define NET_DVR_ERR_STREAM_DELETE               891 //码流正在使用无法删除
+#define NET_DVR_ERR_CUSTOMSTREAM_NAME           892 //自定义码流名称为空或不合法
+#define NET_DVR_ERR_CUSTOMSTREAM_NOTEXISTED     893 //该自定义码流不存在
+
+#define NET_DVR_ERR_TOO_SHORT_CALIBRATING_TIME     894 //标定时间太短
+#define NET_DVR_ERR_AUTO_CALIBRATE_FAILED     895 //自动标定失败
+#define NET_DVR_ERR_VERIFICATION_FAILED     896 //校验失败
 
 //2011-10-25多屏控制器错误码（900-950）
 #define  NET_ERR_CUT_INPUTSTREAM_OVERLIMIT           900 //信号源裁剪数值超限
@@ -1118,6 +1161,7 @@
 #define NET_ERR_MATERIAL_APPROVE_STATE             1054 //素材审核状态错误
 #define NET_ERR_DATAHD_SIGNAL_FORMAT               1055 //已使用的硬盘不允许单个格式化
 
+#define NET_ERR_SCENE_SWITCHING             1056 //场景正在切换
 
 //民用错误码（1100～1200）
 #define NET_ERR_PLT_USERID                          1100 //验证平台userid错误
@@ -1132,7 +1176,8 @@
 #define NET_DVR_ERR_ILLEGAL_VERIFICATION_CODE        1111 //不合法验证码
 #define NET_DVR_ERR_LACK_VERIFICATION_CODE            1112 //缺少验证码
 #define NET_DVR_ERR_FORBIDDEN_IP                    1113 //该IP地址已被禁止，不允许配置(设备支持的IP地址过滤功能)
-
+#define NET_DVR_ERR_UNLOCKPTZ                       1114 //操作无效，请先锁定云台
+#define NET_DVR_ERR_COUNTAREA_LARGE                 1116 //计数区域绘制错误，区域面积大于设备允许值
 //2012-10-16 报警设备错误码（1200~1300）
 #define NET_ERR_SEARCHING_MODULE                    1201 // 正在搜索外接模块
 #define NET_ERR_REGISTERING_MODULE                  1202 // 正在注册外接模块
@@ -1158,6 +1203,11 @@
 #define NET_ERR_DETECTOR_GISTERED_BY_OTHER_PU       1222    //探测器已被其他主机注册
 #define NET_ERR_DETECTOR_DISCONNECT                 1223    //探测器不在线
 #define NET_ERR_CALL_BUSY                           1224    //设备正在通话中
+#define NET_DVR_ERR_ZONE_TAMPER_STAUS                1225    //防区处于防拆状态
+#define NET_DVR_ERR_WIRELESS_DEV_REGISTER             1226    //无线外设已被其他主机注册
+#define NET_DVR_ERR_WIRELESS_DEV_ADDED                1227   //无线外设已被添加
+#define NET_DVR_ERR_WIRELESS_DEV_OFFLINE              1228  //无线外设不在线
+#define NET_DVR_ERR_WIRELESS_DEV_TAMPER_STATUS         1229  //无线外设处于防拆状态
 //信息发布主机
 #define NET_ERR_GET_ALL_RETURN_OVER                    1300  //获取所有返回数目超限
 #define NET_ERR_RESOURCE_USING                      1301  //信息发布资源正在使用，不能修改
@@ -1401,6 +1451,17 @@
 #define NET_ERR_ATM_VCA_CHAN_IS_OVERLAPED           2113     //ATM智能通道已被叠加
 #define NET_ERR_FACE_CHAN_UNOVERLAP_EACH_OTHER      2114     //人脸通道不能互相叠加
 #define NET_ERR_ACHIEVE_MAX_CHANNLE_LIMIT           2115     //达到最大路数限制
+#define NET_DVR_SMD_ENCODING_NORESOURSE             2116  //SMD编码资源不足
+#define NET_DVR_SMD_DECODING_NORESOURSE             2117  //SMD解码资源不足
+#define NET_DVR_FACELIB_DATA_PROCESSING             2118  //人脸库数据正在处理
+#define NET_DVR_ERR_LARGE_TIME_DIFFRENCE            2119  //设备和服务器之间的时间差异太大
+#define NET_DVR_NO_SUPPORT_WITH_PLAYBACK            2120  //已开启回放，不支持本功能
+#define NET_DVR_CHANNEL_NO_SUPPORT_WITH_SMD         2121  //通道已开启SMD，不支持本功能
+#define NET_DVR_CHANNEL_NO_SUPPORT_WITH_FD          2122  //通道已开启人脸抓拍，不支持本功能
+#define NET_DVR_ILLEGAL_PHONE_NUMBER                2123  //非法的电话号码
+#define NET_DVR_ILLEGAL_CERITIFICATE_NUMBER         2124  //非法的证件号码
+#define NET_DVR_ERR_CHANNEL_RESOLUTION_NO_SUPPORT   2125  //通道分辨率不支持
+#define NET_DVR_ERR_CHANNEL_COMPRESSION_NO_SUPPORT  2126  //通道编码格式不支持
 
 //热成像产线相关错误码（3001 - 3500）
 #define NET_DVR_ERR_NOTSUPPORT_DEICING    3001    //设备当前状态不支持除冰功能（只在POE+、AC24V、DC12V供电下支持除冰功能）
@@ -2503,6 +2564,11 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define NET_DVR_CAPTURE_FINGERPRINT_INFO                2504    //采集指纹信息
 /*************************************视频门禁一体机1.0 end**************************************/
 
+/*************************************嵌入式智能终端1.0 begin**************************************/
+#define NET_DVR_BULK_UPLOAD_BLACK_LIST_PICTURE          2520       //批量上传黑名单图片
+#define NET_DVR_BULK_UPLOAD_ID_BLACK_LIST        2521        //批量上传身份证黑名单
+/*************************************嵌入式智能终端1.0 end**************************************/
+
 /*************************************人脸识别门禁一体机1.0 begin**************************************/
 #define NET_DVR_GET_CARD_READER_CFG_V50                    2505    //获取读卡器参数(V50)
 #define NET_DVR_SET_CARD_READER_CFG_V50                 2506    //设置读卡器参数(V50)
@@ -2521,6 +2587,10 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define NET_DVR_DEL_FINGERPRINT_CFG_V50                 2517    //删除指纹参数V50
 #define NET_DVR_GET_EVENT_CARD_LINKAGE_CFG_V51          2518    //获取事件卡号联动配置参数(V51)
 #define NET_DVR_SET_EVENT_CARD_LINKAGE_CFG_V51          2519    //设置事件卡号联动配置参数(V51)
+
+#define NET_DVR_SET_EXAM_INFO                           2530    //考试信息下发
+#define NET_DVR_SET_EXAMINEE_INFO                       2531    //考生信息下发
+#define NET_DVR_SEARCH_EXAM_COMPARE_RESULT              2532    //考试比对结果查询
 
 #define NET_DVR_GET_ALL_ALARM_RS485CFG            2705    // 获取485参数
 #define NET_DVR_GET_ALL_ALARMHOST_RS485_SLOT_CFG        2706        // 获取所有报警主机485槽位参数
@@ -3119,6 +3189,13 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define NET_DVR_GET_PREVIEW_MODE_CAPABILITIES        3983//获取预览模式配置能力
 #define NET_DVR_SET_EAGLE_FOCUS_GOTOSCENE            3984//鹰式聚焦设置摄像机转向指定的场景ID
 #define NET_DVR_EAGLE_FOCUS_SCENE_DEL                3985//删除鹰式聚焦标定的场景
+#define NET_DVR_GET_SAFETY_HELMET_TRIGGER            3986   //获取安全帽检测联动配置
+#define NET_DVR_SET_SAFETY_HELMET_TRIGGER            3987  //设置安全帽检测联动配置
+#define NET_DVR_GET_SAFETY_HELMET_SCHEDULE_CAPABILITIES 3988 //获取安全帽检测布防时间能力
+#define NET_DVR_GET_SAFETY_HELMET_SCHEDULE           3989//获取安全帽检测布防时间配置
+#define NET_DVR_SET_SAFETY_HELMET_SCHEDULE           3990//设置安全帽检测布防时间配置
+
+
 #define NET_DVR_ONE_KEY_CONFIG_SAN_V50               4152  //一键配置SAN(V50)
 #define NET_DVR_GET_HDCFG_V50                        4153  //获取硬盘信息参数V50
 #define NET_DVR_SET_HDCFG_V50                        4154  //设置硬盘信息参数V50
@@ -3128,6 +3205,22 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define NET_DVR_SET_POWER_SUPPLY_CABINET_TRIGGER     4158  //设置机柜供电检测的联动配置
 #define NET_DVR_GET_SENSOR_TRIGGER                   4159  //获取传感器检测的联动配置
 #define NET_DVR_SET_SENSOR_TRIGGER                   4160  //设置传感器检测的联动配置
+#define	NET_DVR_GET_FACESNAP_TRIGGER                 4161  //获取人脸抓拍联动配置
+#define	NET_DVR_SET_FACESNAP_TRIGGER	             4162  //设置人脸抓拍联动配置
+#define NET_DVR_GET_FACESNAP_SCHEDULE_CAPABILITIES   4163  //获取人脸抓拍布防时间能力
+#define NET_DVR_GET_FACESNAP_SCHEDULE                4164  //获取人脸抓拍布防时间配置
+#define NET_DVR_SET_FACESNAP_SCHEDULE                4165  //设置人脸抓拍布防时间配置
+
+#define NET_DVR_SET_SCREEN_SWITCH                    4171  //画面切换控制
+#define NET_DVR_GET_BV_CALIB_PIC                     4172  //获取设备抓取图片和附加信息
+#define NET_DVR_GET_BV_CALIB_RESULT                  4173  //获取双目外参标定结果
+#define NET_DVR_GET_BV_HCORRECTION                   4174  //获取双目高度矫正数据
+#define NET_DVR_DEL_BV_CALIB_PIC                     4175  //删除样本图片
+#define NET_DVR_GET_TV_SCREEN_CFG                    4176  //获取导播画面停留时间配置
+#define NET_DVR_SET_TV_SCREEN_CFG                    4177  //设置导播画面停留时间配置
+#define NET_DVR_ADJUST_BV_CALIB                      4178 //双目标定微调
+#define NET_DVR_GET_HUMAN_CALIB                      4179 //获取人体坐标标定配置
+#define NET_DVR_SET_HUMAN_CALIB                      4180 //设置人体坐标标定配置
 
 /********************************NVR_后端产品线****************************/
 #define NET_DVR_GET_MUTEX_FUNCTION              4353  //获取功能互斥信息
@@ -3763,12 +3856,6 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define    NET_DVR_SET_STORAGEDETECTION_SCHEDULE         6639    //设置存储健康布防时间配置
 #define    NET_DVR_GET_STORAGEDETECTION_STATE             6640    //获取存储健康状态
 
-
-#define    NET_DVR_GET_FACECAPTURE_EVENT_TRIGGER         6641    //获取人脸抓拍联动配置
-#define    NET_DVR_SET_FACECAPTURE_EVENT_TRIGGER         6642    //设置人脸抓拍联动配置
-#define    NET_DVR_GET_FACECAPTURE_SCHEDULE_CAPABILITIES 6643    //获取人脸抓拍布防时间能力
-#define    NET_DVR_GET_FACECAPTURE_SCHEDULE             6644    //获取人脸抓拍布防时间配置
-#define    NET_DVR_SET_FACECAPTURE_SCHEDULE             6645    //设置人脸抓拍布防时间配置
 #define    NET_DVR_GET_STORAGEDETECTION_RWLOCK             6646    //获取存储侦测的读写锁配置
 #define    NET_DVR_GET_STORAGEDETECTION_RWLOCK_CAPABILITIES    6647    //获取存储侦测的读写锁配置能力
 #define    NET_DVR_SET_STORAGEDETECTION_RWLOCK             6648    //设置存储侦测的读写锁配置
@@ -3958,6 +4045,7 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define NET_DVR_SET_DISPLAY_EFFECT_CFG            9030  //设置显示输出效果参数v41
 #define NET_DVR_GET_DISPLAY_EFFECT_CFG            9031  //获取显示输出效果参数v41
 #define NET_DVR_DEC_PLAY_REMOTE_FILE            9032  //解码播放远程文件
+#define NET_DVR_DEC_PLAY_REMOTE_FILE_V50        9314  //解码播放远程文件V50
 #define NET_DVR_GET_WIN_ZOOM_STATUS             9033  //获取窗口电子放大状态
 #define NET_DVR_GET_ALL_MATRIX_LOGOCFG          9034  //获取所有logo参数
 
@@ -4217,7 +4305,14 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define    NET_DVR_GET_FIBER_CONVERT_BASIC_INFO_V50     9310    //获取远端网管收发器基本信息V50
 #define    NET_DVR_GET_FIBER_CONVERT_WORK_STATE_V50     9311    //获取远端网管收发器工作状态
 
-#define  NET_SDK_LED_SCREEN_CHECK  9312  //LED屏幕校正
+#define NET_SDK_LED_SCREEN_CHECK            9312    //LED屏幕校正
+#define NET_SDK_GENERATE_OUTPUT_CONTROL	    9315    //通用扩展输出口模块控制
+#define  NET_SDK_GET_MATRIX_STATUS_V51   9313    /*获取视频综合平台状态*/
+
+//DS-19D2000-S V2.0升级 报警联动配置参数命令码
+#define  NET_DVR_GET_ALARM_LINKAGE_CFG    9316    //获取动环报警联动配置参数
+#define  NET_DVR_SET_ALARM_LINKAGE_CFG    9317    //设置动环报警联动配置参数
+
 
 #define NET_DVR_GET_RS485_WORK_MODE             10001 //获取RS485串口工作模式
 #define NET_DVR_SET_RS485_WORK_MODE             10002 //设置RS485串口工作模式
@@ -4225,6 +4320,7 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define NET_DVR_SET_SPLITTER_TRANS_CHAN_CFG     10004 //设置码分器透明通道参数
 
 #define NET_DVR_GET_RS485_PROTOCOL_VERSION              10301       //获取RS485协议库版本信息
+#define	 NET_DVR_ALARMHOST_REGISTER_DETECTOR  10302			//自动注册探测器
 
 #define  NET_DVR_GET_SIP_CFG                    11001   //IP可视化机获取SIP参数
 #define  NET_DVR_SET_SIP_CFG                    11002   //IP可视化机设置SIP参数
@@ -4296,6 +4392,9 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define NET_DVR_SET_ROOM_CUSTOM_CFG             16041  //房间自定义设置
 #define NET_DVR_GET_ELEVATORCONTROL_CFG_V50     16042  //获取梯控器参数V50
 #define NET_DVR_SET_ELEVATORCONTROL_CFG_V50     16043  //设置梯控器参数V50
+
+#define NET_DVR_GET_NOTICE_VIDEO_DATA           16050  //公告视频获取
+
 /*******************************楼宇可视对讲机 end***********************************/
 
 #define    NET_DVR_DEBUGINFO_START                     18000    //网传设备调试信息启动命令
@@ -4428,6 +4527,8 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 
 #define MINOR_FACESNAP_MATCH_ALARM_START            0x55  /*人脸比对报警开始*/
 #define MINOR_FACESNAP_MATCH_ALARM_STOP             0x56  /*人脸比对报警结束*/
+#define MINOR_WHITELIST_FACESNAP_MATCH_ALARM_START  0x57  /*白名单人脸比对（陌生人）报警开始*/
+#define MINOR_WHITELIST_FACESNAP_MATCH_ALARM_STOP   0x58  /*白名单人脸比对（陌生人）报警结束*/
 
 #define MINOR_THERMAL_SHIPSDETECTION                0x5a   //热成像船只检测侦测
 #define MINOR_THERMAL_THERMOMETRY_EARLYWARNING_BEGIN 0x5b  //热成像测温预警开始
@@ -4631,7 +4732,18 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define MINOR_CAMERA_ANGLE_ANOMALY          0x60//  相机视角异常
 #define MINOR_DATA_DISK_ERROE               0x61//  数据盘错误  
 #define MINOR_INTELLIGENT_SYSTEM_RUNNING_ERROR     0x62//  智能系统运行异常
-
+#define MINOR_FACESNAP_RESOLUTION_OVERFLOW         0x63//  人脸抓拍码流分辨率超限
+#define MINOR_SMD_RESOLUTION_OVERFLOW              0x64//  SMD码流分辨率超限
+#define MINOR_AUDIO_LOSS_EXCEPTION                 0x65//  音频丢失异常
+//NVR集群
+#define MINOR_CLUSTER_DEVICE_OFFLINE                 0x70 // 集群内设备下线
+#define MINOR_CLUSTER_CONFIG_FAILED                  0x71 // 集群内设备配置失败
+#define MINOR_CLUSTER_DISASTER_TOLERANCE_EXCEPT      0x72 // 集群容灾异常:集群CM选举失败,集群存储周期不足,集群带宽不足,集群通道资源不足,集群设备不足等
+#define MINOR_CLUSTER_STORFULL_EXCEPTION             0x73 //集群硬盘满
+#define MINOR_CLUSTER_VERSION_EXCEPTION              0x74  //集群版本异常
+#define MINOR_CLUSTER_OFFLINENODE_EXCEPTION          0x75   //集群掉线数超限
+#define MINOR_CLUSTER_RECORDCYCLE_EXCEPTION          0x76   //集群录像周期不足
+#define MINOR_CLUSTER_IPCTRANSFER_EXCEPTION          0x77   //集群IPC迁移失败
 //0x400-0x1000 门禁异常类型
 #define MINOR_DEV_POWER_ON                     0x400  //设备上电启动
 #define MINOR_DEV_POWER_OFF                    0x401  //设备掉电关闭
@@ -4677,7 +4789,7 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define MINOR_LOCAL_LOGIN_UNLOCK               0x429  //本地登录解锁
 #define MINOR_SUBMARINEBACK_COMM_BREAK         0x42a  //与反潜回服务器通信断开
 #define MINOR_SUBMARINEBACK_COMM_RESUME        0x42b  //与反潜回服务器通信恢复
-#define MINOR_MOTOR_SENSOR_EXCEPTION           0x42c  //电机传感器异常
+#define MINOR_MOTOR_SENSOR_EXCEPTION           0x42c  //电机或传感器异常
 #define MINOR_CAN_BUS_EXCEPTION                0x42d  //CAN总线异常
 #define MINOR_CAN_BUS_RESUME                   0x42e  //CAN总线恢复
 #define MINOR_GATE_TEMPERATURE_OVERRUN         0x42f  //闸机腔体温度超限
@@ -5402,6 +5514,18 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define MINOR_LOCAL_VCA_ANALYSIS_CFG          0x2618    /* 本地智能分析配置*/ 
 #define MINOR_REMOTE_VCA_ANALYSIS_CFG         0x2619    /* 远程智能分析配置*/
 
+#define MINOR_LOCAL_FACE_BASE_IMPORT          0x261a    /* 本地导入人脸库*/ 
+#define MINOR_LOCAL_FACE_BASE_EXPORT          0x261b    /* 本地导出人脸库*/
+//NVR集群
+#define MINOR_REMOTE_CLUSTER_MODE_CONFIG      0x261c    /* 远程集群模式配置操作*/
+#define MINOR_LOCAL_CLUSTER_MODE_CONFIG       0x261d    /* 本地集群模式配置操作*/
+#define MINOR_REMOTE_CLUSTER_NETWORK_CONFIG   0x261e    /* 远程集群组网配置操作*/
+#define MINOR_LOCAL_CLUSTER_NETWORK_CONFIG    0x261f    /* 本地集群组网配置操作*/
+#define MINOR_REMOTE_CLUSTER_ADD_DEVICE       0x2620    /* 远程集群添加设备操作*/
+#define MINOR_LOCAL_CLUSTER_ADD_DEVICE        0x2621    /* 本地集群添加设备操作*/
+#define MINOR_REMOTE_CLUSTER_DEL_DEVICE       0x2622    /* 远程集群删除设备操作*/
+#define MINOR_LOCAL_CLUSTER_DEL_DEVICE        0x2623    /* 本地集群删除设备操作*/
+
 /*日志附加信息*/
 //主类型
 #define MAJOR_INFORMATION               0x4     /*附加信息*/
@@ -5452,6 +5576,12 @@ NET_DVR_GET_SHOWSTRING 、NET_DVR_SET_SHOWSTRING 命令。（不建议使用）*/
 #define MINOR_IPC_CONNECT               0xc8//  IPC连接
 #define MINOR_INTELLIGENT_BOARD_STATUS  0xc9//  智能板状态
 #define MINOR_EZVIZ_OPERATION           0xcc   //萤石运行状态
+//NVR集群
+#define MINOR_CLUSTER_DEVICE_ONLINE     0xcd   //集群设备上线
+#define MINOR_CLUSTER_MGR_SERVICE_STARTUP 0xce   //集群管理服务启动
+#define MINOR_CLUSTER_BUSINESS_TRANSFER 0xcf   //集群业务迁移
+#define MINOR_CLUSTER_STATUS            0xd0   //集群状态信息
+
 /*事件*/
 //主类型
 #define MAJOR_EVENT                             0x5     /*事件*/
@@ -5714,6 +5844,32 @@ typedef enum tagALARMHOST_MINOR_TYPE
         MINOR_ZONE_MODULE_REMOVE,            // 防区模块防拆
         MINOR_ZONE_MODULE_RESET,    // 防区模块防拆复位
 
+        MINOR_ALARM_WIND_SPEED_ALARM,               //风速传感器告警
+        MINOR_ALARM_WIND_SPEED_ALARM_RESTORE,       //风速传感器告警恢复
+        MINOR_ALARM_GENERATE_OUTPUT_ALARM,          //通用输出模块告警
+        MINOR_ALARM_GENERATE_OUTPUT_RESTORE,        //通用输出模块告警恢复
+        MINOR_ALARM_SOAK_ALARM,                     //浸水传感器告警
+        MINOR_ALARM_SOAK_ALARM_RESTORE,             //浸水传感器告警恢复
+        MINOR_ALARM_SOLAR_POWER_ALARM,              //太阳能传感器告警
+        MINOR_ALARM_SOLAR_POWER_ALARM_RESTORE,      //太阳能传感器告警恢复
+        MINOR_ALARM_SF6_ALARM,                      //SF6报警主机告警
+        MINOR_ALARM_SF6_ALARM_RESTORE,              //SF6报警主机告警恢复
+        MINOR_ALARM_WEIGHT_ALARM,                   //称重仪告警
+        MINOR_ALARM_WEIGHT_ALARM_RESTORE,           //称重仪告警恢复
+        MINOR_ALARM_WEATHER_ALARM,                  //气象采集系统告警
+        MINOR_ALARM_WEATHER_ALARM_RESTORE,          //气象采集系统告警恢复
+        MINOR_ALARM_FUEL_GAS_ALARM,                 //燃气监测系统告警
+        MINOR_ALARM_FUEL_GAS_ALARM_RESTORE,         //燃气监测系统告警恢复
+        MINOR_ALARM_FIRE_ALARM,                     //火灾报警系统告警
+        MINOR_ALARM_FIRE_ALARM_RESTORE,             //火灾报警系统告警恢复
+
+        MINOR_WIRELESS_OUTPUT_MODULE_REMOVE,            // 无线输出模块防拆
+        MINOR_WIRELESS_OUTPUT_MODULE_RESET,    // 无线输出模块防拆复位
+        MINOR_WIRELESS_REPEATER_MODULE_REMOVE,            // 无线中继器防拆
+        MINOR_WIRELESS_REPEATER_MODULE_RESET,    // 无线中继器防拆复位
+        MINOR_WIRELESS_SIREN_MODULE_REMOVE,            // 无线警号防拆
+        MINOR_WIRELESS_SIREN_MODULE_RESET,    // 无线警号防拆复位
+
         // 异常
         MINOR_POWER_ON      = 0x01,    // 上电
         MINOR_POWER_OFF,                // 掉电
@@ -5781,6 +5937,8 @@ typedef enum tagALARMHOST_MINOR_TYPE
         MINOR_ALARMHOST_WIRELESS_REPEATER_RESTORE,   //无线中继器恢复在线
         MINOR_TRIGGER_MODULE_LOSS,            // 触发器模块掉线
         MINOR_TRIGGER_MODULE_RESTORE,        // 触发器模块掉线恢复
+        MINOR_WIRELESS_SIREN_LOSS,            // 无线警号离线
+        MINOR_WIRELESS_SIREN_RESTORE,    // 无线警号恢复在线
 
 
         // 操作 
@@ -5919,6 +6077,16 @@ typedef enum tagALARMHOST_MINOR_TYPE
         MINOR_ALARMHOST_ADD_CONTROLLER,		//添加遥控器用户
         MINOR_ALARMHOST_DELETE_CONTORLLER,		//删除遥控器用户
         MINOR_ALARMHOST_REMOTE_NETWORKMODULE_UPGRADE,            //远程升级网络模块
+        MINOR_ALARMHOST_WIRELESS_OUTPUT_ADD,   //注册无线输出模块
+        MINOR_ALARMHOST_WIRELESS_OUTPUT_DEL,   //删除无线输出模块
+        MINOR_ALARMHOST_WIRELESS_REPEATER_ADD,   //注册无线中继器
+        MINOR_ALARMHOST_WIRELESS_REPEATER_DEL,   //删除无线中继器
+        MINOR_ALARMHOST_PHONELIST_CFG,    //电话名单参数配置
+        MINOR_ALARMHOST_RF_SIGNAL_CHECK,  // RF信号查询
+        MINOR_ALARMHOST_USB_UPGRADE,  // USB升级
+        MINOR_ALARMHOST_DOOR_TIME_REMINDER_CFG,//门磁定时提醒参数配置
+        MINOR_ALARMHOST_WIRELESS_SIREN_ADD,   //注册无线警号
+        MINOR_ALARMHOST_WIRELESS_SIREN_DEL,   //删除无线警号
 
         MINOR_ALARMHOST_LOCAL_SET_DEVICE_ACTIVE = 0xf0,        //本地激活设备
         MINOR_ALARMHOST_REMOTE_SET_DEVICE_ACTIVE = 0xf1,        //远程激活设备
@@ -6016,10 +6184,12 @@ typedef enum tagALARMHOST_MINOR_TYPE
 #define    COMM_ALARMHOST_EXTERNAL_DEVICE_ALARM 0x1128     //报警主机外接设备报警上传
 #define COMM_ALARMHOST_DATA_UPLOAD           0x1129     //报警数据上传
 #define COMM_FACECAPTURE_STATISTICS_RESULT   0x112a  //人脸抓拍统计上传
+#define COMM_ALARM_WIRELESS_INFO   0x122b  // 无线网络信息上传
 #define COMM_SCENECHANGE_DETECTION_UPLOAD     0x1130     //场景变更报警上传(布防)2013-7-16
 #define COMM_CROSSLINE_ALARM                 0x1131    //压线报警(监听) 2013-09-27
 #define COMM_UPLOAD_VIDEO_INTERCOM_EVENT     0x1132  //可视对讲事件记录上传
 #define COMM_ALARM_VIDEO_INTERCOM               0x1133  //可视对讲报警上传
+#define COMM_UPLOAD_NOTICE_DATA              0x1134  //可视对讲公告信息上传
 #define COMM_ALARM_AUDIOEXCEPTION             0x1150     //声音报警信息
 #define COMM_ALARM_DEFOCUS                   0x1151     //虚焦报警信息
 #define COMM_ALARM_BUTTON_DOWN_EXCEPTION     0x1152     //按钮按下报警信息
@@ -6520,6 +6690,7 @@ typedef enum tagALARMHOST_MINOR_TYPE
 #define DS_C20N_DI2                 5352    //两路DVI输入设备
 #define DS_C20N_DO2                 5353    //两路DVI输出设备
 #define DS_C20N_UHDI                5354    //DP/HDMI 1路4K超高清输入设备
+#define DS_C20N_YI2                 5355    //两路YPbPr输入板
 
 //无线传输设备
 #define ELEVATO_BRIDGE  5751  //无线电梯网桥
@@ -6574,7 +6745,12 @@ typedef enum tagALARMHOST_MINOR_TYPE
 #define DS_K1T600X                  863     //人脸识别门禁一体机
 #define DS_K22X                     864     //梯控主控制器
 #define DS_K2M0016AX                865     //梯控分控制器
+#define DS_K2602S_AX                867     //人员通道产品
 #define DS_K560XX                   870     //立式/台式智能身份识别终端
+#define DS_K260X_E                  873     //低端门禁主机
+#define DS_K5603X                   874     //台式嵌入式人证设备
+#define DS_K3M200X                  875     //权限控制器
+#define DS_K3M100X                  879     //通道控制器
 #define DS_6800M                    900     //68M合码器
 #define DS_68NTH                    901     //信息发布主机
 #define DS_D60S                     902     //信息发布服务器
@@ -6745,6 +6921,16 @@ typedef enum tagALARMHOST_MINOR_TYPE
 #define DS_6404HFH_I                4047    //4路DVI输入板
 #define DS_6904UD_O                 4048    //8路HDMI输出板
 
+//视频云模方（Y10系列）
+#define DS_Y10_MCU                  5771    //主控板
+#define DS_Y10_SW1                  5772    //交换板
+#define DS_6516UD_Y10D              5773    //8路DVI显示接口解码板
+#define DS_6532UD_Y10D              5774    //16路DVI显示接口解码板
+#define DS_6E2724_Y10               5775    //24个万兆接口编码接入板
+#define DS_68SAA_AA_Y10             5776    //双路2620、内存32G业务板
+#define DS_68SBA_AA_Y10             5777    //双路2630、内存32G业务板
+#define DS_68SCA_AA_Y10             5778    //双路2650、内存32G业务板
+
 #define DS_81XX_SHXL_K4               6101    //KY2017平台审讯机DS-8104SHFH（L）-K4/4P
 
 #define DS_8116THFHL_F4               6201    //标准庭审主机DS-8116THFHL-F4
@@ -6755,12 +6941,14 @@ typedef enum tagALARMHOST_MINOR_TYPE
 #define IDS_86XX_NX_A               7501    //超脑智能ATM NVR(iDS-8632NX-I8/A)
 #define IDS_96XX_NX_S               7502    //人体超脑智能NVR
 #define IDS_96XX_NX_V               7503    //超脑加油站NVR
+#define IDS_96XX_NX_FA              7504    //人脸超脑智能NVR iDS-9632NX-I8/FA
 #define DS_TRIXX                    8471    //超高频固定式读卡器DS_TRI900
 
 #define IDS_67XX_NX_A               12501    //67系列NVS产品(iDS-6704NX/A)
 #define IDS_67XX_NX_L               12502    //67系列录播NVS产品
 #define IDS_ENIXX_XHE               12503    //录播NVS行业专业产品
 #define IDS_67XX_NX_V               12504    //超脑加油站NVS
+#define IDS_67XX_NX_B               12505    //67系列安全帽检测NVS产品
 
 /**********************设备类型 end***********************/
 /**********************设备大类 begin**********************/
@@ -6972,6 +7160,9 @@ typedef enum tagALARMHOST_MINOR_TYPE
 #define EXCEPTION_MINOR_IP_CONFLICT                       0x1  //IP冲突 
 #define EXCEPTION_MINOR_DISCONNECT                         0x14  // 断网
 
+//[add]by zengxiaole 2017-09-27 DS-19D2000-S v2.0
+#define MAX_FIRE_ALARM_ZONE         12           //最大消防主机报警分区个数
+#define MAX_FIRE_ALARM_POINT_ZONE   32           //最大消防主机报警火点个数
 
 
 typedef enum tagCharEncodeType
@@ -7366,7 +7557,9 @@ typedef struct tagNET_DVR_SIP_CFG
     BYTE byDispalyName[MAX_NAME_LEN]; //设备显示名称
     WORD wLocalPort;     //本地端口
     BYTE byLoginCycle;   //注册周期，1-99分钟
-    BYTE byRes[129];
+    BYTE byType;//0-IP/IPV6,1-域名
+    BYTE byDomainName[MAX_DOMAIN_NAME]; //域名
+    BYTE byRes[64];
 }NET_DVR_SIP_CFG, *LPNET_DVR_SIP_CFG;
 
 //IP可视对讲分机配置
@@ -7572,7 +7765,9 @@ typedef struct
     BYTE byOSDMilliSecondEnable;//视频叠加时间支持毫秒；0~不叠加, 1-叠加
     NET_DVR_RGB_COLOR struOsdColor;//OSD颜色
     DWORD dwBoundary; //边界值，左对齐，右对齐以及国标模式的边界值，0-表示默认值，单位：像素
-    BYTE byRes[52];
+    NET_DVR_RGB_COLOR struOsdBkColor; //自定义OSD背景色
+    BYTE byOSDBkColorMode; //OSD背景色模式，0-默认，1-自定义OSD背景色
+    BYTE byRes[47];
 }NET_DVR_PICCFG_V30, *LPNET_DVR_PICCFG_V30;
 
 //通道图象结构SDK_V14扩展
@@ -7737,7 +7932,10 @@ typedef struct
                             168-576*960,                169-2944*1656,             170-432*240,            171-2160*3840,
                             172-1080*1920,              173-7008*1080,             174-3504*540,           175-1752*270,
                             176-876*135,                177-4096*1440,             178-4096*1080,          179-1536*864,
-                            186-3200*1800
+                            186-3200*1800,              187-1752*272,              188-872*136,            189-1280*1440,
+                            190-3520*544,               191-1728*256,              192-864*128,            193-5470*3684,
+                            194-2560*750,               195-1600*480,              196-1024*300,           197-848*480,
+							198-8160*3616,				199-8160*2304
                             0xff-Auto(使用当前码流分辨率)
     */
     BYTE byResolution;      
@@ -7748,7 +7946,7 @@ typedef struct
     24-3072K，25-4096K，26-8192K，27-16384K。最高位(31位)置成1表示是自定义码流，0～30位表示码流值，最小值16k,0xfffffffe，自动，和源一致*/
     DWORD dwVideoBitrate;      
     DWORD dwVideoFrameRate;    //帧率 0-全部; 1-1/16; 2-1/8; 3-1/4; 4-1/2; 5-1; 6-2; 7-4; 8-6; 9-8; 10-10; 11-12; 12-16; 13-20; V2.0版本中新加14-15; 15-18; 16-22;
-    //17-25；18-30；19-35；20-40；21-45；22-50；23-55；24-60；25-3;26-5;27-7;28-9;29-100; 30-120;31-24;32-48,0xfffffffe-自动，和源一致
+    //17-25；18-30；19-35；20-40；21-45；22-50；23-55；24-60；25-3;26-5;27-7;28-9;29-100; 30-120;31-24;32-48,33-8.3,0xfffffffe-自动，和源一致
     WORD  wIntervalFrameI;  //I帧间隔,0xfffe 自动，和源一致
     BYTE  byIntervalBPFrame;//0-BBP帧; 1-BP帧; 2-单P帧(2006-08-11 增加单P帧的配置接口，可以改善实时流延时问题)；0xfe-自动，和源一致
     BYTE  byres1;        //保留
@@ -7876,7 +8074,7 @@ typedef struct
     19-智能侦测(越界侦测|区域入侵|人脸侦测|声音异常|场景变更侦测),20－人脸侦测,21-POS录像,
     22-进入区域侦测, 23-离开区域侦测,24-徘徊侦测,25-人员聚集侦测,26-快速运动侦测,27-停车侦测,
     28-物品遗留侦测,29-物品拿取侦测,30-火点检测，31-防破坏检测,32-打架斗殴事件(司法),33-起身事件(司法), 34-瞌睡事件(司法)
-    35-船只检测, 36-测温预警，37-测温报警，38-温差报警，39-离线测温报警,40-防区报警，41-紧急求助,42-业务咨询,43-起身检测,44-折线攀高,45-如厕超时*/
+    35-船只检测, 36-测温预警，37-测温报警，38-温差报警，39-离线测温报警,40-防区报警，41-紧急求助,42-业务咨询,43-起身检测,44-折线攀高,45-如厕超时，46-人脸抓拍*/
     BYTE byRecordType; 
     BYTE byRes[31];
 }NET_DVR_RECORDSCHED_V40, *LPNET_DVR_RECORDSCHED_V40;
@@ -8255,7 +8453,7 @@ typedef struct tagNET_DVR_ALARMINFO_FIXED_HEADER
 {
     /*0-信号量报警,1-硬盘满,2-信号丢失，3－移动侦测，4－硬盘未格式化,5-写硬盘出错,6-遮挡报警，
     7-制式不匹配, 8-非法访问，9-视频信号异常，10-录像异常，11-智能场景变化，12-阵列异常，13-前端/录像分辨率不匹配, 
-    14-申请解码资源失败,15-智能侦测报警, 16-热备异常，17-录播主机报警，18-语音对讲请求报警，20-开启录像，21-关闭录像，22-车辆检测算法异常，23-脉冲报警,24-人脸库硬盘异常,25-人脸库变更,26-人脸库图片变更,27-POC异常,28-相机视角异常*/
+    14-申请解码资源失败,15-智能侦测报警, 16-热备异常，17-录播主机报警，18-语音对讲请求报警,19-音频丢失，20-开启录像，21-关闭录像，22-车辆检测算法异常，23-脉冲报警,24-人脸库硬盘异常,25-人脸库变更,26-人脸库图片变更,27-POC异常,28-相机视角异常*/
     DWORD dwAlarmType;//报警类型
     NET_DVR_TIME_EX struAlarmTime;    //发生报警的时间
     union
@@ -8383,7 +8581,7 @@ typedef struct tagNET_DVR_IPDEVINFO_V31
     BYTE byProType;                    //协议类型，0-私有协议，1-松下协议，2-索尼
     BYTE byEnableQuickAdd;        // 0 不支持快速添加  1 使用快速添加 
     // 快速添加需要设备IP和协议类型，其他信息由设备默认指定
-    BYTE byRes1;                    //保留字段，置0
+    BYTE byCameraType;    //通道接入的相机类型，值为 0-无意义，1-老师跟踪，2-学生跟踪，3-老师全景，4-学生全景，5-多媒体，6–教师定位,7-学生定位,8-板书定位,9-板书相机
     BYTE sUserName[NAME_LEN];        //用户名
     BYTE sPassword[PASSWD_LEN];        //密码
     BYTE byDomain[MAX_DOMAIN_NAME];    //设备域名
@@ -8819,7 +9017,7 @@ typedef struct tagNET_DVR_HARD_DISK_SINGLE_VOLUME_INFO
     DWORD  dwSize;
     BYTE  byHDVolumeNo;      /*硬盘卷ID(不可设置)*/
     BYTE  byType;       /*硬盘卷类型:0-录像卷（用于保存录像），1-存档卷（用于存档录像，下发录像计划时，不能关联存档卷）,
-                        2-文件卷（只用于存储客户端上传的文件，下发录像计划时，不能关联文件卷，需要过滤掉）*/
+                        2-文件卷（只用于存储客户端上传的文件，下发录像计划时，不能关联文件卷，需要过滤掉）3-图片卷（只用于存储客户端上传的图片）*/
     BYTE  byRes1[2];
     DWORD  dwCapacity;     /*硬盘卷容量，单位MB(不可设置)*/
     DWORD  dwFreeSpace;    /*硬盘卷剩余空间，单位MB(不可设置) */
@@ -10545,7 +10743,7 @@ typedef struct tagNET_DVR_MATRIX_DECCHAN_CONTROL
     BYTE    byNoiseReduction; //3D降噪，0-关，1-开，2-自动
     BYTE    byDefog;         //透雾，0-关，1-7代表透雾等级，等级越高强度越大
     BYTE    byEnableVcaDec; //是否启用智能解码，0-不启用，非0-启用
-    BYTE    byRes1;
+    BYTE    byEnableAudio; //是否开启音频，0-无效，1-开启，2-关闭
     DWORD   dwAllCtrlType;    //所有子窗口一起操作的类型，设置时有效，按位表示
     //dwAllCtrlType & 0x01,开启关闭智能解码
     BYTE    byRes[56];
@@ -11049,7 +11247,7 @@ typedef struct
 //语音对讲参数
 typedef struct tagNET_DVR_COMPRESSION_AUDIO
 {
-    BYTE  byAudioEncType;   //音频编码类型 0-OggVorbis;1-G711_U;2-G711_A;5-MP2L2;6-G726;7-AAC,8-PCM;9-G722;10-G723;11-G729;
+    BYTE  byAudioEncType;   //音频编码类型 0-OggVorbis(G722.1);1-G711_U;2-G711_A;5-MP2L2;6-G726;7-AAC,8-PCM;9-G722.1.C
     BYTE  byAudioSamplingRate;//音频采样率 0-默认，1-16kHZ，2-32kHZ，3-48kHZ, 4- 44.1kHZ,5-8kHZ
     BYTE  byAudioBitRate;// 音频码率 参考 BITRATE_ENCODE_INDEX
     BYTE  byres[4];//这里保留音频的压缩参数  
@@ -11245,9 +11443,14 @@ typedef  struct
     BYTE    byCountry; // 国家索引值，参照枚举COUNTRY_INDEX（不支持”COUNTRY_ALL = 0xff, //ALL  全部”）
     BYTE    byMatchingResult;//黑白名单匹配结果：0-保留，1-白名单，2-黑名单，3-其他
     BYTE    byArea;                         //区域（省份），各国家内部区域枚举，阿联酋参照 EMI_AREA
-    char    sDeviceName[NAME_LEN/*32*/];    //设备名称
     BYTE    byPlateType;                    //车牌类型 参考 VCA_PLATE_TYPE
-    BYTE    byRes[476];
+    char    sDeviceName[NAME_LEN/*32*/];    //设备名称
+    BYTE  	byPlateColor;						//车牌颜色 参考 VCA_PLATE_COLOR
+    BYTE  	byPlateSize;						//车牌尺寸，0~未知，1~long, 2~short(中东车牌使用)
+    BYTE    byRes2[2];
+    char    sPlateCategory[MAX_CATEGORY_LEN/*8*/];		//车牌附加信息, 即车牌小字信息，(目前只有中东地区支持)
+    char    sPlateImageURL[URL_LEN_V40/*256*/];         //车牌小图URL
+    BYTE    byRes[208];
 }NET_DVR_VEHICLE_INFO_CFG, *LPNET_DVR_VEHICLE_INFO_CFG;
 
 //智能控制信息
@@ -11308,7 +11511,11 @@ typedef struct tagNET_VCA_DEV_ABILITY
     BYTE byEdcationStudentNum; //教育录播（学生起来检测&&学生人数统计）支持的通道数
     BYTE byRoadDetectionNum;//道路监控通道个数
     BYTE byPersonDensityDetection; //人员密度检测通道个数
-    BYTE byRes[10];
+    BYTE bySafetyHelmetDetection; //安全帽检测通道个数
+    BYTE byPerimeterCapture;//周界抓拍通道个数
+    BYTE byHeelPDC;//倾斜客流通道个数
+    BYTE by12MPLiveView;// 主码流 1200W@20fps预览（4000*3000）
+    BYTE byRes[6];
 }NET_VCA_DEV_ABILITY, *LPNET_VCA_DEV_ABILITY;
 
 
@@ -11356,7 +11563,8 @@ typedef enum _VCA_ABILITY_TYPE_EX_
     EVENT_SIT_QUIETLY =        0x00000010,    //静坐
     EVENT_HIGH_DENSITY_STATUS_ABILITY = 0x00000020,    //人员聚集状态
     EVENT_RUNNING = 0x00000040,        //奔跑
-    EVENT_RETENTION = 0x00000080 //滞留
+    EVENT_RETENTION = 0x00000080, //滞留
+    EVENT_TEACHER_WRITING = 0x00000100 //板书
 }VCA_ABILITY_TYPE_EX;
 
 //智能通道类型
@@ -11389,7 +11597,10 @@ typedef enum _VCA_CHAN_ABILITY_TYPE_
     VCA_HUMAN_RECOGNITION = 25 ,      // 人体识别
     VCA_EDUCATION_STUDENT_DETECTION = 26,  //教育录播（学生起来检测&&学生人数统计）
     VCA_ROAD_DETECTION = 27,      //道路监控
-    VCA_PERSON_DENSITY_DETECTION = 28     //人员密度检测
+    VCA_PERSON_DENSITY_DETECTION = 28,     //人员密度检测
+    VCA_PERIMETER_CAPTURE = 29,            //周界抓拍
+    VCA_SAFETY_HELMET_DETECTION = 30,      //安全帽检测
+    VCA_HEEL_PDC = 31                      //倾斜客流
 }VCA_CHAN_ABILITY_TYPE;
 
 //智能ATM模式类型(ATM能力特有)
@@ -11556,7 +11767,8 @@ typedef enum _VCA_RULE_EVENT_TYPE_EX_
         ENUM_VCA_EVENT_SIT_QUIETLY        = 38,   //一动不动（静坐）    则事件
         ENUM_VCA_EVENT_HIGH_DENSITY_STATUS= 39,   //区域内人员聚集状态
         ENUM_VCA_EVENT_RUNNING = 40, //奔跑检测
-        ENUM_VCA_EVENT_RETENTION = 41 //滞留检测
+        ENUM_VCA_EVENT_RETENTION = 41, //滞留检测
+        ENUM_VCA_EVENT_BLACKBOARD_WRITE = 42   //板书
 } VCA_RULE_EVENT_TYPE_EX;
 
 //警戒面穿越方向类型
@@ -11908,7 +12120,7 @@ typedef struct tagNET_VCA_LECTURE
     BYTE byTrackingMode ;//跟踪模式，0-自动(默认) , 1-水平, 2-垂直
     BYTE byZoomMode;//变倍模式, 0-固定(默认), 1-自动
     BYTE byZoomOver;//0-保留,1-变倍到位(报警上传录播主机，作为切换画面判断依据)
-    BYTE byRes;
+    BYTE byTrackStatus;//跟踪状态 0-保留，1-开始授课（A，全景） 2-正在跟踪（2,特写），3 -跟踪丢失（2,全景）
 }NET_VCA_LECTURE, *LPNET_VCA_LECTURE;
 
 typedef struct tagNET_VCA_ANSWER
@@ -11940,6 +12152,16 @@ typedef struct tagNET_VCA_COMBINED_RULE_
     NET_VCA_RELATE_RULE_PARAM  struRule2Raram;//规则2
     BYTE    byRes1[36];
 } NET_VCA_COMBINED_RULE, *LPNET_VCA_COMBINED_RULE;
+
+//板书事件
+typedef struct  tagNET_VCA_BLACKBOARD_WRITE
+{
+    NET_VCA_POLYGON struRegion;//区域范围（配置区域，报警中不含有该区域）
+    BYTE    byTeacherState;//教师状态；0~教师特写，1~教师全景，2~讲台无人状态
+    BYTE    byWritingState;//板书状态；0~板书开始，1~板书结束
+    BYTE    byWritingArea;//板书区域；0~整个板书，1~板书左边，2~板书右边
+    BYTE    byRes[5];
+}NET_VCA_BLACKBOARD_WRITE, *LPNET_VCA_BLACKBOARD_WRITE;
 
 //人员聚集状态
 typedef struct tagNET_VCA_HIGH_DENSITY_STATUS
@@ -12005,6 +12227,7 @@ typedef union tagNET_VCA_EVENT_UNION
     NET_VCA_HIGH_DENSITY_STATUS       struHighDensityStatus;        //人员聚集状态 
     NET_VCA_RUNNING     struRunning; //奔跑参数
     NET_VCA_RETENTION   struRetention;//滞留检测
+    NET_VCA_BLACKBOARD_WRITE   struBlackboardWrite; //板书参数
 }NET_VCA_EVENT_UNION, *LPNET_VCA_EVENT_UNION;
 
 // 尺寸过滤器类型
@@ -12080,9 +12303,10 @@ typedef struct tagNET_DVR_TARGET_LEFT_REGION_ALARM
     DWORD     dwRelativeTime; //相对时标
     DWORD        dwAbsTime; //绝对时标
     NET_VCA_DEV_INFO  struDevInfo;   //前端设备信息
-    BYTE     byTargetType;//检测目标类型 0-无效目标，1-教师    
+    BYTE     byTargetType;//检测目标类型 0-无效目标，1-教师 2-学生   
     BYTE     byLeftDirection;//检测目标离开方向类型0-保留,1-上,2-下,3-左,4-右
-    BYTE     byRes[126];
+    BYTE     byTargetStatus;//0-保留(不做处理) 
+    BYTE     byRes[125];
 }NET_DVR_TARGET_LEFT_REGION_ALARM,*LPNET_DVR_TARGET_LEFT_REGION_ALARM;
 
 //尺寸过滤策略
@@ -12572,11 +12796,29 @@ typedef struct tagNET_PTZ_INFO
     BYTE  byRes[4];
 }NET_PTZ_INFO, *LPNET_PTZ_INFO;
 
+typedef struct tagNET_DVR_BV_CALIB_POSITION
+{
+    DWORD  dwSize;  //结构长度
+    NET_PTZ_INFO struInitialPos;  //初始坐标
+    NET_PTZ_INFO struAdjustPos;  //调整坐标
+    BYTE  byRes[300]; //保留
+}NET_DVR_BV_CALIB_POSITION, *LPNET_DVR_BV_CALIB_POSITION;
+
+typedef struct tagNET_DVR_HUMAN_CALIB_CFG
+{
+    DWORD  dwSize;  //结构长度
+    NET_VCA_POINT struLeftPos;   //人体左坐标点
+    NET_VCA_POINT struRightPos;  //人体右坐标点
+    BYTE  byRes[300]; //保留
+}NET_DVR_HUMAN_CALIB_CFG, *LPNET_DVR_HUMAN_CALIB_CFG;
+
 typedef struct tagNET_DVR_CALIB_PARAM
 {
     NET_PTZ_INFO   struPtzInfo;
     NET_VCA_POINT  struCalibCoordinates;//标定坐标
-    BYTE      byRes[16];
+    int                iHorValue;//双目标定 水平值 cm（手动模式下生效 双目相机配置）
+    int                iVerValue;//双目标定 垂直值 cm（手动模式下生效 双目相机配置）
+    BYTE      byRes[8];
 }NET_DVR_CALIB_PARAM, *LPNET_DVR_CALIB_PARAM;
 
 typedef struct tagNET_DVR_SLAVECAMERA_CALIB_CFG
@@ -13095,7 +13337,8 @@ typedef struct tagNET_DVR_SEARCH_EVENT_PARAM_V40
     NET_DVR_TIME struStartTime;    //搜索的开始时间，停止时间: 同时为(0, 0) 表示从最早的时间开始，到最后，最前面的4000个事件
     NET_DVR_TIME struEndTime;    //
     BYTE            byLockType;        // 0xff-全部，0-未锁，1-锁定
-    BYTE             byRes[131];        // 保留
+    BYTE            byQuickSearch;        // 是否启用快速查询，0-不启用，1-启用（快速查询不会返回文件大小，仅对设备数据库进行查询，避免频繁唤醒硬盘）
+    BYTE             byRes[130];        // 保留
     union    
     {
         BYTE byLen[SEARCH_EVENT_INFO_LEN_V40/*800*/];          
@@ -13141,7 +13384,9 @@ typedef struct tagNET_DVR_SEARCH_EVENT_PARAM_V40
             NET_DVR_STREAM_INFO struIDInfo; // 流id信息，72字节长
             DWORD                dwCmdType;  // 外部触发类型，NVR接入云存储使用
             BYTE                byBackupVolumeNum; //存档卷号，CVR使用
-            BYTE                byRes[723];
+            BYTE                byRes1[3];
+            BYTE                byArchiveLabel[64]; //存档标签，CVR使用
+            BYTE                byRes[656];
         }struStreamIDParam;
         
         struct //pos录像
@@ -13222,7 +13467,9 @@ typedef struct tagNET_DVR_SEARCH_EVENT_RET
         }struInquestRet;
         struct //流id录像查询结果
         {
-            DWORD dwRecordType;    //录像类型 0-定时录像 1-移动侦测 2-报警录像 3-报警|移动侦测 4-报警&移动侦测 5-命令触发 6-手动录像 7-震动报警 8-环境触发 9-智能报警 10-回传录像
+            DWORD dwRecordType;    /*录像类型 0-定时录像,1-移动侦测,2-报警触发,3-报警|移动侦测, 4-报警&移动侦测,5-命令触发,6-手动录像,7-震动报警,8-环境触发报警, 
+                                   9-智能报警,10-PIR报警,11-无线报警,12-呼救报警,13- PIR|无线报警|呼救报, 14-智能交通事件,15-越界侦测,16-区域入侵,17-声音异常,
+                                   18-场景变更侦测, 19-全部简单智能（越界侦测|区域入侵|进入区域|离开区域|人脸识别）, 20-信号量,21-回传、22-回迁录像,23-遮挡 24-录像拼接存档*/
             DWORD dwRecordLength;    //录像大小
             BYTE  byLockFlag;    // 锁定标志 0：没锁定 1：锁定
             BYTE  byDrawFrameType;    // 0：非抽帧录像 1：抽帧录像
@@ -13419,7 +13666,8 @@ typedef struct tagNET_DVR_IN_CAL_SAMPLE
     NET_DVR_LINE_SEGMENT struLineSegment;    // 高度标定线
 }NET_DVR_IN_CAL_SAMPLE, *LPNET_DVR_IN_CAL_SAMPLE;
 
-#define  MAX_SAMPLE_NUM 5
+#define  MAX_SAMPLE_NUM 5  //直接标定点最大个数
+#define  MAX_SAMPLE_NUM_EX 7 //样本标定点个数扩展
 
 typedef struct tagNET_DVR_BEHAVIOR_IN_CALIBRATION 
 {
@@ -13558,7 +13806,9 @@ typedef struct tagNET_DVR_PDC_RULE_CFG_V42
     BYTE   byRes3;// 保留字节
     NET_VCA_LINE  struLine;//检测线
     BYTE byHeightFilterEnable;//高度过滤是否开启，0-保留，1-关闭，2-开启
-    BYTE byRes4[3];
+    BYTE  byDetectThreshold;//检测阈值,范围[0,100],默认 90(内部使用，暂不开放)用于设定算法库中被检测目标的置信度阈值，置信度低于该阈值的目标，不用于跟踪计数；
+    BYTE  byAidedTrackEnabled;//辅助跟踪开关，0~开启、1~关闭，默认开启(内部使用) 用于开启和关闭算法跟踪模块中的光流辅助跟踪，跟踪客流人员，增加精准度。
+    BYTE byRes4;
     float fHeightFilter;//过滤高度，单位：厘米，默认值：120厘米，范围：40-200厘米。byHeightFilterEnable为2是才有效
     BYTE byCalibrateType;//标定类型，0-未进行标定，1-自动标定，2-手动标定
     BYTE byCountingType;//计数触发方式 0-无,1-报警输入触发,2-视频分析触发
@@ -13567,7 +13817,7 @@ typedef struct tagNET_DVR_PDC_RULE_CFG_V42
     float fTiltAngle;//俯仰角,单位：度；俯仰角默认值：0；俯仰角范围：0-180度,只读
     float fHeelAngle;//倾斜角,单位：度；倾斜角默认值：0；倾斜角范围：-90-90度,只读
     float fHeight;//高度，高度单位：厘米；高度默认值300厘米：高度范围：200-500厘米,当byCalibrateType为2时设置有效，其余时只读
-    NET_VCA_POLYGON struCountPolygon;//计数区域,只读区域
+    NET_VCA_POLYGON struCountPolygon;//计数区域：该参数默认为只读属性，若智能通道分析能力中返回了<CountingPolygon>能力节点，则代表该参数支持配置。
     NET_VCA_POLYGON struAutoCalibPolygon;//标定区域，当byCalibrateType为1时有效
     NET_DVR_TIME_EX struDailyResetTime; //定时清零
     NET_VCA_POLYLINE struPolyLine;//折线检测区域（配置折线后，struLine不做显示）
@@ -14397,7 +14647,7 @@ typedef struct tagNET_DVR_VCA_VERSION
     WORD    wVersionYear;        //    版本日期-年
     BYTE    byVersionMonth;        //    版本日期-月
     BYTE    byVersionDay;        //    版本日期-日
-    BYTE    byType;//算法库类型名称，0-保留，1-人脸属性,2-行为分析,3-人体属性,4-人脸抓拍,5人脸识别 6-人脸对比,7-学生站立检测, 8-区域人数统计,9-人脸评分库
+    BYTE    byType;//算法库类型名称，0-保留，1-人脸属性,2-行为分析,3-人体属性,4-人脸抓拍,5人脸识别 6-人脸对比,7-学生站立检测, 8-区域人数统计,9-人脸评分库,10-安全帽检测,11-电梯检测算法库,12-客流量统计
     BYTE    byRes[7];            // 保留字节
 }NET_DVR_VCA_VERSION, *LPNET_DVR_VCA_VERSION;
 
@@ -14437,7 +14687,11 @@ typedef struct tagNET_DVR_PLATE_INFO
     BYTE  byRegion;                       // 区域索引值 0-保留，1-欧洲(EU)，2-俄语区域(ER)，3-欧洲&俄罗斯(EU&CIS) ,4-中东(ME),0xff-所有
     BYTE  byCountry;                      // 国家索引值，参照枚举COUNTRY_INDEX（不支持"COUNTRY_ALL = 0xff, //ALL  全部"）
     BYTE  byArea;                         //区域（省份），各国家内部区域枚举，阿联酋参照 EMI_AREA
-    BYTE  byRes[32];                       //保留
+    BYTE  byPlateSize;                    //车牌尺寸，0~未知，1~long, 2~short(中东车牌使用)
+    BYTE  byRes[15];                       //保留
+    char  sPlateCategory[MAX_CATEGORY_LEN/*8*/];//车牌附加信息, 即中东车牌中车牌号码旁边的小字信息，(目前只有中东地区支持)
+    DWORD dwXmlLen;                        //XML报警信息长度
+    char* pXmlBuf;                      // XML报警信息指针,报警类型为 COMM_ITS_PLATE_RESUL时有效，其XML对应到EventNotificationAlert XML Block
     NET_VCA_RECT    struPlateRect;        //车牌位置
     char sLicense[MAX_LICENSE_LEN];        //车牌号码,注：中东车牌需求把小字也纳入车牌号码，小字和车牌号中间用空格分隔
     BYTE byBelieve[MAX_LICENSE_LEN];    //各个识别字符的置信度，如检测到车牌"浙A12345", 置信度为,20,30,40,50,60,70，则表示"浙"字正确的可能性只有%，"A"字的正确的可能性是%
@@ -15002,7 +15256,21 @@ typedef struct tagNET_DVR_CAMERAPARAMCFG_EX
     NET_DVR_BACKLIGHT struBackLight;/*背光补偿*/
     NET_DVR_NOISEREMOVE struNoiseRemove;/*数字降噪*/
     BYTE byPowerLineFrequencyMode; /*0-50HZ; 1-60HZ*/
-    BYTE byIrisMode; /*0-自动光圈 1-手动光圈, 2-P-Iris1, 3-Union 3-9mm F1.6-2.7 (T5280-PQ1), 4-Union 2.8-12mm F1.6-2.7 (T5289-PQ1),5-HIK 3.8-16mm F1.5（HV3816P-8MPIR）*/ 
+    /*
+    0-自动光圈,
+    1-手动光圈,
+    2-P-Iris1,
+    3-Union 3-9mm F1.6-2.7 (T5280-PQ1) [IPC5.1.7]
+    4-Union 2.8-12mm F1.6-2.7 (T5289-PQ1) [IPC5.1.7]
+    5-HIK 3.8-16mm F1.5（HV3816P-8MPIR)
+    6-HIK 11-40mm F1.7 (HV1140P-8MPIR)
+    7-HIK 2.7-12mm F1.2（TV2712P-MPIR）
+    8- MZ5721D-12MPIR
+    9- MZ1555D-12MPIR
+    10- MZ5721D-12MPIR(RS485)
+    11- MZ1555D-12MPIR(RS485)
+    */
+    BYTE byIrisMode;
     BYTE byMirror ;  /* 镜像：0 off，1- leftright，2- updown，3-center 4-Auto*/
     BYTE byDigitalZoom;  /*数字缩放:0 dsibale  1 enable*/
     BYTE byDeadPixelDetect;   /*坏点检测,0 dsibale  1 enable*/
@@ -15058,7 +15326,9 @@ typedef struct tagNET_DVR_CAMERAPARAMCFG_EX
     120-2560*2048@12fps、121-2560*2048@15fps、122-2560*1536@25fps、123-2560*1536@30fps、124-2256*2048@25fps、125-2256*2048@30fps、126-2592*2592@12.5fps、127-2592*2592@15fps、
     128 - 640*512@30fps、129-2048*1520@30fps、130-2048*1520@25fps、131-3840*2160@24fps、132-2592*1520@25fps、133-2592*1520@30fps、134-2592*1536@25fps、135-2592*1536@30fps
     136-640*960@25fps、137-640*960@24fps、142-2992*2192@25fps、143-2992*2192@30fps、144-3008*2160@25fps、145-3008*2160@30fps、146-3072*1728@20fps、147-2560*1440@20fps、
-    148-2160*3840@25fps、149-2160*3840@30fps、150-7008*1080@25fps、151-7008*1080@30fps、152-3072*2048@20fps、153-1536*864@25fps、154-2560*1920@24fps*/
+    148-2160*3840@25fps、149-2160*3840@30fps、150-7008*1080@25fps、151-7008*1080@30fps、152-3072*2048@20fps、153-1536*864@25fps、154-2560*1920@24fps、155-2400*3840@30fps、
+    156-3840*2400@30fps、157-3840*2160@15fps
+    158-384*288@8.3fps、159-640*512@8.3fps、160-160*120@8.3fps、161-1024*768@8.3fps、162-640*480@8.3fps、163-3840*2160@12.5fps、164-720P@25fps、165-720P@30fps*/
     BYTE   byCaptureModeN; //视频输入模式（N制）
     BYTE   byCaptureModeP; //视频输入模式（P制）
     NET_DVR_SMARTIR_PARAM struSmartIRParam; //红外放过爆配置信息
@@ -15078,7 +15348,8 @@ typedef struct tagNET_DVR_CAMERAPARAMCFG_EX
     BYTE   byFusionMode;//双光谱视频融合模式，0~热成像模式，1~融合模式，2~画中画模式
     BYTE   byHorizontalFOV;//水平视场角[0-100]
     BYTE   byVerticalFOV;//垂直视场角[0-100]
-    BYTE   byRes2[157];
+    BYTE   byBrightnessSuddenChangeSuppression;//亮度突变抑制0-关闭,1-开启
+    BYTE   byRes2[156];
 }NET_DVR_CAMERAPARAMCFG_EX, *LPNET_DVR_CAMERAPARAMCFG_EX;
 
 typedef struct tagNET_DVR_FOCUSING_POSITION_STATE
@@ -15096,6 +15367,8 @@ typedef enum _VCA_PLATE_COLOR_
         VCA_BLACK_PLATE,       //黑色车牌
         VCA_GREEN_PLATE,       //绿色车牌
         VCA_BKAIR_PLATE,       //民航黑色车牌
+        VCA_RED_PLATE,         //红色车牌
+        VCA_ORANGE_PLATE,      //橙色车牌
         VCA_OTHER = 0xff       //其他
 }VCA_PLATE_COLOR;
 
@@ -15151,7 +15424,17 @@ typedef enum _VTR_RESULT
     VTR_RESULT_NON_MOTOR_VEHICLE = 12,  //非机动车
     VTR_RESULT_SMALLCAR   = 13,   //小型轿车
     VTR_RESULT_MICROCAR   = 14,   //微型轿车
-    VTR_RESULT_PICKUP     = 15    //皮卡车
+    VTR_RESULT_PICKUP     = 15,    //皮卡车
+    VTR_RESULT_CONTAINER_TRUCK = 16, // 集装箱卡车
+    VTR_RESULT_MINI_TRUCK = 17, // 微卡，栏板卡
+    VTR_RESULT_SLAG_CAR = 18, // 渣土车
+    VTR_RESULT_CRANE = 19, // 吊车，工程车
+    VTR_RESULT_OIL_TANK_TRUCK = 20, // 油罐车
+    VTR_RESULT_CONCRETE_MIXER = 21, // 混凝土搅拌车
+    VTR_RESULT_PLATFORM_TRAILER = 22, // 平板拖车
+    VTR_RESULT_HATCHBACK = 23, // 两厢轿车
+    VTR_RESULT_SALOON = 24, // 三厢轿车
+    VTR_RESULT_SPORT_SEDAN = 25  // 轿跑
 }VTR_RESULT;
 
 
@@ -15220,7 +15503,7 @@ typedef enum _VCA_VEHICLE_TYPE_
 //车辆品牌主类型
 typedef enum _VLR_VEHICLE_CLASS
 {
-    VLR_OTHER       = 0,    //其它
+        VLR_OTHER       = 0,    //其它
         VLR_VOLKSWAGEN  = 1,    //大众
         VLR_BUICK       = 2,    //别克
         VLR_BMW         = 3,    //宝马
@@ -17696,7 +17979,8 @@ typedef struct tagNET_DVR_VEHICLE_INFO_
     WORD  wLength;          //前一辆车的车身长度  
                             /*违规类型，0-正常，1-低速，2-超速，3-逆行，4-闯红灯,5-压车道线,6-不按导向，7-路口滞留，
                             8-机占非，9-违法变道，10-不按车道 11-违反禁令，12-路口停车，13-绿灯停车, 14-未礼让行人(违法代码1357), 
-    15-违章停车，16-违章掉头,17-占用应急车道,18-禁右,19-禁左,20-压黄线,21-未系安全带,22-行人闯红灯,23-加塞,24-违法使用远光灯*/
+    15-违章停车，16-违章掉头,17-占用应急车道,18-禁右,19-禁左,20-压黄线,21-未系安全带,22-行人闯红灯,23-加塞,24-违法使用远光灯，
+    25-驾驶时拨打接听手持电话，26-左转不让直行，27-右转不让左转，28-掉头不让直行，29-大弯小转*/
     BYTE  byIllegalType;
     BYTE  byVehicleLogoRecog; //参考枚举类型 VLR_VEHICLE_CLASS
     BYTE  byVehicleSubLogoRecog; //车辆品牌子类型识别；参考VSB_VOLKSWAGEN_CLASS等子类型枚举。
@@ -18166,7 +18450,8 @@ typedef struct tagNET_DVR_MANUALSNAP
 {
     BYTE   byOSDEnable;//0-不关闭(默认)，1-关闭
     BYTE   byLaneNo;//车道号, 范围为1-6，默认为1(抓拍机内部测试使用)
-    BYTE   byRes[22]; //保留
+    BYTE   byChannel;//通道号
+    BYTE   byRes[21]; //保留
 }NET_DVR_MANUALSNAP, *LPNET_DVR_MANUALSNAP;
 
 typedef struct tagNET_DVR_SPRCFG    
@@ -19063,7 +19348,8 @@ typedef struct tagNET_DVR_NATASSOCIATECFG
     DWORD                  dwSize;
     NET_DVR_NETCFG_V30  struNatIpAddress[2];//NAT IP地址 
     BYTE                byNATEnable;//是否启用NAT功能，0-不启用，非0-启用
-    BYTE                  byRes[63];
+    BYTE   byNATCfgMode; //NAT配置模式，0-手动分配，1-自动分配
+    BYTE   byRes[62];
 }NET_DVR_NATASSOCIATECFG, *LPNET_DVR_NATASSOCIATECFG;
 
 //2010-06-01 视频综合平台报警配置
@@ -19633,7 +19919,7 @@ typedef struct tagNET_DVR_DIALSTATUS
 #define PARKING_EXCEPTION                      0x1b    /*停车侦测报警*/
 #define UNATTENDEDBAGGAGE_EXCEPTION            0x1c    /*物品遗留侦测报警*/
 #define ATTENDEDBAGGAGE_EXCEPTION              0x1d    /*物品拿取侦测报警*/
-
+#define DATATRAFFIC_EXCESS                     0x1e    /*流量超额*/
 
 #define PHONECFG_RECEIVE_SMS        0x0    /* 支持接收报警短信 */
 #define PHONECFG_SMS_CONTROL        0x1    /* 支持短信控制上下线 */
@@ -19721,7 +20007,11 @@ typedef struct tagNET_DVR_ACS_EVENT_DETAIL
     BYTE  bySwipeCardType;//刷卡类型，0-无效，1-二维码
     BYTE  byRes2;
     DWORD dwSerialNo; //事件流水号，为0无效
-    BYTE  byRes[112];
+    BYTE  byChannelControllerID; //通道控制器ID，为0无效，1-主通道控制器，2-从通道控制器
+    BYTE  byChannelControllerLampID; //通道控制器灯板ID，为0无效（有效范围1-255）
+    BYTE  byChannelControllerIRAdaptorID; //通道控制器红外转接板ID，为0无效（有效范围1-255）
+    BYTE  byChannelControllerIREmitterID; //通道控制器红外对射ID，为0无效（有效范围1-255）
+    BYTE  byRes[108];
 }NET_DVR_ACS_EVENT_DETAIL, *LPNET_DVR_ACS_EVENT_DETAIL;
 
 typedef struct tagNET_DVR_ACS_EVENT_CFG
@@ -20065,7 +20355,7 @@ typedef struct tagNET_DVR_SIREN_PARAM
     BYTE    byName[NAME_LEN];        // 名称
     WORD    wDelay;                    // 输出延迟 单位为秒, 范围 0~5599s 0表示一直有输出
     BYTE    byRes1[2];
-    DWORD   dwOverallEventJointSirenOn;        //全局事件联动警号输出开启，事件类型按位表示，bit0-主机防拆, bit1-全局键盘紧急报警,bit2-交流电断电，bit3-电池电压低,bit4-电话线掉线,bit5-有线网络异常,bit6-无线网络异常,  bit7-键盘485断线
+    DWORD   dwOverallEventJointSirenOn;        //全局事件联动警号输出开启，事件类型按位表示，bit0-主机防拆, bit1-全局键盘紧急报警,bit2-交流电断电，bit3-电池电压低,bit4-电话线掉线,bit5-有线网络异常,bit6-无线网络异常,  bit7-键盘485断线，bit8- WIFI通信故障，bit9-RF信号干扰故障
     DWORD    dwSubsystemEventJointSirenOn[MAX_ALARMHOST_SUBSYSTEM/*32*/];//子系统事件联动警号输出开启。数组下标表示子系统号，每一个元素按位表示事件类型，bit0-紧急报警
     BYTE    byRes2[448];  // 保留字节　　
 }NET_DVR_SIREN_PARAM, *LPNET_DVR_SIREN_PARAM;
@@ -20097,6 +20387,12 @@ typedef enum tagDETECTOR_TYPE
         CONTROL_SWITCH,                    //控制开关
         SMART_LOCK,                        //智能锁
         WATER_DETECTOR,                 //水感探测器
+        DISPLACEMENT_DETECTOR,    //位移探测器
+        SINGLE_INFRARED_DETECTOR,    //单体门磁探测器
+        SINGLE_ZONE_MODULE,    //无线单防区模块
+        ACOUSTOOPTIC_ALARM,   //声光报警器
+        CURTAIN_INFRARED_DETECTOR,   //幕帘红外人体探测器
+        DOORBELL_SWITCH,              //门铃开关21
         OTHER_DETECTOR = 0xffff          // 其他探测器   
 }DETECTOR_TYPE;
 
@@ -20130,7 +20426,9 @@ typedef struct tagNET_DVR_ALARMIN_PARAM
     BYTE    byTimeOutRange;      // 超时时间范围，0:1~599s,1:1~65535s
     BYTE    byAssociateLampOut[8];//  警灯输出 数组0 表示警灯1 值为1表示输出 0 表示不输出
     WORD   wTimeOut;  //超时时间，秒
-    BYTE    byRes3[10];      // 保留字节
+    BYTE    byDetectorSignalIntensity;      // 探测器信号强度（只读），0~100
+    BYTE    byTimeOutMethod;    //超时防区计时方式：0-触发计时，1-恢复计时
+    BYTE    byRes3[8];      // 保留字节
 }NET_DVR_ALARMIN_PARAM, *LPNET_DVR_ALARMIN_PARAM;
 
 typedef struct tagNET_DVR_ALARMIN_PARAM_V50
@@ -20164,7 +20462,9 @@ typedef struct tagNET_DVR_ALARMIN_PARAM_V50
     BYTE    byAssociateLampOut[8];//  警灯输出 数组0 表示警灯1 值为1表示输出 0 表示不输出
     BYTE    byVoiceFileName[32];   //语音文件名
     BYTE    byTimeOutRange;      // 超时时间范围，0:1~599s,1:1~65535s
-    BYTE    byRes3[511];  // 保留字节
+    BYTE    byDetectorSignalIntensity;      // 探测器信号强度（只读），0~100
+    BYTE    byTimeOutMethod;    //超时防区计时方式：0-触发计时，1-恢复计时
+    BYTE    byRes3[509];  // 保留字节
 }NET_DVR_ALARMIN_PARAM_V50, *LPNET_DVR_ALARMIN_PARAM_V50;
 
 #define MAX_MAX_ALARMIN_NUM            64    /* 批量获取最大防区数*/
@@ -20180,7 +20480,7 @@ typedef struct tagNET_DVR_SINGLE_ALARMIN_PARAM
     DWORD   dwSize;
     WORD    wZoneNo;        //防区号，该参数只能获取
     BYTE    byJointSubSystem; //防区所属的子系统号，该参数只能获取 
-    BYTE    byType;            //防区类型，0:即时防区,1-24小时防区,2-延时防区 ,3-内部防区，4-钥匙防区 5-火警防区 6-周界防区 7-24小时无声防区  8-24小时辅助防区，9-24小时震动防区 0xff-无
+    BYTE    byType;            //防区类型，0:即时防区,1-24小时防区,2-延时防区 ,3-内部防区，4-钥匙防区 5-火警防区 6-周界防区 7-24小时无声防区  8-24小时辅助防区，9-24小时震动防区,12-超时防区 0xff-无
     BYTE    byName[NAME_LEN];
     WORD    wDetectorType;    // DETECTOR_TYPE
     WORD    wInDelay;        //进入延时，0-255秒
@@ -20189,7 +20489,11 @@ typedef struct tagNET_DVR_SINGLE_ALARMIN_PARAM
     BYTE    byZoneSignalType;    //防区信号传输类型，0-有线防区，1-无线防区
     BYTE    byDetectorSerialNo[ALARMHOST_DETECTOR_SERIAL_LEN]; //探测器序列号，只读
     BYTE    byDisableDetectorTypeCfg;    //探测是类型是否不可配，0-可配，1-不可配
-    BYTE    byRes2[118];    // 保留字节
+    BYTE    byTimeOutRange;      // 超时时间范围，0:1~599s,1:1~65535s
+    BYTE    byDetectorSignalIntensity;      // 探测器信号强度（只读），0~100
+    WORD   wTimeOut;  //超时时间，秒
+    BYTE    byTimeOutMethod;    //超时防区计时方式：0-触发计时，1-恢复计时
+    BYTE    byRes2[113];    // 保留字节
 }NET_DVR_SINGLE_ALARMIN_PARAM, *LPNET_DVR_SINGLE_ALARMIN_PARAM;
 
 typedef struct tagNET_DVR_ALARMIN_PARAM_LIST
@@ -20206,7 +20510,7 @@ typedef struct tagNET_DVR_ALARMOUT_PARAM
     WORD    wDelay;             // 输出延迟 单位s, 范围：0~3599s 0 表示一直有输出
     WORD    wTriggerIndex;        //触发器号，该参数只能获取
     BYTE    byAssociateAlarmIn[MAX_ALARMHOST_ALARMIN_NUM];   //表示警号跟随的报警输入通道 （多个报警输入同时触发一个警号输出）数组下标0表示报警输入1，依次类推 0-不跟随 1-跟随
-    BYTE    byModuleType;   //外接触发器类型，1-本地触发器， 2-4路触发器，3-8路触发器 4-单防区触发器，5-32路触发器，6-1门就地控制器、7-2门就地控制器、8-4门就地控制器
+    BYTE    byModuleType;   //外接触发器类型，1-本地触发器， 2-4路触发器，3-8路触发器 4-单防区触发器，5-32路触发器，6-1门就地控制器、7-2门就地控制器、8-4门就地控制器,9-2路触发器
     BYTE    byModuleStatus;    //外接触发器状态 1-在线 2-离线
     WORD    wModuleAddress;    //外接触发器地址，扩展模块从0~255，0xFFFF表示无效
     BYTE    byModuleChan;    //外接触发器通道号，从1开始，最大值根据模块类型来决定，0xFF表示无效
@@ -20337,7 +20641,7 @@ typedef struct tagNET_DVR_ALARMHOST_ABILITY
     // bit12:   是否支持LED屏幕参数配置
     // bit13: 是否支持故障关联本地故障灯输出
     DWORD    dwSubSystemEvent;        //子系统事件，按位表示，0表示不支持，非0表示支持,bit0-进入延时，bit1-退出延时，bit2-布防，bit3-撤防，bit4-报警，bit5-消除报警记忆
-    DWORD    dwOverallEvent;            //全局事件，按位表示，0表示不支持，非0表示支持，bit0-交流电掉电，bit1-电池电压低，bit2-电话线掉线，bit3-有线网络异常，bit4-无线网络异常，bit5-硬盘故障,bit6-3G/4G信号异常, bit7-（模块链接）第三方主机掉线
+    DWORD    dwOverallEvent;            //全局事件，按位表示，0表示不支持，非0表示支持，bit0-交流电掉电，bit1-电池电压低，bit2-电话线掉线，bit3-有线网络异常，bit4-无线网络异常，bit5-硬盘故障,bit6-3G/4G信号异常, bit7-（模块链接）第三方主机掉线,bit8-WIFI通信故障，bit9-RF信号干扰故障
     DWORD    dwFaultType;            //设备支持的故障类型，bit0-交流电断电，bit1-蓄电池欠压，bit2-主机防拆开，bit3-电话线掉线，bit4-主键盘掉线，bit5-网络故障，bit6-无线异常，bit7-扩展总线异常，bit8-硬盘异常    
     BYTE    byPublicSubsystemAssociateSubsystemNum;    //公共子系统可关联的子系统个数
     BYTE    byOverallKeyboard;    //全局键盘个数
@@ -20557,7 +20861,8 @@ typedef struct tagNET_DVR_PHONECENTERDIALCFG
     BYTE byPstnProtocol;        //通信协议，0-CID；
     BYTE byDialDelay;           //拨号延时，最大150s, 0-150
     BYTE byPstnTransMode;       //传输方式，0-DTMF 5/S，1-DTMF 10/S；
-    BYTE byRes1[6];
+    BYTE byEnable;       //使能，0-关闭，1-启用
+    BYTE byRes1[5];
     BYTE byReceiverId[6];         //接收机识别账号；
     BYTE byRes2[32];
 }NET_DVR_PHONECENTERDIALCFG, *LPNET_DVR_PHONECENTERDIALCFG;
@@ -20645,7 +20950,7 @@ typedef struct tagNET_DVR_UPLOAD_PARAM
     DWORD         dwSize;
     BYTE        byUploadType;    /*上传方式，1-根据文件名绝对地址读取数据文件上传， 2-从缓冲区读取数据上传*/
     BYTE        byDataType;        //数据类型：1-音频数据
-    BYTE        byDataNum;        //数据编号，如：上传语音，则该参数表示语音号，增加一条语音号（超时提示音）
+    BYTE        byDataNum;        //数据编号，如：上传语音，则该参数表示语音号，增加三条语音号（晕倒、多人、人脸遮挡）
     BYTE        byAudioType;        //语音格式，0-wave
     char        sFileName[260];        //数据文件的全路径
     char        *lpBuffer;            //数据缓冲区
@@ -20659,7 +20964,7 @@ typedef struct tagNET_DVR_ALARMHOST_PARAM
     DWORD         dwSize;
     BYTE        byDownType;        /*下载的数据保存方式，1-根据文件名绝对地址保存数据， 2-通过回调函数获取数据*/
     BYTE        byDataType;        //数据类型：1-音频数据
-    BYTE        byDataNum;        //数据编号，如：下载语音，则该参数表示语音号，增加一条语音号（超时提示音）
+    BYTE        byDataNum;        //数据编号，如：下载语音，则该参数表示语音号，增加三条语音号（晕倒、多人、人脸遮挡）
     BYTE        byRes1;
     char        sFileName[260];        //数据文件的全路径
     DATADOWNLOAD lpDataCallBack; //下载时的回调函数句柄
@@ -20673,7 +20978,7 @@ typedef struct tagNET_DVR_ALARMHOST_DOWNLOAD_PARAM
     DWORD         dwSize;
     BYTE        byDownType;        /*下载的数据保存方式，1-根据文件名绝对地址保存数据， 2-通过回调函数获取数据*/
     BYTE        byDataType;        //数据类型：1-音频数据
-    BYTE        byDataNum;        //数据编号，如：下载语音，则该参数表示语音号，增加一条语音号（超时提示音）
+    BYTE        byDataNum;        //数据编号，如：下载语音，则该参数表示语音号，增加三条语音号（晕倒、多人、人脸遮挡）
     BYTE        byRes1;
     char        sFileName[260];        //数据文件的全路径
     DATADOWNLOAD lpDataCallBack; //下载时的回调函数句柄
@@ -20982,7 +21287,7 @@ typedef struct tagNET_DVR_SUBSYSTEMINFO_V40
     char        sDnsAddress[MAX_DOMAIN_NAME];/*DNS域名或IP地址*/
     BYTE        sSerialNumber[SERIALNO_LEN];//序列号（此参数只能获取）
     BYTE        byBelongBoard;//所属子板号，从1开始，0xff表示无效
-    BYTE        byInterfaceType;//接口类型，0-无类型，1-BNC，2-VGA，3-HDMI，4-DVI，5-SDI, 6-FIBER, 7-RGB, 8-YPrPb, 9-VGA/HDMI/DVI自适应，10-3GSDI, 11-VGA/DVI自适应，12-HDTVI，13-HDBaseT，14-DP，15-DVIT，0xff-无效
+    BYTE        byInterfaceType;//接口类型，0-无类型，1-BNC，2-VGA，3-HDMI，4-DVI，5-SDI, 6-FIBER, 7-RGB, 8-YPrPb, 9-VGA/HDMI/DVI自适应，10-3GSDI, 11-VGA/DVI自适应，12-HDTVI，13-HDBaseT，14-DP，15-DVIT，16-TVI,17-VSCREEN,0xff-无效
     BYTE        byInterfaceNums;//接口个数，0xff表示无效
     BYTE        byInterfaceStartNum;//接口起始号，0xff表示无效
     BYTE        byDeviceName[20];//子系统名称
@@ -21632,7 +21937,7 @@ typedef enum _COUNTRY_INDEX_
     COUNTRY_MON = 52, //Monaco 摩纳哥
     COUNTRY_LIE = 53, //Liechtenstein 列支敦士登
     COUNTRY_SMO = 54, //San Marino 圣马力诺
-    COUNTRY_RES1 = 55, //保留字段
+    COUNTRY_ORN = 55, //Oran 奥兰
     COUNTRY_RES2 = 56, //保留字段
     COUNTRY_RES3 = 57, //保留字段
     COUNTRY_RES4 = 58, //保留字段
@@ -21897,6 +22202,7 @@ typedef struct tagNET_DVR_FIND_PICTURE_PARAM
 }NET_DVR_FIND_PICTURE_PARAM, *LPNET_DVR_FIND_PICTURE_PARAM;
 
 #define PICTURE_NAME_LEN 64
+#define PICTURE_INFO_MAX_SIZE 640*960*1.5
 
 typedef struct
 {
@@ -22311,7 +22617,10 @@ typedef enum
     IMPORT_DATA_TO_FACELIB = 39,//导入人脸数据（人脸图片+图片附件信息 到设备人脸库）
     UPLOAD_LEFTEYE_4K_CALIBFILE = 40,//左眼、4K相机标定内参数据上传（针对三目教育录播相机）
     UPLOAD_SECURITY_CFG_FILE = 41,//配置文件安全导入
-    UPLOAD_RIGHT_CONTROLLER_AUDIO = 42 //上传权限控制器音频文件
+    UPLOAD_RIGHT_CONTROLLER_AUDIO = 42, //上传权限控制器音频文件
+    UPLOAD_MODBUS_CFG_FILE = 43, //导入Modbus协议配置文件
+    UPLOAD_NOTICE_VIDEO_DATA = 44, //公告视频下发
+    UPLOAD_RS485_PROTOCOL_DLL_FILE = 45, //导入RS485协议动态库文件
 }NET_SDK_UPLOAD_TYPE;  
 
 typedef enum 
@@ -22342,7 +22651,10 @@ typedef enum
     NET_SDK_DOWNLOAD_FD_DATA = 21,//导出指定人脸库的数据
     NET_SDK_DOWNLOAD_SECURITY_CFG_FILE = 22,//配置文件安全导出
     NET_SDK_DOWNLOAD_PUBLISH_SCHEDULE = 23, //日程导出
-    NET_SDK_DOWNLOAD_RIGHT_CONTROLLER_AUDIO = 24 //下载权限控制器音频文件
+    NET_SDK_DOWNLOAD_RIGHT_CONTROLLER_AUDIO = 24, //下载权限控制器音频文件
+    NET_SDK_DOWNLOAD_MODBUS_CFG_FILE = 25, //导出Modbus协议配置文件
+    NET_SDK_DOWNLOAD_RS485_PROTOCOL_DLL_FILE = 26, //导出RS485协议动态库文件
+    NET_SDK_DOWNLOAD_CLUSTER_MAINTENANCE_LOG = 27, //集群维护日志导出
 }NET_SDK_DOWNLOAD_TYPE;
 
 //下载状态
@@ -22410,6 +22722,13 @@ typedef struct NET_DVR_SECURITY_CFG_FILE_COND
     char        szSecretKey[NET_SDK_SECRETKEY_LEN/*128*/];//校验密钥
     BYTE        byRes[128];
 }NET_DVR_SECURITY_CFG_FILE_COND, *LPNET_DVR_SECURITY_CFG_FILE_COND;
+
+typedef struct tagNET_DVR_DOWNLOAD_CLUSTER_MAINTENANCE_LOG_PARAM_
+{
+    DWORD     dwSize;
+    BYTE      byType;   //日志类型，0-全部，1-精简，2-默认
+    BYTE      byRes[255];
+}NET_DVR_DOWNLOAD_CLUSTER_MAINTENANCE_LOG_PARAM, *LPNET_DVR_DOWNLOAD_CLUSTER_MAINTENANCE_LOG_PARAM;
 
 
 typedef struct tagNET_DVR_BONJOUR_CFG
@@ -22803,7 +23122,10 @@ typedef struct tagNET_VCA_FACESNAPCFG
     DWORD dwValidFaceTime;    //有效人脸最短持续时间，单位：秒
     DWORD dwUploadInterval; //人脸抓拍统计数据上传间隔时间，单位：秒，默认900秒
     DWORD dwFaceFilteringTime;//人脸停留时间过滤,默认5秒，范围0-100秒。0秒表示不过滤
-    BYTE byRes2[84];
+    BYTE  bySceneID;     //场景号,目前支持1~4场景，0为无效
+    BYTE byInvalCapFilterEnable;//无效抓拍过滤使能，0为关闭，1为开启，默认为0
+    BYTE byInvalCapFilterThreshold;//无效抓拍过滤阈值，0~100，当byInvalCapFilterEnable为1时生效
+    BYTE byRes2[81];
 }NET_VCA_FACESNAPCFG, *LPNET_VCA_FACESNAPCFG;
 
 typedef struct tagNET_DVR_FIRMWARE_VERSION_IFNO
@@ -22849,7 +23171,8 @@ typedef struct tagNET_VCA_FACESNAP_RESULT
     char    sStorageIP[16];        //存储服务IP地址
     WORD    wStoragePort;            //存储服务端口号
     WORD    wDevInfoIvmsChannelEx;     //与NET_VCA_DEV_INFO里的byIvmsChannel含义相同，能表示更大的值。老客户端用byIvmsChannel能继续兼容，但是最大到255。新客户端版本请使用wDevInfoIvmsChannelEx。
-    BYTE    byRes1[16];              // 保留字节
+    BYTE    byRes1[15];              // 保留字节
+    BYTE    byBrokenNetHttp;     //断网续传标志位，0-不是重传数据，1-重传数据
     BYTE*   pBuffer1;  //人脸子图的图片数据
     BYTE*   pBuffer2;  //背景图的图片数据（保留，通过查找背景图接口可以获取背景图）
 }NET_VCA_FACESNAP_RESULT, *LPNET_VCA_FACESNAP_RESULT;
@@ -23010,7 +23333,7 @@ typedef struct tagNET_DVR_AREAINFOCFG
 typedef struct tagNET_VCA_HUMAN_ATTRIBUTE
 {
     BYTE   bySex; //性别：0-男，1-女，0xff-未知
-    BYTE   byCertificateType; //证件类型：0-身份证，1-警官证，0xff-未知
+    BYTE   byCertificateType; //证件类型：0-身份证，1-警官证，2-军官证，3-护照，4-其他，0xff-未知
     BYTE   byBirthDate[MAX_HUMAN_BIRTHDATE_LEN]; //出生年月，如：201106
     BYTE   byName[NAME_LEN]; //姓名
     NET_DVR_AREAINFOCFG struNativePlace; //籍贯参数
@@ -23021,7 +23344,8 @@ typedef struct tagNET_VCA_HUMAN_ATTRIBUTE
 	*/
     DWORD  dwPersonInfoExtendLen;// 人员标签信息扩展长度
     BYTE  *pPersonInfoExtend;  //人员标签信息扩展信息
-    BYTE   byRes2[12];
+    BYTE   byAgeGroup;//年龄段，详见HUMAN_AGE_GROUP_ENUM，如传入0xff表示未知
+    BYTE   byRes2[11];
 }NET_VCA_HUMAN_ATTRIBUTE, *LPNET_VCA_HUMAN_ATTRIBUTE;
 
 typedef struct tagNET_VCA_HUMANATTRIBUTE_COND
@@ -23151,7 +23475,8 @@ typedef struct tagNET_VCA_FACESNAP_INFO_ALARM
 	*/
     BYTE byAge;//年龄
     BYTE byAgeDeviation;//年龄误差值
-    BYTE  byRes1[3];              // 保留字节
+    BYTE byAgeGroup;//年龄段，详见HUMAN_AGE_GROUP_ENUM，若传入0xff表示未知
+    BYTE  byRes1[2];              // 保留字节
     DWORD dwUIDLen; // 上传报警的标识长度
     BYTE  *pUIDBuffer;  //标识指针
     BYTE  byRes[4];              // 保留字节
@@ -23186,7 +23511,8 @@ typedef struct tagNET_VCA_FACESNAP_MATCH_ALARM
     NET_VCA_RECT  struRegion;//目标边界框，设备识别抓拍图片中，人脸子图坐标
     DWORD dwModelDataLen;//建模数据长度
     BYTE  *pModelDataBuffer;// 建模数据指针
-    BYTE             byRes[8];              // 保留字节
+    BYTE  byRes[7];              // 保留字节
+    BYTE  byBrokenNetHttp;     //断网续传标志位，0-不是重传数据，1-重传数据
 }NET_VCA_FACESNAP_MATCH_ALARM, *LPNET_VCA_FACESNAP_MATCH_ALARM;
 
 typedef struct tagNET_VCA_BLACKLIST_INFO_ALARM_LOG
@@ -23704,6 +24030,7 @@ typedef enum tagNET_DVR_CAM_MODE
         NET_DVR_CAM_3GSDI, //3G-SDI
         NET_DVR_CAM_DISTRIBUTED_IP, //分布式网络源
         NET_DVR_CAM_JONIT_X86,// x86拼接子系统的拼接通道
+        NET_DVR_CAM_TVI, //TVI信号源
 }NET_DVR_CAM_MODE;
 
 typedef struct tagNET_DVR_INPUTSTREAMCFG
@@ -24052,7 +24379,8 @@ typedef struct tagNET_DVR_PLAN_CFG
     NET_DVR_CYCLE_TIME struTimeCycle[DAYS_A_WEEK/*7*/]; /*循环时间，周期为一个星期，年、月、日三个参数不使用。如：struTimeCycle[0]中的byValid的值是1，表示星期天执行该预案。星期取值区间为[0,6]，其中0代表星期天，1代表星期一，以此类推*/
     DWORD     dwWorkCount;      // 预案内容执行次数
     NET_DVR_PLAN_INFO strPlanEntry[MAX_PLAN_ACTION_NUM/*32*/];  // 预案执行的内容
-    BYTE    byRes2[64];
+    DWORD		dwPlanNo; //4字节预案号，客户端统一使用4字节的预案号，单字节的预案号不再使用
+    BYTE		byRes2[60];
 }NET_DVR_PLAN_CFG, *LPNET_DVR_PLAN_CFG;
 
 
@@ -24081,10 +24409,11 @@ typedef struct tagNET_DVR_CONTROL_PARAM
     BYTE    byRes1;
     DWORD    dwControlParam;
     BYTE    byMandatoryAlarm;    //1-使能  0-不使能
-    BYTE      byRes3;
+    BYTE      byRes2;
     WORD     wZoneIndex;            //防区号
     BYTE      byOperatorCode[16];   //回控码
-    BYTE      byRes2[12];
+    DWORD	dwPlanNo; //4字节预案号，客户端统一使用4字节的预案号，单字节的预案号不再使用
+    BYTE	byRes3[8];
 }NET_DVR_CONTROL_PARAM, *LPNET_DVR_CONTROL_PARAM;
 
 /*******************************获取设备状态*******************************/
@@ -24237,7 +24566,8 @@ typedef struct tagNET_DVR_PLAYCOND
     BYTE             byDrawFrame;  //0:不抽帧，1：抽帧
     BYTE             byStreamType ; //码流类型，0-主码流 1-子码流 2-码流三
     BYTE             byStreamID[STREAM_ID_LEN];
-    BYTE             byRes[30];    //保留
+    BYTE             byCourseFile;    //课程文件0-否，1-是
+    BYTE             byRes[29];    //保留
 }NET_DVR_PLAYCOND, *LPNET_DVR_PLAYCOND;
 
 typedef struct tagNET_DVR_ATMFINDINFO
@@ -24260,7 +24590,7 @@ typedef struct tagNET_DVR_FILECOND_V40
     DWORD          dwFileType;/*不带卡号录象文件类型0xff-全部，0-定时录像，1-移动侦测，2-报警触发，3-报警触发或移动侦测，4-报警触发和移动侦测，5-命令触发，6-手动录像，
     7-智能录像，10-PIR报警，11-无线报警，12-呼救报警，13-全部事件，14-智能交通事件，15-越界侦测，16-区域入侵，17-声音异常，18-场景变更侦测，19-智能侦测（越界侦测|区域入侵|人脸侦测|声音异常|场景变更侦测），
     20-人脸侦测， 21-信号量，22-回传，23-回迁录像，24-遮挡，25-pos录像，26-进入区域侦测, 27-离开区域侦测,28-徘徊侦测,29-人员聚集侦测,30-快速运动侦测,31-停车侦测,32-物品遗留侦测,33-物品拿取侦测, 
-    34-火点侦测，35-防破坏检测，36-船只检测，37-测温预警，38-测温报警,39-打架斗殴报警，40-起身检测，41-瞌睡检测，42-温差报警，43-离线测温报警,44-防区报警，45-紧急求助,46-业务咨询,47-起身检测,48-折线攀高,49-如厕超时，50-奔跑检测，51-滞留检测*/
+    34-火点侦测，35-防破坏检测，36-船只检测，37-测温预警，38-测温报警,39-打架斗殴报警，40-起身检测，41-瞌睡检测，42-温差报警，43-离线测温报警,44-防区报警，45-紧急求助,46-业务咨询,47-起身检测,48-折线攀高,49-如厕超时，50-奔跑检测，51-滞留检测，52-人脸抓拍*/
     DWORD          dwIsLocked;
     DWORD          dwUseCardNo;//是否带ATM信息进行查询：0-不带ATM信息，1-按交易卡号查询，2-按交易类型查询，3-按交易金额查询，4-按卡号、交易类型及交易金额的组合查询 5-按课程名称查找，此时卡号表示课程名称
     BYTE           sCardNumber[CARDNUM_LEN_OUT];
@@ -24273,7 +24603,7 @@ typedef struct tagNET_DVR_FILECOND_V40
     DWORD       dwVolumeNum;  //存档卷号
     BYTE        byWorkingDeviceGUID[GUID_LEN];    //工作机GUID，通过获取N+1得到
     NET_DVR_SPECIAL_FINDINFO_UNION uSpecialFindInfo ;   //专有查询条件
-    BYTE        byStreamType;    //0-主码流，1-子码流，2-三码流，254-双码流搜索(优先返回主码流录像，没有主码流录像时返回子码流录像),0xff-全部
+    BYTE        byStreamType;    //0-同一个时间段只返回一种录像，优先级顺序为：主码流、子码流、三码流，1-子码流，2-三码流，3-主码流，254-双码流搜索(优先返回主码流录像，没有主码流录像时返回子码流录像)
     BYTE        byAudioFile;                //音频文件 0-非音频文件，1-音频文件
     BYTE        byRes2[30];    //保留
 }NET_DVR_FILECOND_V40, *LPNET_DVR_FILECOND_V40;
@@ -24580,7 +24910,11 @@ typedef  struct tagNET_DVR_ALARMHOST_SAFETYCABINSTATE
     BYTE    byAbnormal; //异常状态  0-正常 1-异常(防护舱使用超时上传异常)
     BYTE    byLightState;   //灯光状态 0-关 ，1-开
     BYTE    byFanState;     //风扇状态 0-关，1-开
-    BYTE    byRes[63];
+    BYTE    byFollow;  //尾随进入状态 0-无尾随，1-有尾随
+    BYTE    byFighting;  //打斗状态 0-无打斗，1-有打斗
+    BYTE    byFaint;  //晕倒状态 0-无晕倒，1-有人晕倒
+    BYTE    byManyPerson;  //多人状态 0-无多人进舱，1-多人进舱
+    BYTE    byRes[59];  //保留
 }NET_DVR_ALARMHOST_SAFETYCABINSTATE,*LPNET_DVR_ALARMHOST_SAFETYCABINSTATE;
 
 /////////警号输出口，警号状态上传/////////////
@@ -24610,7 +24944,7 @@ typedef struct tagNET_DVR_AUDIO_PARAM
 typedef struct tagNET_DVR_PREVIEWINFO
 {
     LONG lChannel;//通道号
-    DWORD dwStreamType;    // 码流类型，0-主码流，1-子码流，2-码流3，3-码流4 等以此类推
+    DWORD dwStreamType;    // 码流类型，0-主码流，1-子码流，2-码流3，3-码流4, 4-码流5,5-码流6,7-码流7,8-码流8,9-码流9,10-码流10
     DWORD dwLinkMode;// 0：TCP方式,1：UDP方式,2：多播方式,3 - RTP方式，4-RTP/RTSP,5-RSTP/HTTP 
     HWND hPlayWnd;//播放窗口的句柄,为NULL表示不播放图象
     DWORD bBlocked;  //0-非阻塞取流, 1-阻塞取流, 如果阻塞SDK内部connect失败将会有5s的超时才能够返回,不适合于轮询取流操作.
@@ -24630,8 +24964,8 @@ typedef struct tagNET_DVR_PREVIEWINFO
 typedef struct tagNET_DVR_TRIGGER_EVENT
 {
     DWORD    dwSize;
-    DWORD    dwOverallEventTriggerAlarmoutOn;    //全局事件触发报警输出开启，按位或，bit0-交流电掉电，bit1-电池电压低，bit2-电话线掉线，bit3-有线网络异常，bit4-无线网络异常 ,bit5-硬盘故障, bit6-3G/4G信号异常, bit7-（模块链接）第三方主机掉线
-    DWORD    dwOverallEventTriggerAlarmoutOff;    //全局事件触发报警输出开启，按位或，bit0-交流电掉电，bit1-电池电压低，bit2-电话线掉线，bit3-有线网络异常，bit4-无线网络异常 ,bit5-硬盘故障, bit6-3G/4G信号异常, bit7-（模块链接）第三方主机掉线
+    DWORD    dwOverallEventTriggerAlarmoutOn;    //全局事件触发报警输出开启，按位或，bit0-交流电掉电，bit1-电池电压低，bit2-电话线掉线，bit3-有线网络异常，bit4-无线网络异常 ,bit5-硬盘故障, bit6-3G/4G信号异常, bit7-（模块链接）第三方主机掉线 ，bit8- WIFI通信故障，bit9-RF信号干扰故障
+    DWORD    dwOverallEventTriggerAlarmoutOff;    //全局事件触发报警输出开启，按位或，bit0-交流电掉电，bit1-电池电压低，bit2-电话线掉线，bit3-有线网络异常，bit4-无线网络异常 ,bit5-硬盘故障, bit6-3G/4G信号异常, bit7-（模块链接）第三方主机掉线 ，bit8- WIFI通信故障，bit9-RF信号干扰故障
     DWORD    dwSubSystemEventTriggerAlarmoutOn[MAX_ALARMHOST_SUBSYSTEM/*32*/]; //子系统事件触发报警输出开启,dwSubSystemEvent[0]表示子系统1，dwSubSystemEvent[2]表示子系统2，具体的子系统个数从能力集获取（wSubSystem），每个子系统的事件按位表示，bit0-进入延时，bit1-退出延时，bit2-布防，bit3-撤防，bit4-报警，bit5-消除报警记忆,bit6-报警恢复,bit7-防区防拆,bit8-防区防拆恢复
     DWORD    dwSubSystemEventTriggerAlarmoutOff[MAX_ALARMHOST_SUBSYSTEM/*32*/]; //子系统事件触发报警输出关闭,wSubSystemEvent[0]表示子系统1，dwSubSystemEvent[2]表示子系统2，具体的子系统个数从能力集获取（wSubSystem），每个子系统的事件按位表示，bit0-进入延时，bit1-退出延时，bit2-布防，bit3-撤防，bit4-报警，bit5-消除报警记忆,bit6-报警恢复,bit7-防区防拆,bit8-防区防拆恢复
     BYTE    byRes[128];
@@ -25186,7 +25520,8 @@ typedef struct tagNET_DVR_VOD_PARA
     BYTE                byStreamType;   //码流类型 0-主码流， 1-子码流，2-码流三
     DWORD                   dwFileIndex;      //存档卷上的录像文件索引，搜索存档卷录像时返回的值
     BYTE                byAudioFile;    //音频文件0-否，1-是
-    BYTE                byRes2[23];
+    BYTE                byCourseFile;    //课程文件0-否，1-是
+    BYTE                byRes2[22];
 }NET_DVR_VOD_PARA, *LPNET_DVR_VOD_PARA;
 
 // 手动录像
@@ -26537,6 +26872,8 @@ typedef struct tagNET_DVR_SETUPALARM_PARAM
     //bit0-车牌检测（IPC） （0-不续传，1-续传）
     //bit1-客流统计（IPC）  （0-不续传，1-续传）
     //bit2-热度图统计（IPC） （0-不续传，1-续传）
+    //bit3-人脸抓拍（IPC） （0-不续传，1-续传）
+    //bit4-人脸对比（IPC） （0-不续传，1-续传）
     BYTE  byBrokenNetHttp;
     WORD  wTaskNo;    //任务处理号 和 (上传数据NET_DVR_VEHICLE_RECOG_RESULT中的字段dwTaskNo对应 同时 下发任务结构 NET_DVR_VEHICLE_RECOG_COND中的字段dwTaskNo对应)
     BYTE  byDeployType;    //布防类型：0-客户端布防，1-实时布防
@@ -27230,16 +27567,19 @@ typedef union tagNET_DVR_DIFFDEV_INFO
 /*注册设备信息*/
 typedef enum tagNET_DVCS_DEVICE_TYPE
 {
-    NET_DVR_BNC_PROC = 1,                       /* BNC处理器 */
-        NET_DVR_RGB_PROC,                       /* RGB处理器 */
-        NET_DVR_STP_PROC,                       /* 转码处理器 */
-        NET_DVR_DISP_PROC,                      /* 显示处理器 */
-        NET_DVR_NETSIGNAL,                        //网络信号源
-        NET_DVR_SDI_PROC,                       //SDI处理器
-        NET_DVR_BIW_PROC,                       //8路BNC处理器
-        NET_DVR_DON_PROC,                        //显示处理器
-        NET_DVR_TVI_PROC,                       //TVI处理器
-        NET_DVR_DI2_PROC                        //2路DVI处理器
+    NET_DVR_BNC_PROC = 1,                   /* BNC处理器 */
+    NET_DVR_RGB_PROC,                       /* RGB处理器 */
+    NET_DVR_STP_PROC,                       /* 转码处理器 */
+    NET_DVR_DISP_PROC,                      /* 显示处理器 */
+    NET_DVR_NETSIGNAL,                      //网络信号源
+    NET_DVR_SDI_PROC,                       //SDI处理器
+    NET_DVR_BIW_PROC,                       //8路BNC处理器
+    NET_DVR_DON_PROC,                       //显示处理器
+    NET_DVR_TVI_PROC,                       //TVI处理器
+    NET_DVR_DI2_PROC,                       //2路DVI输入处理器
+    NET_DVR_DO2_PROC,                       //2路DVI输出设备
+    NET_DVR_UHDI_PROC,                      //DP/HDMI 1路4K超高清输入设备
+    NET_DVR_YI2_PROC                        //两路YPbPr输入板
 }NET_DVCS_DEVICE_TYPE;
 
 typedef struct  tagNET_DVR_SINGLE_DEV_INFO 
@@ -27649,14 +27989,14 @@ typedef struct tagNET_ITS_ECTWORKSTATE
 typedef struct tagNET_ITS_PICTURE_INFO
 {
     DWORD   dwDataLen;            //媒体数据长度
-    BYTE    byType;            // 0:车牌图;1:车辆图;2:合成图; 3:特写图;4:二直图;5:码流;6:人脸子图(主驾驶);7:人脸子图(副驾驶)成图;8-非机动车;9-行人;10-称重原始裸数据;11-目标图;12-主驾驶室图 ;13-副驾驶室图
+    BYTE    byType;            // 0:车牌图;1:车辆图;2:合成图; 3:特写图;4:二直图;5:码流;6:人脸子图(主驾驶);7:人脸子图(副驾驶)成图;8-非机动车;9-行人;10-称重原始裸数据;11-目标图;12-主驾驶室图 ;13-副驾驶室图;14-人脸图抠小图
     // 0-数据直接上传; 1-云存储服务器URL(3.7Ver)原先的图片数据变成URL数据，图片长度变成URL长度
     BYTE    byDataType;
     BYTE    byCloseUpType;//特写图类型，0-保留,1-非机动车,2-行人
     BYTE    byPicRecogMode;  //图片背向识别：0-正向车牌识别，1-背向识别(尾牌识别) ；
     DWORD   dwRedLightTime;        //经过的红灯时间  （s）
     BYTE    byAbsTime[32];        //绝对时间点,yyyymmddhhmmssxxx,e.g.20090810235959999  最后三位为毫秒数
-    NET_VCA_RECT   struPlateRect;    //车牌位置
+    NET_VCA_RECT   struPlateRect;    //车牌位置,当byType为8-非机动车;9-行人时，表示人体坐标
     NET_VCA_RECT  struPlateRecgRect;   //牌识区域坐标，当图片类型为12-主驾驶室图13-副驾驶室图是，该坐标为驾驶员坐标
     BYTE    *pBuffer;    //数据指针
     DWORD   dwUTCTime;//UTC时间定义
@@ -27684,7 +28024,9 @@ typedef struct tagNET_ITS_PLATE_RESULT
     BYTE    byDriveChan;        //触发车道号
     BYTE    byVehicleType;     //车辆类型，参考VTR_RESULT
     BYTE    byDetSceneID;//检测场景号[1,4], IPC默认是0
-    BYTE    byVehicleAttribute;//车辆属性，按位表示，0- 无附加属性(普通车)，bit1- 黄标车(类似年检的标志)，bit2- 危险品车辆，值：0- 否，1- 是
+    //车辆属性，按位表示，0- 无附加属性(普通车)，bit1- 黄标车(类似年检的标志)，bit2- 危险品车辆，值：0- 否，1- 是
+    //该节点已不再使用,使用下面的byYellowLabelCar和byDangerousVehicles判断是否黄标车和危险品车
+    BYTE    byVehicleAttribute;
     WORD    wIllegalType;       //违章类型采用国标定义
     BYTE    byIllegalSubType[8];   //违章子类型
     BYTE    byPostPicNo;    //违章时取第几张图片作为卡口图,0xff-表示不取
@@ -27836,14 +28178,17 @@ typedef struct tagNET_DVR_TFS_ALARM
     BYTE                    byPilotCall;// 0-表示未知, 1-不打电话,2-打电话
     BYTE                    byRes2[2]; //保留
     BYTE                    byIllegalCode[ILLEGAL_LEN/*32*/];//违法代码扩展，当dwIllegalType值为0xffffffff；使用这个值
-    BYTE                    byRes[68]; //保留
+    WORD                    wCountry; // 国家索引值,参照枚举COUNTRY_INDEX
+    BYTE                    byRegion; //区域索引值,0-保留，1-欧洲(Europe Region)，2-俄语区域(Russian Region)，3-欧洲&俄罗斯(EU&CIS) , 4-中东（Middle East），0xff-所有
+    BYTE                    byRes[65]; //保留
 }NET_DVR_TFS_ALARM,*LPNET_DVR_TFS_ALARM;
 
 typedef struct tagNET_DVR_SOFTWARE_SERVICE_CFG
 {
     DWORD       dwSize;//结构体大小
     BYTE        byThirdStreamEnabled;  //是否开启三码流配置：0-否，1-是
-    BYTE        byRes[255];
+    BYTE        bySubStreamEnabled;  //是否开启子码流配置：0-否，1-是
+    BYTE        byRes[254];
 }NET_DVR_SOFTWARE_SERVICE_CFG, *LPNET_DVR_SOFTWARE_SERVICE_CFG;
 
 typedef struct _tagNET_ITS_ECT_BLACKLIST_
@@ -27988,6 +28333,9 @@ typedef enum ITS_OVERLAP_ITEM_TYPE
         OVERLAP_ITEM_CAR_VALIDITY,  //39-置信度
         OVERLAP_ITEM_CAR_COUNTRY,       //40-国家
         OVERLAP_ITEM_CAR_PLATE_TYPE,    //41-车牌类型，参考车牌类型枚举
+        OVERLAP_ITEM_CAR_PLATE_SIZE,		//42-车牌尺寸
+        OVERLAP_ITEM_CAR_PLATE_COLOR,		//43-车牌颜色
+        OVERLAP_ITEM_CAR_PLATE_CATEGORY		//44-车牌附加信息
 }ITS_OVERLAP_ITEM_TYPE;
 
 //字符叠加每一条信息结构体
@@ -28502,9 +28850,11 @@ typedef struct tagNET_DVR_LOCAL_GENERAL_CFG
 {
     BYTE     byExceptionCbDirectly;    //0-通过线程池异常回调，1-直接异常回调给上层
     BYTE     byNotSplitRecordFile;     //回放和预览中保存到本地录像文件不切片 0-默认切片，1-不切片
-    BYTE byRes[6];      //保留
+    BYTE     byResumeUpgradeEnable;    //断网续传升级使能，0-关闭（默认），1-开启
+    BYTE byRes[5];      //保留
     UINT64 i64FileSize;      //单位：Byte
-    BYTE byRes1[240];    //预留
+    DWORD dwResumeUpgradeTimeout;       //断网续传重连超时时间，单位毫秒
+    BYTE byRes1[236];    //预留
 }NET_DVR_LOCAL_GENERAL_CFG, *LPNET_DVR_LOCAL_GENERAL_CFG;
 
 typedef struct tagNET_DVR_LOCAL_STREAM_CALLBACK_CFG
@@ -28945,7 +29295,10 @@ typedef struct tagNET_DVR_CMD_TRIGGER_PERIOD_RECORD_PARA
     DWORD                    dwCmdType;                         //外部触发类型 
     DWORD                    dwRecordTimeLen;                //录像持续时间，单位：秒
     BYTE                    byEventID[MAX_EVENTID_LEN];        //事件ID，作为附加信息
-    BYTE                    byRes[128];
+    DWORD                    dwLockDuration;                //锁定持续时间，单位：秒，0xffffffff- 永久锁定，0- 不锁
+    BYTE                    byBackUp;                       //是否存档，0-不存档，1-存档
+    BYTE                    byPreRecord;                    //是否预录，0-不预录，1-预录
+    BYTE                    byRes[122];
 }NET_DVR_CMD_TRIGGER_PERIOD_RECORD_PARA, *LPNET_DVR_CMD_TRIGGER_PERIOD_RECORD_PARA;
 
 typedef struct tagNET_DVR_LOCK_FILE_BY_NAME_PARA
@@ -28960,7 +29313,7 @@ typedef struct tagNET_DVR_MULTI_STREAM_COMPRESSIONCFG_COND
 {
     DWORD                    dwSize;
     NET_DVR_STREAM_INFO        struStreamInfo;
-    DWORD                    dwStreamType; //码流类型，0-主码流，1-子码流，2-事件类型，3-码流3，……
+    DWORD                    dwStreamType; //码流类型，0-主码流，1-子码流，2-事件类型，3-码流3，……（自定义码流类型需通过GET /ISAPI/Streaming/channels/<ID>/customStream获取当前通道已经添加的所有自定义码流ID。自定义码流为6~10，其索引值就是6~10）
     BYTE                    byRes[32];
 }NET_DVR_MULTI_STREAM_COMPRESSIONCFG_COND, *LPNET_DVR_MULTI_STREAM_COMPRESSIONCFG_COND;
 
@@ -29255,7 +29608,9 @@ typedef struct tagNET_DVR_WALLWINPARAM
     BYTE  byEnableSpartan;//畅显使能，0-关，1-开
     BYTE  byDecResource;  //为窗口分配的解码资源，1-D1,2-720P,3-1080P
     BYTE  byWndShowMode; //窗口显示模式，0-此字段不用，1-子窗口模式，2-子窗口全屏模式
-    BYTE  byRes1[3];
+    BYTE    byEnabledFeature; //是否启用场景特写，0-不启用，!0-启用
+    BYTE    byFeatureMode; //特写模式，启用场景特写时有效，0-无效，1-“1+5”模式
+    BYTE  byRes1;
     DWORD dwAmplifyingSubWndNo; //全屏子窗口号（1字节墙号+1字节子窗口号+2字节窗口号）
                                                                   //当byWndShowMode为2时有效，表示当前全屏显示的子窗口
     BYTE  byWndTopKeep; //窗口置顶保持，0-不保持，1-保持
@@ -29369,7 +29724,7 @@ typedef struct tagNET_DVR_WALL_CFG
     BYTE  byTransparency;//透明度,0-100,0为不透明
     BYTE  byWinStaticMode; //窗口解码停止显示模式，1-黑屏，2-显示最后一帧图像
     BYTE  byStreamFailedMode; //取流失败显示模式，1-“无网络视频信号”，2-显示最后一帧图像
-    BYTE  byRes1;
+    BYTE    byEnabledOverlayLogo; //解码能力不足时是否叠加LOGO以提示用户，0-不叠加，!0-叠加
     NET_DVR_SUBSTREAM_SWITCH_CFG  struSubStreamSwitch; //子码流切换
     BYTE  byLEDShowMode; //LED窗口显示模式，0-普通模式，1-平铺模式
     BYTE  byLowLatencyMode; //低延时模式，0-普通模式，1-低延时模式
@@ -29764,6 +30119,34 @@ typedef struct tagNet_DVR_MATRIX_DEC_REMOTE_PLAY_EX
     }unionPlayBackInfo;
 }NET_DVR_MATRIX_DEC_REMOTE_PLAY_EX, *LPNET_DVR_MATRIX_DEC_REMOTE_PLAY_EX;
 
+typedef struct tagNET_DVR_MATRIX_DEC_REMOTE_PLAY_V50
+{
+    DWORD   dwSize;
+    DWORD   dwDecChannel;   //解码通道号
+    BYTE    byAddressType;  //设备地址类型，0-IP，1-DDNS，2-URL
+    BYTE    byChannelType;  //通道类型，0-普通通道，1-零通道，2-流ID
+    BYTE    byRes1[2];
+    BYTE    sUserName[NAME_LEN];    /* 用户名 */
+    BYTE    sPassword[PASSWD_LEN];  /* 密码 */
+    DWORD   dwChannel;              /* 设备通道号 */
+    BYTE    byStreamId[STREAM_ID_LEN];  //流ID,此参数在通道类型为流ID时有效
+    DWORD   dwPlayMode;             /* 0－按文件 1－按时间*/
+    union
+    {
+        BYTE byRes[200];
+        NET_DVR_IP_ADDRESS struIpAddr;	 //IP地址，byAddressType为0时有效
+        NET_DVR_DDNS_ADDRESS struDdnsAddr;	//DDNS地址，byAddressType为1时有效
+    }unionAddr;
+    union
+    {
+        BYTE byRes[128];
+        NET_DVR_PLAY_BACK_BY_TIME struPlayBackByTime; //按时间回放时文件信息
+        BYTE sFileName[128];    //按文件名回放时文件信息
+    }unionPlayBackInfo;
+    NET_DVR_PU_STREAM_URL struURL;	//取流URL，byAddressType为2时有效
+    BYTE    byRes2[128];
+}NET_DVR_MATRIX_DEC_REMOTE_PLAY_V50, *LPNET_DVR_MATRIX_DEC_REMOTE_PLAY_V50;
+
 typedef struct tagNET_DVR_DISPLAY_EFFECT_CFG
 {
     DWORD dwSize;
@@ -29820,7 +30203,9 @@ typedef struct tagNET_DVR_SAFETYCABIN_WORK_MODE
 {
     DWORD dwSize;
     BYTE  byWorkMode; //工作模式，0-无人门常开，1-无人门常锁
-    BYTE  byRes[15];
+    BYTE  byFaintToUnlock; //晕倒报警一定时间后外部可以开锁：0-否，1-是
+    BYTE  byOvertimeToUnlock;  //使用超时后外部按钮是否可以开锁：0-否，1-是
+    BYTE  byRes[13];
 }NET_DVR_SAFETYCABIN_WORK_MODE,*LPNET_DVR_SAFETYCABIN_WORK_MODE;
 
 typedef struct tagNET_DVR_SAFETYCABIN_PERSON_SIGNAL_CFG
@@ -29831,8 +30216,11 @@ typedef struct tagNET_DVR_SAFETYCABIN_PERSON_SIGNAL_CFG
     BYTE  byDevUseTimeout; //防护舱使用超时时间，单位：分,范围：5-30，默认超时15min,超时后通过布防通道上传报警
     BYTE  byRes1;
     WORD  wCurtainDelayTime; //幕帘传感器探测延时时间，单位：秒，范围：0-10
-    WORD  wCurtainResponseTime; //幕帘人状态变化控制器响应时间，单位：秒，范围：0-300    
-    BYTE  byRes2[32];
+    WORD  wCurtainResponseTime; //幕帘人状态变化控制器响应时间，单位：秒，范围：0-300
+    WORD  wFaintToEmergencyTime; //晕倒告警生效时间，单位：秒，范围：10-300
+    BYTE  byFollowDetectorSensitivity;  //尾随检测灵敏度，范围：0-100%
+    BYTE  byManyPersonSensitivity;    //多人检测灵敏度，范围：0-100%
+    BYTE  byRes2[28];  //保留
 }NET_DVR_SAFETYCABIN_PERSON_SIGNAL_CFG,*LPNET_DVR_SAFETYCABIN_PERSON_SIGNAL_CFG;    
 
 typedef struct tagNET_DVR_ETHERNET_IPV6_COND
@@ -29933,7 +30321,8 @@ typedef struct
     /*触发的录像通道*/
     DWORD     dwMaxRecordChanNum;   //设备支持的最大关联录像通道数-只读
     DWORD     dwRelRecordChan[MAX_CHANNUM_V40];     /* 实际触发录像通道，按值表示,采用紧凑型排列，从下标0 - dwRelRecordChan -1有效，如果中间遇到0xffffffff,则后续无效*/  
-    BYTE  byRes[128]; //保留字节
+    BYTE  byDiscardFalseAlarm; //启用去误报 0-无效，1-不启用，2-启用
+    BYTE  byRes[127]; //保留字节
 }NET_DVR_MOTION_V40,*LPNET_DVR_MOTION_V40;
 
 typedef struct
@@ -30069,7 +30458,8 @@ typedef struct
     BYTE        byEnableVisibleMovementPower;// 可见光机芯电源开关 0-关闭，1-开启
     BYTE        byEnableThermalMovementPower;// 热成像机芯电源开关 0-关闭，1-开启
     BYTE        byEnablePtzPower;// 云台电源开关 0-关闭，1-开启
-    BYTE        byRes[246];
+    BYTE        byPowerSavingControl;// 低功耗策略 0-保留 1-休眠模式 2-低功耗模式 低功耗模式下 可见光机芯电源、热成像机芯电源、云台电源控制生效
+    BYTE        byRes[245];
 }NET_DVR_DEVSERVER_CFG,*LPNET_DVR_DEVSERVER_CFG;
 
 typedef struct tagNET_DVR_GBT28181_ACCESS_CFG
@@ -30083,7 +30473,7 @@ typedef struct tagNET_DVR_GBT28181_ACCESS_CFG
     char       szSipServerAddress[MAX_SIPSERVER_ADDRESS_LEN] ;// SIP服务器地址支持域名和IP地址
     WORD       wServerSipPort;//服务器SIP端口：1024-65535
     BYTE       byProtocolVersion;//协议版本 0-GB/T28181-2011(仅支持UDP),1-GB/T28181-2015(支持TCP,UDP),2-GB/T28181-2016
-    BYTE       byRes3;
+    BYTE        byTCPConnectMod; //TCP连接模式，使用TCP传输协议时有效，0-无效，1-主动模式，2-被动模式
     char       szSipUserName[MAX_SERVERNAME_LEN];//SIP用户名称：64字节字符串(第三方SIP终端请求IPC服务时使用)
     char       szSipAuthenticateID[MAX_AUTHENTICATEID_LEN];//SIP用户认证ID：64字节字符串
     char       szSipAuthenticatePasswd[MAX_AUTHENTICATEPASSWD_LEN];//SIP用户认证密码：32字节字符串(IPC设备注册到SIP服务器时使用)
@@ -30540,6 +30930,14 @@ typedef struct  tagNET_DVR_GATE_ALARMINFO
     BYTE  byRes2[64]; //预留
 }NET_DVR_GATE_ALARMINFO, *LPNET_DVR_GATE_ALARMINFO;
 
+typedef struct tagNET_DVR_ALARMWIRELESSINFO
+{
+    BYTE     byDeviceID[NAME_LEN];   //设备ID
+    float       fDataTraffic;    /* 已用流量,单位：MB,小数点后两位*/
+    BYTE      bySignalIntensity;  /* 信号强度，0~100*/
+    BYTE      byRes[127];
+}NET_DVR_ALARMWIRELESSINFO, *LPNET_DVR_ALARMWIRELESSINFO;
+
 typedef struct tagNET_DVR_VOLTAGE
 {
     int iPhaseAVol;            //A相电压
@@ -30733,8 +31131,9 @@ typedef struct tagNET_DVR_ALARMHOST_WATERLEVEL_SENSOR
 typedef struct tagNET_DVR_ALARMHOST_DUSTNOISE_SENSOR
 {
     LONG        iDust;        //扬尘
-    LONG        iNoise;        //噪声
-    BYTE        byRes[504];
+    LONG        iNoise;       //噪声
+    LONG        iPM25;        //PM2.5
+    BYTE        byRes[500];
 }NET_DVR_ALARMHOST_DUSTNOISE_SENSOR, *LPNET_DVR_ALARMHOST_DUSTNOISE_SENSOR;
 
 //环境采集仪
@@ -30753,8 +31152,194 @@ typedef struct tagNET_DVR_ALARMHOST_ENVIRONMENTAL_LOGGER
     LONG        iNitrogenOxides;    //氮氧化物
     LONG        iFlueGasTemperature;//烟气温度
     LONG        iFlueGasPressure;    //烟气压力
-    BYTE        byRes[460];
+    LONG 		iDustThickness; /*粉尘浓度*/
+    LONG 		iAirCleanLevel; /*空气洁净度等级*/
+    LONG 		iPm10Thickness; /*PM10浓度*/
+    BYTE	    byRes[448];
 }NET_DVR_ALARMHOST_ENVIRONMENTAL_LOGGER, *LPNET_DVR_ALARMHOST_ENVIRONMENTAL_LOGGER;
+
+//风速传感器状态
+typedef struct
+{
+    int  iWindSpeed; /*风速*/
+    BYTE   byRes[508];
+}NET_DVR_WIND_SPEED_STATE, *LPNET_DVR_WIND_SPEED_STATE;
+
+//通用扩展输出模块状态（48路，每位表示1路，0表示关，1表示开）
+typedef struct
+{
+    BYTE byOutPutState1; /*output1-8*/
+    BYTE byOutPutState2; /*output9-16*/
+    BYTE byOutPutState3; /*output17-24*/
+    BYTE byOutPutState4; /*output25-32*/
+    BYTE byOutPutState5; /*output33-40*/
+    BYTE byOutPutState6; /*output41-48*/
+    BYTE Res[506];
+}NET_DVR_GENERATE_OUTPUT_STATE, *LPNET_DVR_GENERATE_OUTPUT_STATE;
+
+//浸水传感器状态
+typedef struct
+{
+    int  iWaterLogVal;      /* 泄露位置，100倍*/
+    int  iLeakResist1;      /*第一路漏水电阻*/
+    int  iTotolResist1;     /*第一路总电阻*/
+    int  iLeakResist2;      /*第二路漏水电阻*/
+    int  iTotolResist2;     /*第二路总电阻*/
+    BYTE   byWaterLogAlarm;    /* 泄漏报警1：正常，2：告警*/
+    BYTE   byLeakAlarm1;       /*第一路漏水告警1：正常，2：告警*/
+    BYTE   byFaultAlarm1;      /*第一路故障告警1：正常，2：告警*/
+    BYTE   byLeakAlarm2;       /*第二路漏水告警1：正常，2：告警*/
+    BYTE   byFaultAlarm2;      /*第二路故障告警1：正常，2：告警*/
+    BYTE   byRes[487];
+}NET_DVR_SOAK_STATE, *LPNET_DVR_SOAK_STATE;
+
+//太阳能控制器状态
+typedef struct
+{
+    int  iChangerVolInput;          /*充电设备输入电压*/
+    int  iChangerCurInput;          /*充电设备输入电流*/
+    int  iChangerPwInput;           /*充电设备输入功率*/
+    int  iChangerVolOutput;         /*充电设备输出电压*/
+    int  iChangerCurOutput;         /*充电设备输出电流*/
+    int  iChangerPwOutput;          /*充电设备输出功率*/
+    int  iDischangerVolOutput;      /*放电设备输出电压*/
+    int  iDischangerCurOutput;      /*放电设备输出电流*/
+    int  iDischangerPwOutput;       /*放电设备输出功率*/
+    int  iDevTemperatrue;           /*设备内温度*/
+    BYTE   byBatteryVolState;          /*蓄电池电压状态1：正常，2：异常*/
+    BYTE   byBatteryTmpState;          /*蓄电池温度状态1：正常，2：异常*/
+    BYTE   byChangerVolInputState;     /*充电设备输入电压状态1：正常，2：异常*/
+    BYTE   byChangerRunState;          /*充电设备运行状态1：正常，2：待机*/
+    BYTE   byChangerChgState;          /*充电设备充电状态1：正常，2：异常*/
+    BYTE   byBatteryVolFlt;            /*蓄电池电压故障1：正常，2：告警*/
+    BYTE   byBatteryTmpFlt;            /*蓄电池温度异常1：正常，2：告警*/
+    BYTE   byBatteryResistanceFlt;     /*蓄电池内阻异常1：正常，2：告警*/
+    BYTE   byVolRcgFlt;                /*额定电压识别错误1：正常，2：告警*/
+    BYTE   byChangerVolInputFlt;       /*充电设备输入电压异常1：正常，2：告警*/
+    BYTE   byChangerMosShort;          /*充电MOS管短路1：正常，2：告警*/
+    BYTE   byChangerAntiOrMosShort;    /*充电或防反MOS管短路1：正常，2：告警*/
+    BYTE   byChangerAntiShort;         /*防反MOS管短路1：正常，2：告警*/
+    BYTE   byInputOverCur;             /*输入过流1：正常，2：告警*/
+    BYTE   byLoadOverCur;              /*负载过流1：正常，2：告警*/
+    BYTE   byLoadShort;                /*负载短路1：正常，2：告警*/
+    BYTE   byLoadMosShort;             /*负载MOS管短路1：正常，2：告警*/
+    BYTE   byChangerFlt;               /*充电设备故障1：正常，2：告警*/
+    BYTE   byRes[454];
+}NET_DVR_SOLAR_POWER_STATE, *LPNET_DVR_SOLAR_POWER_STATE;
+
+//SF6报警主机状态
+typedef struct
+{
+    int  iSf6Thick1;    /*第一点SF6浓度*/
+    int  iO2Thick1;     /*第一点氧气浓度*/
+    int  iTemprature1;  /*第一点温度*/
+    int  iHumidity1;    /*第一点湿度*/
+    int  iSf6Thick2;    /*第二点SF6浓度*/
+    int  iO2Thick2;     /*第二点氧气浓度*/
+    int  iTemprature2;  /*第二点温度*/
+    int  iHumidity2;    /*第三点湿度*/
+    int  iSf6Thick3;    /*第三点SF6浓度*/
+    int  iO2Thick3;     /*第三点氧气浓度*/
+    int  iTemprature3;  /*第三点温度*/
+    int  iHumidity3;    /*第三点湿度*/
+    int  iSf6Thick4;    /*第四点SF6浓度*/
+    int  iO2Thick4;     /*第四点氧气浓度*/
+    int  iTemprature4;  /*第四点温度*/
+    int  iHumidity4;    /*第四点湿度*/
+    int  iSf6Thick5;    /*第五点SF6浓度*/
+    int  iO2Thick5;     /*第五点氧气浓度*/
+    int  iTemprature5;  /*第五点温度*/
+    int  iHumidity5;    /*第五点湿度*/
+    int  iSf6Thick6;    /*第六点SF6浓度*/
+    int  iO2Thick6;     /*第六点氧气浓度*/
+    int  iTemprature6;  /*第六点温度*/
+    int  iHumidity6;    /*第六点湿度*/
+    int  iSf6Thick7;    /*第七点SF6浓度*/
+    int  iO2Thick7;     /*第七点氧气浓度*/
+    int  iTemprature7;  /*第七点温度*/
+    int  iHumidity7;    /*第七点湿度*/
+    int  iSf6Thick8;    /*第八点SF6浓度*/
+    int  iO2Thick8;     /*第八点氧气浓度*/
+    int  iTemprature8;  /*第八点温度*/
+    int  iHumidity8;    /*第八点湿度*/
+    int  iSf6Thick9;    /*第九点SF6浓度*/
+    int  iO2Thick9;     /*第九点氧气浓度*/
+    int  iTemprature9;  /*第九点温度*/
+    int  iHumidity9;    /*第九点湿度*/
+    int  iSf6Thick10;   /*第十点SF6浓度*/
+    int  iO2Thick10;    /*第十点氧气浓度*/
+    int  iTemprature10; /*第十点温度*/
+    int  iHumidity10;   /*第十点湿度*/
+    int  iSf6Thick11;   /*第十一点SF6浓度*/
+    int  iO2Thick11;    /*第十一点氧气浓度*/
+    int  iTemprature11; /*第十一点温度*/
+    int  iHumidity11;   /*第十一点湿度*/
+    int  iSf6Thick12;   /*第十二点SF6浓度*/
+    int  iO2Thick12;    /*第十二点氧气浓度*/
+    int  iTemprature12; /*第十二点温度*/
+    int  iHumidity12;   /*第十二点湿度*/
+    BYTE   byFanState1;    /*风机状态1 1：运行，2：停止*/
+    BYTE   byFanState2;    /*风机状态2 1：运行，2：停止*/
+    BYTE   byFanState3;    /*风机状态3 1：运行，2：停止*/
+    BYTE   byFanState4;    /*风机状态4 1：运行，2：停止*/
+    BYTE   byFanState5;    /*风机状态5 1：运行，2：停止*/
+    BYTE   byFanState6;    /*风机状态6 1：运行，2：停止*/
+    BYTE   byFanState7;    /*风机状态7 1：运行，2：停止*/
+    BYTE   byFanState8;    /*风机状态8 1：运行，2：停止*/
+    BYTE   byFanState9;    /*风机状态9 1：运行，2：停止*/
+    BYTE   byFanState10;   /*风机状态10 1：运行，2：停止*/
+    BYTE   byFanState11;   /*风机状态11 1：运行，2：停止*/
+    BYTE   byFanState12;   /*风机状态12 1：运行，2：停止*/
+    BYTE   byRes[308];
+}NET_DVR_SF6_ALARMHOST_STATE, *LPNET_DVR_SF6_ALARMHOST_STATE;
+
+//称重仪状态
+typedef struct
+{
+    int  iWeight;   /*称重值,1000倍*/
+    BYTE   byRes[508];
+}NET_DVR_WEIGHT_STATE, *LPNET_DVR_WEIGHT_STATE;
+
+//气象采集系统状态
+typedef struct
+{
+    int  iAirTemperature;              /* 空气温度*/
+    DWORD  dwAirHumidity;              /* 空气湿度*/
+    DWORD  dwWindSpeed;                /* 风速*/
+    DWORD  dwWindDirection;            /* 风向*/
+    DWORD  dwIlluminationIntensity;    /* 光照强度*/
+    DWORD  dwCO2;                      /* co2浓度*/
+    DWORD  dwPM25;                     /* PM2.5浓度*/
+    DWORD  dwAirPressure;              /* 大气压力*/
+    int  iSoilTemperature;             /* 土壤温度*/
+    DWORD  dwSoilHumidity;             /* 土壤湿度*/
+    DWORD  dwRainFall;                 /*降雨量*/
+    BYTE   byIsRainSnow;               /* 雨雪情况，1-无雨雪，2-有雨雪*/
+    BYTE   byRes[467];
+}NET_DVR_WEATHER_STATION_STATE, *LPNET_DVR_WEATHER_STATION_STATE;
+
+//水质监测仪状态
+typedef struct
+{
+    DWORD  dwTurbidity;    /* 浊度值*/
+    DWORD  dwChlorine;     /* 余氯值*/
+    DWORD  dwPH;           /* PH 值*/
+    BYTE   byRes[500];
+}NET_DVR_WATER_QLT_STATE, *LPNET_DVR_WATER_QLT_STATE;
+
+//燃气监测系统状态
+typedef struct
+{
+    int  iNatrualGasThick;  /* 天然气浓度*/
+    BYTE   byRes[508];
+}NET_DVR_FUEL_GAS_DETE_STATE, *LPNET_DVR_FUEL_GAS_DETE_STATE;
+
+//消防主机设备
+typedef struct tagNET_DVR_FIRE_ALARM_STATUS
+{
+    BYTE  byFireAlarm[MAX_FIRE_ALARM_ZONE][MAX_FIRE_ALARM_POINT_ZONE];           //火点状态参数位，1-正常，2-告警
+    BYTE  byRes[128];   //保留位
+}NET_DVR_FIRE_ALARM_STATUS, *LPNET_DVR_FIRE_ALARM_STATUS;
 
 typedef union tagNET_DVR_EXTERNAL_DEVICE_STATE_UNION
 {
@@ -30768,18 +31353,41 @@ typedef union tagNET_DVR_EXTERNAL_DEVICE_STATE_UNION
     NET_DVR_ALARMHOST_WATERLEVEL_SENSOR struWaterLevelSensor;//水位传感器
     NET_DVR_ALARMHOST_DUSTNOISE_SENSOR struDustNoiseSensor;//扬尘噪声传感器
     NET_DVR_ALARMHOST_ENVIRONMENTAL_LOGGER struEnvironmentLogger;//环境采集仪
+    NET_DVR_WIND_SPEED_STATE struWindSpeedState; //风速传感器状态
+    NET_DVR_GENERATE_OUTPUT_STATE struGenerateOutputState; //通用扩展输出模块状态（48路，每位表示1路）
+    NET_DVR_SOAK_STATE struSoakState; //浸水传感器状态
+    NET_DVR_SOLAR_POWER_STATE struSolarPowerState; //太阳能控制器状态
+    NET_DVR_SF6_ALARMHOST_STATE struSF6AlarmHostState; //SF6报警主机状态
+    NET_DVR_WEIGHT_STATE struWeightState; //称重仪状态
+    NET_DVR_WEATHER_STATION_STATE struWeatherStationState; //气象采集系统状态
+    NET_DVR_WATER_QLT_STATE struWaterQltState; //水质监测仪状态
+    NET_DVR_FUEL_GAS_DETE_STATE struFuelGasDeteState; //燃气监测系统状态
+    NET_DVR_FIRE_ALARM_STATUS struFireAlarmStatus; //消防主机设备状态
     BYTE    byRes[512];
 } NET_DVR_EXTERNAL_DEVICE_STATE_UNION, *LPNET_DVR_EXTERNAL_DEVICE_STATE_UNION;
 
 typedef struct tagNET_DVR_ALARMHOST_EXTERNAL_DEVICE_STATE
 {
     DWORD dwSize;
-    BYTE    byDevType;    //1-UPS，2-开关电源，3-气体检测系统，4-温湿度传感器，5-空调，6-电量表，7-变电器状态, 8-水位传感器、9-扬尘噪声传感器、10-环境采集仪
+    BYTE    byDevType;    //1-UPS，2-开关电源，3-气体检测系统，4-温湿度传感器，5-空调，6-电量表，7-变电器状态, 8-水位传感器、9-扬尘噪声传感器、10-环境采集仪、11-风速传感器状态、12-通用扩展输出模块状态、13-浸水传感器状态、14-太阳能控制器状态、15-SF6报警主机状态、16-称重仪状态、17-气象采集系统状态、18-水质检测仪状态、19-燃气监测系统状态、20-消防主机状态
     BYTE    byRes1[3];
     NET_DVR_EXTERNAL_DEVICE_STATE_UNION struDevState;
     BYTE    byRes2[32];
 } NET_DVR_ALARMHOST_EXTERNAL_DEVICE_STATE, *LPNET_DVR_ALARMHOST_EXTERNAL_DEVICE_STATE;
 
+//通用扩展输出模块控制（48路，每位表示1路）
+typedef struct
+{
+    DWORD dwSize;
+    BYTE byOutPutState1; /*output1-8*/
+    BYTE byOutPutState2; /*output9-16*/
+    BYTE byOutPutState3; /*output17-24*/
+    BYTE byOutPutState4; /*output25-32*/
+    BYTE byOutPutState5; /*output33-40*/
+    BYTE byOutPutState6; /*output41-48*/
+    BYTE byOperateType; //操作类型，0-无效，1-开，2-关
+    BYTE Res[65];
+}NET_DVR_GENERATE_OUTPUT_CTRL, *LPNET_DVR_GENERATE_OUTPUT_CTRL;
 
 //UPS报警限值
 typedef struct tagNET_DVR_ALARMHOST_UPS_LIMIT_VALUE
@@ -31049,7 +31657,7 @@ typedef struct tagNET_VCA_TRAVERSE_PLANEPARAM
     BYTE    byEnable;//使能
     BYTE    byEnableDualVca;// 启用支持智能后检索 0-不启用，1-启用
     BYTE    byEnableHumanMisinfoFilter;// 启用人体去误报 0-不启用，1-启用
-    BYTE    byRes1[1];
+    BYTE    byEnableVehicleMisinfoFilter;// 启用车辆去误报 0-不启用，1-启用
     NET_VCA_TRAVERSE_PLANE struAlertParam[MAX_ALERTLINE_NUM];  //警戒线参数
     NET_DVR_SCHEDTIME    struAlarmSched[MAX_DAYS][MAX_TIMESEGMENT_V30];
     NET_DVR_HANDLEEXCEPTION_V40 struHandleException;  //异常处理方式
@@ -31067,7 +31675,7 @@ typedef struct tagNET_VCA_FIELDDETECION
     BYTE byEnable; //使能，是否开启
     BYTE byEnableDualVca;// 启用支持智能后检索 0-不启用，1-启用
     BYTE byEnableHumanMisinfoFilter;// 启用人体去误报 0-不启用，1-启用
-    BYTE byRes1[1];
+    BYTE byEnableVehicleMisinfoFilter;// 启用车辆去误报 0-不启用，1-启用
     NET_VCA_INTRUSION struIntrusion[MAX_INTRUSIONREGION_NUM];//每个区域的参数设置
     NET_DVR_SCHEDTIME struAlarmSched[MAX_DAYS][MAX_TIMESEGMENT_V30]; //布防时间
     NET_DVR_HANDLEEXCEPTION_V40 struHandleException;  //异常处理方式
@@ -31582,7 +32190,8 @@ typedef struct tagNET_DVR_PREVIEW_SWITCH_COND
                      4-辅助输出二 5-辅助输出三 6-辅助输出四, 7-辅助HDMI, 8-扩展HDMI1,
                      9-扩展HDMI2, 10-扩展HDMI3, 11-扩展HDMI4, 12-非同源VGA1，
                      13-非同源VGA2，14-非同源VGA3，15-非同源VGA4，16-同源VGA, 17-主LCD,18-辅助VGA,19-辅助LCD*/
-    BYTE    byRes[2];
+    BYTE    byGetDefaultPreviewSet;//是否获取预设，0-否，1-是；若为是时，byPreviewNumber字段有效
+    BYTE    byPreviewNumber;//预览数目,0-1画面,1-4画面,2-9画面,3-16画面, 4-6画面, 5-8画面6-25画面,7-32画面, 8-36画面0xff:最大画面
 }NET_DVR_PREVIEW_SWITCH_COND, *LPNET_DVR_PREVIEW_SWITCH_COND;
 
 typedef struct tagNET_DVR_PREVIEW_SWITCH_CFG
@@ -32059,7 +32668,8 @@ typedef struct tagNET_DVR_INPUT_INFO
     DWORD        dwChanNo;        //通道号
     DWORD        dwSubChanNo;    //槽位号
     DWORD        dwVariableNo;    //变量编号
-    BYTE        byRes2[60];
+    BYTE        byRemoteType;    //获取变量类型，0-全部类型，1-遥信，2-遥测
+    BYTE        byRes2[59];
 }NET_DVR_INPUT_INFO, *LPNET_DVR_INPUT_INFO;
 
 typedef struct tagNET_DVR_ALARM_VARIABLE_CFG
@@ -32069,7 +32679,8 @@ typedef struct tagNET_DVR_ALARM_VARIABLE_CFG
     WORD        wVariableType;        //变量类型 1-模拟量 2-开关量，只能获取
     BYTE        sDescribe[NAME_LEN];//变量描述
     BYTE        byLimitLineType;    //报警限值配置类型，0-不支持报警限值配置，1-两限值配置（即上限、下限），2-四限值配置
-    BYTE        byRes[31];            //保留
+    BYTE        byRemoteType;       //变量远动系统类型：0-全部类型，1-遥信，2遥测
+    BYTE        byRes[30];            //保留
 }NET_DVR_ALARM_VARIABLE_CFG, *LPNET_DVR_ALARM_VARIABLE_CFG;
 
 
@@ -32614,9 +33225,10 @@ typedef struct tagNET_DVR_PASSIVETRANSINFO
 typedef struct tagNET_DVR_BASEMAP_CONTROL_CFG
 {
     DWORD dwSize;
-    BYTE  byEnable;        //是否显示，1-显示，0-隐藏    
-    BYTE  byBaseMapType;    //底图类型，1-图片底图，2-超高清输入底图
-    BYTE  byRes1[2];
+    BYTE  byEnable;          //是否显示，1-显示，0-隐藏    
+    BYTE  byBaseMapType;     //底图类型，1-图片底图，2-超高清输入底图，3-底图轮训
+    BYTE  byBaseMapCircleNo; //底图轮训参数编号，byBaseMapType为3时有效
+    BYTE  byRes1;
     DWORD dwBaseMapNo;     //底图号；底图类型为1时，此参数为图片序号，底图类型为2时此参数为超高清输入子系统输入口号（1字节矩阵号+1字节子板号+1字节输入口号+1字节保留）
     BYTE  byRes2[64];
 }NET_DVR_BASEMAP_CONTROL_CFG,*LPNET_DVR_BASEMAP_CONTROL_CFG;
@@ -32727,10 +33339,11 @@ typedef struct  tagNET_DVR_TEST_COMMAND
     //数组下标4 花样扫描测试程序，0表示关闭，1表示开启
     //数组下标5 电子罗盘校正程序，0表示关闭，1表示开启
     WORD    wICRIntervalTime;//icr间隔时间（byTestCommand 数组下表2内的值为1时，ICR开关间隔时间，单位秒）
-    BYTE      byElectronicCompassState;//罗盘状态返回， 0-正常， 1-不正常
+    BYTE    byElectronicCompassState;//罗盘状态返回， 0-正常， 1-不正常
     BYTE    byRes1[1];
-    float     fDeviceTem; //设备机芯温度，精确度0.001
-    BYTE    byRes[12];      //保留字节 
+    float   fDeviceTem; //设备机芯温度，精确度0.001
+    BYTE    byTemp[9];  //用于多个温敏设备， 下标0-全景的温敏， 标1-4：全景1的4个sensor的温敏， 标5-8：全景2的4个sensor的温敏,目前用于鹰眼全景
+    BYTE    byRes[3];      //保留字节 
 }NET_DVR_TEST_COMMAND, *LPNET_DVR_TEST_COMMAND;
 
 typedef struct  tagNET_DVR_AGING_TRICK_SCAN
@@ -33148,17 +33761,18 @@ typedef struct tagNET_DVR_CMS_PARAM
     WORD            wServerPort;                   // 平台服务器侦听端口，
     BYTE         bySeverProtocolType;            //平台协议类型 1-私有，2-Ehome
     BYTE            byStatus;                         //设备注册到该平台的状态，1-未注册，2-已注册
-    BYTE         sDeviceId[NAME_LEN/*32*/];     //设备ID
-    char         sPassWord[PASSWD_LEN];
+    BYTE         sDeviceId[NAME_LEN/*32*/];     //设备ID，由平台提供
+    char         sPassWord[PASSWD_LEN];  //密码
     /********* IPC5.1.7 新增参数 Begin 2014-03-21***********/
     BYTE         sPlatformEhomeVersion[NAME_LEN];//平台EHOME协议版本
     /********* IPC5.1.7 新增参数 end 2014-03-21***********/
-    BYTE         byNetWork;                //0- 无意义，1-自动，2-有线网络优先，3-有线网络，4-3G网络
+    BYTE         byNetWork;                //网络类型：0- 无意义，1-自动，2-有线网络优先，3-有线网络，4-3G网络
     BYTE         byAddressType;            //0 - 无意义, 1 - ipv4/ipv6地址，2 - 域名
     BYTE         byProtocolVersion;            //协议版本 0 - 无意义, 1 – v2.0，2 – v4.0
     BYTE            byRes1;
-    BYTE         sDomainName[MAX_DOMAIN_NAME/*64*/]; //域名
-    BYTE            byRes[140];          // 保留字节
+    BYTE         sDomainName[MAX_DOMAIN_NAME/*64*/]; //平台服务器域名，byAddressType为2时有效
+    BYTE        byEnable;      //0-关闭，1-开启
+    BYTE            byRes[139];          // 保留字节
 }NET_DVR_CMS_PARAM, *LPNET_DVR_CMS_PARAM;
 
 //条件结构
@@ -33392,9 +34006,11 @@ typedef struct tagNET_DVR_WIPERINFO_CFG
 {
     DWORD dwSize;
     //雨刷工作模式
-    //0-单次模式，1-持续模式（针对配置结构NET_DVR_ROTATE_OPERATE_PARAM）
+    //0-单次模式，1-持续模式（针对配置结构NET_DVR_ROTATE_OPERATE_PARAM），2-智能模式，0xff-关闭
     BYTE  byWiperWorkMode;
-    BYTE  byRes[23];
+    BYTE  byRes1;
+    WORD  wSensitivity;//降雨灵敏度
+    BYTE  byRes[20];
     NET_DVR_WIPERMODE_PARAM_UNION ustruWiperModeParam;
 }NET_DVR_WIPERINFO_CFG,*LPNET_DVR_WIPERINFO_CFG;
 
@@ -33932,7 +34548,7 @@ typedef struct tagNET_DVR_DISPLAYPARAM
 {
     DWORD dwDisplayNo;//显示输出号
     BYTE  byDispChanType;/*输出连接模式,1-BNC，2-VGA，3-HDMI，4-DVI，5-SDI, 6-FIBER, \
-                                    7-RGB, 8-YPrPb, 9-VGA/HDMI/DVI自适应，10-3GSDI,11-VGA/DVI自适应，12-HDBaseT,13-HDTVI, 0xff-无效*/
+                                    7-RGB, 8-YPrPb, 9-VGA/HDMI/DVI自适应，10-3GSDI,11-VGA/DVI自适应，12-HDBaseT,13-HDTVI, 14-TVI，0xff-无效*/
 
     BYTE  byRes[11];
 }NET_DVR_DISPLAYPARAM,*LPNET_DVR_DISPLAYPARAM;
@@ -33988,22 +34604,34 @@ typedef struct tagNET_DVR_VIRTUALLED_PARAM
 {
     DWORD   dwSize;
     BYTE    byEnable; //使能
-    BYTE    byDispMode;//显示模式，1-透明，2-半透明，3-覆盖
-    BYTE  byWndOperateMode;  //窗口操作模式，0-统一坐标，1-分辨率坐标
-    BYTE    byRes1[5];
-    NET_DVR_RGB_COLOR struContentColor;//字体颜色
-    NET_DVR_RGB_COLOR struBackColor;//背景颜色
-    NET_DVR_RECTCFG_EX struRect;
-    DWORD   dwContentNum;/*字符的个数*/
-    BYTE    byLedContent[MAX_LEDCONTENT_NUM/*512*/]; /*虚拟LED字符内容*/
-    BYTE    byMoveMode; //字符移动模式，1-普通；2-平滑，3-静止
+    BYTE    byDispMode; //显示模式，1-透明，2-半透明，3-覆盖
+    BYTE    byWndOperateMode; //窗口操作模式，0-统一坐标，1-分辨率坐标
+    BYTE    byType; //虚拟LED类型，0-文本，1-时间
+    BYTE    byDirection; //虚拟LED方向，0-水平方向，1-垂直方向
+    BYTE    byTimeType; //时间类型，byType为1时有效，0-无效，1-只显示时间，2-显示日期和时间
+    BYTE    byDateFormat; //日期显示格式，byTimeType为2时有效
+    //0-无效，1-XXXX-XX-XX(年月日)，2-XX-XX-XXXX(月日年)，3-XX-XX-XXXX(日月年)，4-XXXX年XX月XX日，5-XX月XX日XXXX年，6-XX日XX月XXXX年
+    BYTE    byTimeFormat; //时间显示格式，byTimeType不为零时有效
+    //0-无效，1-H:MM:SS，2-HH:MM:SS
+    NET_DVR_RGB_COLOR   struContentColor; //字体颜色
+    NET_DVR_RGB_COLOR   struBackColor; //背景颜色
+    NET_DVR_RECTCFG_EX  struRect;
+    DWORD   dwContentNum; //文本内容长度，byType为0时有效
+    BYTE    byLedContent[MAX_LEDCONTENT_NUM/*512*/]; //文本内容，byType为0时有效
+    BYTE    byMoveMode; //移动模式，1-普通；2-平滑；3-静止
     BYTE    byFontSize; //字体大小，1-1倍，2-2倍，3-4倍
-    BYTE    byMoveDirection; //移动方向，0-默认（从左到右），1-从左到右，2-从右到左，3-从上到下，4-从下到上
-    BYTE    byMoveSpeed; //移动速度，1-速度1,2-速度2
+    BYTE    byMoveDirection; //移动方向，0-默认（从左到右），1-从左到右，2-从右到左，3-从上到下，4-从下到上，动态虚拟LED时有效
+    BYTE    byMoveSpeed; //移动速度，1-速度1，2-速度2，动态虚拟LED时有效
     NET_DVR_RECTCFG_EX struResolution; //目的窗口分辨率坐标，获取或按分辨率坐标设置有效
-    DWORD dwXCoordinate; //LED区域左上角X坐标（统一坐标），获取或按分辨率坐标设置有效
-    DWORD dwYCoordinate; //LED区域左上角Y坐标（统一坐标），获取或按分辨率坐标设置有效
-    BYTE    byRes2[96];
+    DWORD   dwXCoordinate; //LED区域左上角X坐标（统一坐标），获取或按分辨率坐标设置有效
+    DWORD   dwYCoordinate; //LED区域左上角Y坐标（统一坐标），获取或按分辨率坐标设置有效
+    BYTE    byHourFormat; //时间制式，byTimeType不为零时有效，0-无效，1-12小时制，2-24小时制
+    BYTE    byAMFormat; //AM格式，byHourFormat为1时有效，0-无效，1-AM，2-上午
+    BYTE    byPMFormat; //PM格式，byHourFormat为1时有效，0-无效，1-PM，2-下午
+    BYTE    byAlignmentX; //水平对齐方式，byDirection为0时有效，0-无效，1-左对齐，2-居中对齐，3-右对齐
+    BYTE    byAlignmentY; //垂直对齐方式，byDirection为1时有效，0-无效，1-顶端对齐，2-居中对齐，3-底端对齐
+    BYTE    byFontType; //字体类型，0-默认，1-宋体，2-黑体，3-楷体
+    BYTE    byRes2[90];
 }NET_DVR_VIRTUALLED_PARAM,*LPNET_DVR_VIRTUALLED_PARAM;
 
 typedef struct tagNET_DVR_IMAGE_CUT_MODE
@@ -34414,7 +35042,7 @@ typedef struct tagNET_DVR_AUTO_TRACK_CFG
     DWORD  dwSize;   //结构体大小
     NET_DVR_DIRECT_CONNECT_CHAN_INFO struSDIInfo[MAX_CHANNUM_V30] ; 
     //SDI通道，设备端实际的流返回形式是模拟通道，而控制前端使用IP通道。
-    BYTE   byCameraType[MAX_CHANNUM_V30];     //通道接入的相机类型，值为 0-无意义，1-老师跟踪，2-学生跟踪，3-老师全景，4-学生全景，5-多媒体，0xff-未接入
+    BYTE   byCameraType[MAX_CHANNUM_V30];     //通道接入的相机类型，值为 0-无意义，1-老师跟踪，2-学生跟踪，3-老师全景，4-学生全景，5-多媒体，6-教师定位,7-学生定位,8-板书定位,9-板书相机, 0xff-未接入
     BYTE   byRes[64];     //保留
 }NET_DVR_AUTO_TRACK_CFG, *LPNET_DVR_AUTO_TRACK_CFG; 
 
@@ -34547,8 +35175,15 @@ typedef struct _NET_DVR_PPT_DETECT_CFG_
     WORD    wY;
     WORD    wWidth;
     WORD    wHeight;
-    BYTE    byRes[32];
+    DWORD   dwChangePixelNum;//像素点检测阈值[0,1000](ps : 一幅图像有多少像素在变化)
+    BYTE    byRes[28];
 }NET_DVR_PPT_DETECT_CFG,*LPNET_DVR_PPT_DETECT_CFG;
+
+typedef struct _NET_DVR_SCREEN_SWITCH_
+{
+    DWORD dwSize;
+    BYTE  byRes[64];     //保留
+}NET_DVR_SCREEN_SWITCH, *LPNET_DVR_SCREEN_SWITCH;
 
 typedef struct _NET_DVR_PPT_CHANNEL_CFG_
 {
@@ -34870,6 +35505,14 @@ typedef struct tagNET_DVR_AUTH_INFO
     BYTE   byRes[212];  //保留
 }NET_DVR_AUTH_INFO, *LPNET_DVR_AUTH_INFO;
 
+//车牌信息上传
+typedef struct tagNET_DVR_UPLOAD_PLATE_INFO
+{
+    char sLicense[MAX_LICENSE_LEN];        //车牌号码
+    BYTE   byColor;                      //车牌颜色，参考结构VCA_PLATE_COLOR
+    BYTE   byRes[239];  //保留
+}NET_DVR_UPLOAD_PLATE_INFO, *LPNET_DVR_UPLOAD_PLATE_INFO;
+
 //可视对讲事件记录信息联合体
 typedef union tagNET_DVR_VIDEO_INTERCOM_EVENT_INFO_UINON
 {
@@ -34877,6 +35520,7 @@ typedef union tagNET_DVR_VIDEO_INTERCOM_EVENT_INFO_UINON
     NET_DVR_UNLOCK_RECORD_INFO struUnlockRecord; //开锁记录
     NET_DVR_NOTICEDATA_RECEIPT_INFO struNoticedataReceipt; //公告信息阅读回执
     NET_DVR_AUTH_INFO struAuthInfo; //认证记录
+    NET_DVR_UPLOAD_PLATE_INFO struUploadPlateInfo; //车牌信息上传
 }NET_DVR_VIDEO_INTERCOM_EVENT_INFO_UINON,*LPNET_DVR_VIDEO_INTERCOM_EVENT_INFO_UINON;
 
 
@@ -34886,7 +35530,7 @@ typedef struct tagNET_DVR_VIDEO_INTERCOM_EVENT
     DWORD dwSize; //结构体大小
     NET_DVR_TIME_EX struTime; //时间
     BYTE   byDevNumber[MAX_DEV_NUMBER_LEN]; //设备编号
-    BYTE   byEventType; //事件信息类型，1-开锁记录，2-公告信息阅读回执，3-认证记录
+    BYTE   byEventType; //事件信息类型，1-开锁记录，2-公告信息阅读回执，3-认证记录，4-车牌信息上传
     BYTE   byRes1[3]; //保留
     NET_DVR_VIDEO_INTERCOM_EVENT_INFO_UINON uEventInfo; //事件信息，具体内容参考byEventType取值
     BYTE  byRes2[256]; //保留
@@ -35203,7 +35847,11 @@ typedef struct tagNET_DVR_CARD_USER_INFO_CFG  /*对应配置结构体*/
 #define ACS_PARAM_ANTI_SNEAK_CFG               0x00004000 //反潜回参数
 #define ACS_PAPAM_EVENT_CARD_LINKAGE           0x00008000 //事件及卡号联动参数
 #define ACS_PAPAM_CARD_PASSWD_CFG              0x00010000 //密码开门使能参数
-#define ACS_PARAM_PERSON_STATISTICS_CFG           0x00020000 //人数统计参数
+#define ACS_PARAM_PERSON_STATISTICS_CFG        0x00020000 //人数统计参数
+#define ACS_PARAM_BLACK_LIST_PICTURE           0x00040000 //黑名单图片参数
+#define ACS_PARAM_ID_BLACK_LIST                0x00080000 //身份证黑名单参数
+#define ACS_PARAM_EXAM_INFO                    0x00100000 //考试信息参数
+#define ACS_PARAM_EXAMINEE_INFO                0x00200000 //考生信息参数
 
 typedef struct tagNET_DVR_ACS_PARAM_TYPE
 {
@@ -35223,10 +35871,14 @@ typedef struct tagNET_DVR_ACS_PARAM_TYPE
     //#define ACS_PARAM_CARD_RIGHT_PALN_TEMPLATE     0x00000800 //卡权限计划模板参数
     //#define ACS_PARAM_CARD                         0x00001000 //卡参数
     //#define ACS_PARAM_GROUP                        0x00002000 //群组参数
-    //#define ACS_PARAM_ANTI_SNEAK_CFG                 0x00004000 //反潜回参数
-    //#define ACS_PAPAM_EVENT_CARD_LINKAGE           0x00008000 //事件及卡号联动参数
-    //#define ACS_PAPAM_CARD_PASSWD_CFG              0x00010000 //密码开门使能参数
-    //#define ACS_PARAM_PERSON_STATISTICS_CFG           0x00020000 //人数统计参数
+    //#define ACS_PARAM_ANTI_SNEAK_CFG               0x00004000 //反潜回参数
+    //#define ACS_PAPAM_EVENT_CARD_LINKAGE          0x00008000 //事件及卡号联动参数
+    //#define ACS_PAPAM_CARD_PASSWD_CFG             0x00010000 //密码开门使能参数
+    //#define ACS_PARAM_PERSON_STATISTICS_CFG       0x00020000 //人数统计参数
+    //#define ACS_PARAM_BLACK_LIST_PICTURE          0x00040000 //黑名单图片参数
+    //#define ACS_PARAM_ID_BLACK_LIST               0x00080000 //身份证黑名单参数
+    //#define ACS_PARAM_EXAM_INFO                   0x00100000 //考试信息参数
+    //#define ACS_PARAM_EXAMINEE_INFO               0x00200000 //考生信息参数
     WORD wLocalControllerID; //就地控制器序号[1,64],0代表门禁主机
     BYTE byRes[30];
 }NET_DVR_ACS_PARAM_TYPE, *LPNET_DVR_ACS_PARAM_TYPE;
@@ -35379,7 +36031,8 @@ typedef struct tagNET_DVR_CALLER_INFO
     BYTE   byUnitNo;    //单元号
     BYTE   byDevNo;    //设备编号
     BYTE    byDevType;   //设备类型，1-门口机，2-管理机，3-室内机，4-围墙机，5-别墅门口机，6-二次确认机，7-8700客户端，8-4200客户端，9-APP
-    BYTE    byRes[100];        //保留
+    BYTE    byLockNum;//锁数量0-按照老的逻辑走，其他值-代表实际锁的数量
+    BYTE    byRes[99];        //保留
 }NET_DVR_CALLER_INFO,*LPNET_DVR_CALLER_INFO;
 
 typedef struct tagNET_DVR_CALL_STATUS
@@ -35396,7 +36049,8 @@ typedef struct tagNET_DVR_SERVER_DEVICE_CFG
     BYTE    byDeviceName[NAME_LEN];   //设备名称
     BYTE       byDeviceType; ////设备类型，1-门口机，2-管理机，3-室内机
     BYTE       byDeviceID; //门口机编号
-    BYTE    byRes[6];        //保留
+    BYTE    byLockNum; //锁数量0-按照老的逻辑走，其他值-代表实际锁的数量
+    BYTE    byRes[5]; 	   //保留
 }NET_DVR_SERVER_DEVICE_CFG,*LPNET_DVR_SERVER_DEVICE_CFG;
 
 typedef struct tagNET_DVR_SERVER_DEVICE_INFO
@@ -35416,7 +36070,9 @@ typedef struct tagNET_DVR_VIDEO_CALL_PARAM
     WORD wUnitNumber;  //单元号
     SHORT wFloorNumber;  //层号
     WORD  wRoomNumber;    //房间号
-    BYTE    byRes[118];     //保留
+    WORD  wDevIndex; //设备编号
+    BYTE    byUnitType; //设备类型，1-门口机，2-管理机，3-室内机，4-围墙机，5-别墅门口机，6-二次确认机，7-8700客户端，8-4200客户端，9-APP
+    BYTE    byRes[115];     //保留
 }NET_DVR_VIDEO_CALL_PARAM,*LPNET_DVR_VIDEO_CALL_PARAM;
 
 #define MAX_SCREEN_ADDRESS_LEN 16 //特征码最大长度
@@ -35505,7 +36161,9 @@ typedef struct tagNET_DVR_SCREEN_CONTROL_V41
     8-显示屏幕特征码（此命令矩形区域起始坐标设为（0,0），宽高均设为0xffffffff）, 9-屏幕维墙,10-恢复屏幕默认参数，11-显示IP（此命令矩形区域起始坐标设为（0,0），宽高均设为0xffffffff）,12-屏幕USB升级 13-区域放大还原*/
     NET_DVR_SCREEN_CONTROL_PARAM    struControlParam;
     BYTE    byWallNo;        // 电视墙号
-    BYTE   byRes1[3];
+    BYTE    byDevNo;         //设备号
+    BYTE    bySubboardNo;    //子板号
+    BYTE    byRes1;
     NET_DVR_RECTCFG_EX struRect;//根据坐标进行计算，基准坐标
     BYTE   byRes2[28];
 }NET_DVR_SCREEN_CONTROL_V41, *LPNET_DVR_SCREEN_CONTROL_V41;
@@ -35746,7 +36404,8 @@ typedef struct tagNET_DVR_BV_SAMPLE_CALIB_CFG
     float  fPitchAngle;   //摄像机俯视角度[0°, 60°],
     float  fInclineAngle; //摄像机倾斜角度[-20°,20°]
     NET_DVR_BV_SAMPLE_CALIB_POINT struCalibPoint[MAX_SAMPLE_NUM]; //标定点组
-    BYTE  byRes[256]; //保留
+    NET_DVR_BV_SAMPLE_CALIB_POINT struCalibPointEx[MAX_SAMPLE_NUM_EX/*7*/]; //标定点组扩展
+    BYTE  byRes[60]; //保留
 }NET_DVR_BV_SAMPLE_CALIB_CFG,*LPNET_DVR_BV_SAMPLE_CALIB_CFG;
 
 //双目图像校正参数结构体
@@ -35886,7 +36545,8 @@ typedef    struct tagNET_DVR_REGION_ENTRANCE_DETECTION
     DWORD        dwSize;//结构体大小
     BYTE        byEnabled;  //是否使能：0- 否，1- 是
     BYTE        byEnableHumanMisinfoFilter;// 启用人体去误报 0-不启用，1-启用
-    BYTE        byRes1[2];
+    BYTE        byEnableVehicleMisinfoFilter;// 启用车辆去误报 0-不启用，1-启用
+    BYTE        byRes1[1];
     NET_DVR_REGIONENTRANCE_REGION    struRegion[MAX_REGION_NUM];
     BYTE        byRes2[128];
 }NET_DVR_REGION_ENTRANCE_DETECTION,*LPNET_DVR_REGION_ENTRANCE_DETECTION;
@@ -35930,7 +36590,8 @@ typedef    struct tagNET_DVR_EVENT_SCHEDULE
     DWORD        dwSize;//结构体大小
     NET_DVR_SCHEDTIME struAlarmTime[MAX_DAYS][MAX_TIMESEGMENT_V30]; /*布防时间*/
     NET_DVR_SCHEDTIME struHolidayAlarmTime[MAX_TIMESEGMENT_V30]; /*假日布防时间*/
-    BYTE        byRes[128];
+    BYTE         bySceneID[MAX_DAYS][MAX_TIMESEGMENT_V30];//场景号,目前支持1~4场景，0为无效。该场景号与布防时间中每个时间段一一对应。
+    BYTE         byRes[72];
 }NET_DVR_EVENT_SCHEDULE,*LPNET_DVR_EVENT_SCHEDULE;
 
 typedef struct  tagNET_DVR_ANR_ARMING_HOST
@@ -35962,7 +36623,8 @@ typedef    struct tagNET_DVR_REGION_EXITING_DETECTION
     DWORD        dwSize;//结构体大小
     BYTE        byEnabled;  //是否使能：0- 否，1- 是
     BYTE        byEnableHumanMisinfoFilter;// 启用人体去误报 0-不启用，1-启用
-    BYTE        byRes1[2];
+    BYTE        byEnableVehicleMisinfoFilter;// 启用车辆去误报 0-不启用，1-启用
+    BYTE        byRes1[1];
     NET_DVR_REGIONEXITING_REGION    struRegion[MAX_REGION_NUM];
     BYTE        byRes2[128];
 }NET_DVR_REGION_EXITING_DETECTION,*LPNET_DVR_REGION_EXITING_DETECTION;
@@ -36553,7 +37215,9 @@ typedef struct tagNET_DVR_CARD_READER_CFG_V50
     BYTE byLivingBodyDetect; //真人检测，0-无效，1-不启用，2-启用
     BYTE byFaceMatchThreshold1; //人脸1:1匹配阀值，范围0-100
     WORD wBuzzerTime; //蜂鸣时间，范围0s-5999s（0-代表长鸣）
-    BYTE byRes[254];
+    BYTE byFaceMatch1SecurityLevel; //人脸1:1识别安全等级，0-无效，1-一般，2-较强，3-极强
+    BYTE byFaceMatchNSecurityLevel; //人脸1:N识别安全等级，0-无效，1-一般，2-较强，3-极强
+    BYTE byRes[252];
 }NET_DVR_CARD_READER_CFG_V50, *LPNET_DVR_CARD_READER_CFG_V50;
 
 typedef struct tagNET_DVR_FACE_PARAM_COND
@@ -36708,7 +37372,9 @@ typedef struct tagNET_DVR_ACS_WORK_STATUS_V50
     DWORD dwCardNum; //已添加的卡数量
     BYTE byFireAlarmStatus; //消防报警状态显示：0-正常、1-短路报警、2-断开报警
     BYTE byBatteryChargeStatus; //电池充电状态：0-无效；1-充电中；2-未充电
-    BYTE byRes2[122];
+    BYTE byMasterChannelControllerStatus; //主通道控制器在线状态：0-无效；1-不在线；2-在线
+    BYTE bySlaveChannelControllerStatus; //从通道控制器在线状态：0-无效；1-不在线；2-在线
+    BYTE byRes2[120];
 }NET_DVR_ACS_WORK_STATUS_V50, *LPNET_DVR_ACS_WORK_STATUS_V50;
 
 typedef struct tagNET_DVR_CASE_SENSOR_CFG
@@ -36957,7 +37623,7 @@ typedef  struct _NET_DVR_LAMP_CONTROL
 typedef struct tagNET_DVR_TPS_PARAM
 {
     BYTE                byStart;          // 开始码
-    BYTE                byCMD;         // 命令号，01-进入指令，02-离开指令，03-拥堵状态指令(为03时，只有byLaneState和byQueueLen有效)
+    BYTE                byCMD;         // 命令号，01-进入指令，02-离开指令，03-拥堵状态指令(为03时，只有byLaneState和byQueueLen有效)，04-多线圈状态（为04时，wLoopState和wStateMask有效，表示byLane车道上多个线圈的过车状态）
     BYTE                byRes[2];        // 预留字节
     WORD                wDeviceID;      // 设备ID
     WORD                wDataLen;       // 数据长度
@@ -36965,7 +37631,12 @@ typedef struct tagNET_DVR_TPS_PARAM
     BYTE                bySpeed;        // 对应车速（KM/H）
     BYTE                  byLaneState;     // 车道状态；0-无状态，1-畅通，2-拥挤，3-堵塞
     BYTE                  byQueueLen;       // 堵塞状态下排队长度（比如50米）
-    BYTE                byRes1[24];        //保留
+    WORD                wLoopState;         //线圈状态，第几位表示几号线圈状态，线圈编号从镜头由近到远依次增大。状态1-到达，0-离开
+    WORD                wStateMask;         //线圈状态掩码，掩码位为1对应wLoopState状态位有效，为0表示无效
+    DWORD               dwDownwardFlow;     //当前车道 从上到下车流量
+    DWORD               dwUpwardFlow;       //当前车道 从下到上车流量
+    BYTE                byJamLevel;         //拥堵等级，当byLaneState为3时有效，1-轻度，2-中度，3-重度
+    BYTE                byRes1[11];        //保留
 }NET_DVR_TPS_PARAM, *LPNET_DVR_TPS_PARAM;
 
 //TPS实时过车数据上传
@@ -37441,13 +38112,22 @@ typedef struct tagNET_DVR_AUTO_LIMIT_WAVE_CFG
     BYTE  byRes[16];
 }NET_DVR_AUTO_LIMIT_WAVE_CFG,*LPNET_DVR_AUTO_LIMIT_WAVE_CFG;
 
+typedef struct _NET_DVR_DSP_PARAMETER_CFG
+{
+    BYTE  byFBCEnable;         //FBC开关 0-不开启，1-开启
+    BYTE  byVolume;            //输入音量 取值范围0~255
+    BYTE  byRes[22];
+}NET_DVR_DSP_PARAMETER_CFG, *LPNET_DVR_DSP_PARAMETER_CFG;
+
+
 typedef struct tagNET_DVR_MIX_AUDIOIN_CFG
 {
     DWORD  dwSize;  //结构体大小
     DWORD  dwHighPassFilter;         //高通滤波器 取值范围 0-127, 具体索引代表含义以能力集为准
     DWORD  dwNoiseMargin;            //噪声门限，取值范围 0-127, 具体索引代表含义以能力集为准
     NET_DVR_AUTO_LIMIT_WAVE_CFG  struLimitWave;  //自动限波控制参数，当音频输入源为macIn时有效
-    BYTE   byRes[64];
+    NET_DVR_DSP_PARAMETER_CFG  struDSPParameter;  //数字信号处理芯片参数
+    BYTE   byRes[40];
 }NET_DVR_MIX_AUDIOIN_CFG,*LPNET_DVR_MIX_AUDIOIN_CFG;
 
 typedef struct tagNET_DVR_MIX_AUDIOOUT_CFG
@@ -37465,7 +38145,10 @@ typedef struct tagNET_DVR_MIX_AUDIOOUT_CFG
     BYTE    byCompressRate;    //压缩率 
     BYTE    byRecoveryGain;    //回复增益 0-1X,1-2X,2-4X,3-8X
     BYTE    byOutputGain;      //输出增益 0 ~100（负值）
-    BYTE    byRes[61];
+    BYTE    byOutputMute;      //输出静音，0-关闭，1-开启
+    int     iOutputGainEx;      //输出增益扩展，返回正值为放大，负值为缩小
+    BYTE    bySoundQualityHanding;      //音质处理，0-关闭，1-开启
+    BYTE    byRes[55];
 }NET_DVR_MIX_AUDIOOUT_CFG,*LPNET_DVR_MIX_AUDIOOUT_CFG;
 
 #define MAX_AUDIOOUT_PRO_TYPE                8    //音频输出处理方式
@@ -37477,7 +38160,8 @@ typedef struct tagNET_DVR_VOLUME_CFG
     BYTE    byEnableAEC;    //是否启用全局的回声消除,0-不启用，1-启用
     BYTE    byRes1[2];
     BYTE    byEnableFBC[MAX_AUDIOOUT_PRO_TYPE];    //是否启用FBC(啸叫抑制),0-不启用，1-启用
-    BYTE    byRes[20];     //保留
+    WORD    wVolumeEx[MAX_AUDIOOUT_PRO_TYPE];      //音量大小扩展 取值范围 0-127, 具体索引代表含义以能力集为准
+    BYTE    byRes[4];     //保留
 }NET_DVR_VOLUME_CFG,*LPNET_DVR_VOLUME_CFG;
 
 typedef struct tagNET_DVR_VIDEOOUT_RESOLUTION_CFG  //视频输出口分辨率配置
@@ -37505,6 +38189,20 @@ typedef struct tagNET_DVR_ALARMCENTER_NETCFG
     NET_DVR_ADDR_DOMAIN_INFO struHostAddr[MAX_CENTERNUM_V40]; //报警中心地址信息
     BYTE    byRes[172];
 }NET_DVR_ALARMCENTER_NETCFG, *LPNET_DVR_ALARMCENTER_NETCFG;
+
+//报警联动参数结构
+typedef struct tagNET_DVR_ALARM_LINKAGE_PARAM
+{
+    DWORD    dwSize;
+    WORD     wChanRec;  //联动录像的NVR通道，按位表示，例如最低位表示通道1，最高位表示通道16，二进制位的值：0-不录像，1-录像
+    BYTE     byRes1[2];
+    WORD     wRecTime[MAX_LINKAGE_CHAN_NUM];    //录像的时间，按字节表示，例如byRecTime[0]表示通道1的录像时间，byRecTime[15]表示通道16的录像时间
+    WORD     wChanPic;                          //联动抓图的NVR通道，按位表示，例如最低位表示通道1，最高位表示通道16，二进制位的值：0-不抓图，1-抓图
+    BYTE     byRes2[2];
+    BYTE     byPicNum[MAX_LINKAGE_CHAN_NUM];    //抓图的个数，按字节表示，例如byPicNum[0]表示通道1的抓图个数，byPicNum[15]表示通道16的抓图个数
+    BYTE     byRes[256];            //保留字段
+}NET_DVR_ALARM_LINKAGE_PARAM, *LPNET_DVR_ALARM_LINKAGE_PARAM;
+
 
 //雷达调试报警上传 抓拍机4.0新增
 typedef struct tagNET_DVR_ALARM_RADARINFO
@@ -37543,7 +38241,7 @@ typedef struct tagNET_DVR_FINGER_PRINT_STATUS
     BYTE  byTotalStatus;  //下发总的状态，0-当前指纹未下完所有读卡器，1-已下完所有读卡器(这里的所有指的是门禁主机往所有的读卡器下发了，不管成功与否)
     BYTE  byRes1;
     BYTE  byErrorMsg[ERROR_MSG_LEN]; //下发错误信息，当byCardReaderRecvStatus为5时，表示已存在指纹对应的卡号
-    DWORD dwCardReaderNo;  //纹读卡器编号，可用于下发错误返回
+    DWORD dwCardReaderNo;  //非0表示错误信息byErrMsg有效，其值代表byErrMsg对应的读卡器编号（具体什么错误查看byCardReaderRecvStatus对应编号的值）。0时表示无错误信息
     BYTE  byRes[24];
 }NET_DVR_FINGER_PRINT_STATUS,*LPNET_DVR_FINGER_PRINT_STATUS;
 
@@ -37671,7 +38369,7 @@ typedef enum _ACS_DEV_SUBEVENT_ENUM_
     EVENT_ACS_SUBMARINEBACK_COMM_RESUME,        //与反潜回服务器通信恢复
     EVENT_ACS_REMOTE_ACTUAL_GUARD,              //远程实时布防
     EVENT_ACS_REMOTE_ACTUAL_UNGUARD,            //远程实时撤防
-    EVENT_ACS_MOTOR_SENSOR_EXCEPTION,           //电机传感器异常
+    EVENT_ACS_MOTOR_SENSOR_EXCEPTION,           //电机或传感器异常
     EVENT_ACS_CAN_BUS_EXCEPTION,                //CAN总线异常
     EVENT_ACS_CAN_BUS_RESUME,                   //CAN总线恢复
     EVENT_ACS_GATE_TEMPERATURE_OVERRUN,         //闸机腔体温度超限
@@ -37933,7 +38631,7 @@ typedef struct tagNET_DVR_RIGHT_CONTROLLER_AUDIO_PARAM
 {
     DWORD dwSize;
     DWORD dwFileSize;     //文件大小，单位：字节（上传音频文件时有效，下载音频文件时无效）
-    DWORD dwAudioID;      //音频ID
+    DWORD dwAudioID;      //音频ID（0xffffffff代表上传/下载全部音频文件，目前设备仅支持全量上传/下载，不支持单个音频ID上传/下载）
     BYTE  byRes[256];
 }NET_DVR_RIGHT_CONTROLLER_AUDIO_PARAM, *LPNET_DVR_RIGHT_CONTROLLER_AUDIO_PARAM;
 
@@ -38034,7 +38732,8 @@ typedef struct tagNET_DVR_GATE_TIME_CFG
     DWORD dwPostponeIntrusionAlarmTime;  //推迟触发闯入欺骗行为报警时间，单位ms
     DWORD dwNoLaneAccessTimeLimitTime;  //通道收到有效通行认证信号，但无人通行超时报警时间，单位s
     DWORD dwSafetyZoneStayTime;  //通道收到有效通行认证信号，乘客到达安全区后滞留通道超时报警时间，单位s
-    BYTE byRes[300];
+    BYTE byIRTriggerTimeoutTime;  //红外触发超时时间，单位：秒（0-255）
+    BYTE byRes[299];
 }NET_DVR_GATE_TIME_CFG, *LPNET_DVR_GATE_TIME_CFG;
 
 
@@ -38488,7 +39187,10 @@ typedef struct tagNET_DVR_FIREDETECTION_ALARM
     // pSmokeBuf参数当byAlarmSubType报警子类型为1（烟雾检测报警）、2（烟火报警）时生效。
     BYTE    *pSmokeBuf;    //烟雾检测报警数据指针，指向一个NET_DVR_SMOKEDETECTION_ALARM结构体
     WORD    wDevInfoIvmsChannelEx;     //与NET_VCA_DEV_INFO里的byIvmsChannel含义相同，能表示更大的值。老客户端用byIvmsChannel能继续兼容，但是最大到255。新客户端版本请使用wDevInfoIvmsChannelEx。
-    BYTE    byRes[58];
+    BYTE    byRes3;
+    BYTE    byFireScanWaitMode; //火点扫描等待模式 0-自动   1-手动
+    DWORD   dwVisibleChannel; //可见光通道通道号
+    BYTE    byRes[52];
 } NET_DVR_FIREDETECTION_ALARM,*LPNET_DVR_FIREDETECTION_ALARM;
 
 //火点检测配置
@@ -38792,6 +39494,7 @@ typedef struct tagNET_DVR_CAMERACHAN_SERIALCFG
 }NET_DVR_CAMERACHAN_SERIALCFG, *LPNET_DVR_CAMERACHAN_SERIALCFG;
 
 #define MAX_MATRIX_SUBBOARD_NUM      16   //综合平台最大子板数
+#define MAX_MATRIX_SUBBOARD_NUM_V51  32     //综合平台最大子板数
 #define MAX_BOARD_SUBSYSTEM_NUM      12   //每个子板最大系统数
 typedef  struct  tagNET_DVR_SUBSYSTEM_STATUS
 {
@@ -38857,6 +39560,42 @@ typedef struct  tagNET_DVR_MATRIX_STATUS_V50
     BYTE  byMainBoardNums; //主控数量
     BYTE  byRes[30];
 }NET_DVR_MATRIX_STATUS_V50, *LPNET_DVR_MATRIX_STATUS_V50;
+
+typedef struct tagNET_DVR_MATRIX_SUBBOARD_V51
+{
+    BYTE    byBoardNo; //子板号
+    BYTE    byPcieConnectStatus; //pcie连接状态，1-连接，2-断开
+    BYTE    byRes1;
+    BYTE    byTemperatureAlarm; //温度报警，0-此字段无效，1-温度正常，2-温度超上限报警，3-温度超下限报警
+    DWORD   dwHardwareVersion; //子板硬件版本
+    DWORD dwPcieBandwidth; //pcie Link带宽
+    DWORD dwTemperature; //子板温度，单位：摄氏度
+    NET_DVR_SUBSYSTEM_STATUS    struSubsystemStatus[MAX_BOARD_SUBSYSTEM_NUM]; //子系统状态
+    BYTE    bySubboardModel[32]; //子板型号
+    BYTE    byRes2[128];
+}NET_DVR_MATRIX_SUBBOARD_V51, *LPNET_DVR_MATRIX_SUBBOARD_V51;
+
+typedef struct tagNET_DVR_MATRIX_STATUS_V51
+{
+    DWORD   dwSize;
+    BYTE    byMainFrameType; //机箱类型 1-18U机箱（V1.0），2-18U机箱，3-14U机箱，4-11U机箱，5-8U机箱，6-7U机箱
+    BYTE    bySoltNum; //槽位数
+    BYTE    byBoardNum; //子板数
+    BYTE    byLCDPanelStatus; //液晶面板连接状态，1-正常，2-异常
+    NET_DVR_MATRIX_SUBBOARD_V51 struMatrixSubboard[MAX_MATRIX_SUBBOARD_NUM_V51];
+    DWORD  dwFanSequence; //风扇编号，按位表示，例如0x00000001表示设备只有一个风扇，编号为1，0x00000101表示设备有两个风扇，编号分别为1和9，当对应风扇编号被置位时，dwFanConnectStatus和dwFanOperationStatus的对应位才有效，否则认为无此编号的风扇
+    DWORD dwFanConnectStatus; //风扇连接状态，按位表示，例如0x00000001表示编号为1的风扇连接状态异常，0x00000101表示编号为1和9的风扇连接状态均异常
+    DWORD dwFanOperationStatus; //风扇运行状态，按位表示，例如0x00000001表示编号为1的风扇运行状态异常，0x00000101表示编号为1和9的风扇运行状态均异常
+    BYTE   byDeviceModel[32]; //设备型号
+    BYTE    byFanSpeed[32]; //风扇转速，按字节表示，例如byFanSpeed[0]表示编号为1的风扇的转速，转速等级范围为[1,3]
+    BYTE   byMainMemUsed; //主控内存使用率，单位：百分比
+    BYTE    byMainCpuUsed; //主控CPU使用率，单位：百分比
+    BYTE    byNetwordUsed; //交换板网络使用率，单位：百分比
+    BYTE   byRes1;
+    DWORD   dwMainSoftwareVer; //主控软件版本
+    BYTE     byRes2[128];
+}NET_DVR_MATRIX_STATUS_V51, *LPNET_DVR_MATRIX_STATUS_V51;
+
 
 
 typedef struct tagNET_DVR_FUSION_SCALE
@@ -39114,7 +39853,8 @@ typedef struct tagNET_SDK_FIRESHIELDMASK_CFG
 {
     DWORD        dwSize;
     BYTE      byEnabled;// 火点区域屏蔽使能，0~不启用，1~启用
-    BYTE         byRes1[3]; //保留
+    BYTE         byShieldAreaTransparency;//屏蔽区域透明度 0-不透明 1-透明 2-半透明
+    BYTE         byRes1[2]; //保留
     NET_SDK_FIRESHIELDMASK_REGION struMaskRegion[MAX_FIRESHIELDMASK_REGION/*24*/];//火点屏蔽区域
     BYTE         byRes[256]; //保留
 }NET_SDK_FIRESHIELDMASK_CFG, *LPNET_SDK_FIRESHIELDMASK_CFG;
@@ -39139,7 +39879,8 @@ typedef struct tagNET_SDK_SMOKESHIELDMASK_CFG
 {
     DWORD        dwSize;
     BYTE      byEnabled;// 烟雾区域屏蔽使能，0~不启用，1~启用
-    BYTE         byRes1[3]; //保留
+    BYTE         byShieldAreaTransparency;//屏蔽区域透明度 0-不透明 1-透明 2-半透明
+    BYTE         byRes1[2]; //保留
     NET_SDK_SMOKESHIELDMASK_REGION struMaskRegion[MAX_SMOKESHIELDMASK_REGION/*24*/];//烟雾屏蔽区域
     BYTE         byRes[256]; //保留
 }NET_SDK_SMOKESHIELDMASK_CFG, *LPNET_SDK_SMOKESHIELDMASK_CFG;
@@ -39276,7 +40017,9 @@ typedef struct tagNET_DVR_INPUTSTREAMCFG_V40
     BYTE    byDevNo; //设备号
     BYTE    byRes1;
     DWORD    dwInputSignalNo; //输入信号源编号（新）
-    BYTE    byRes[120];
+    BYTE    byVideoEnctype; //视频编码类型，0-默认，1-Smart264
+    BYTE    byAudioEnctype; //音频编码类，0-默认，1-AUDIO_G711_A，2-AUDIO_G711_U，3- AUDIO_G722_1
+    BYTE    byRes[118];
 }NET_DVR_INPUTSTREAMCFG_V40, *LPNET_DVR_INPUTSTREAMCFG_V40 ;
 
 typedef struct tagNET_DVR_AUDIO_CONTROL_INFO
@@ -39298,18 +40041,57 @@ typedef struct  tagNET_DVR_INPUTSTREAM_PTZCFG_PARAM
     BYTE     byRes[34];    
 }NET_DVR_INPUTSTREAM_PTZCFG_PARAM, *LPNET_DVR_INPUTSTREAM_PTZCFG_PARAM; 
 
+//公路货车轴型定义 参照《2016治超分类1133.xlsx》
+typedef enum
+{
+    AXLE_TYPE_UNKNOWN = 0x0000,         //未知
+    //2轴
+    AXLE_TYPE_2AXLE_12 = 0x0200,        //2轴载货汽车
+    //3轴
+    AXLE_TYPE_3AXLE_122_1 = 0x0300,     //3轴中置轴挂车列车
+    AXLE_TYPE_3AXLE_122_2,              //3轴铰接列车
+    AXLE_TYPE_3AXLE_15,                 //3轴载货汽车
+    AXLE_TYPE_3AXLE_112,                //3轴载货汽车
+    //4轴
+    AXLE_TYPE_4AXLE_125_1 = 0x0400,     //4轴中置轴挂车列车
+    AXLE_TYPE_4AXLE_152,                //4轴中置轴挂车列车
+    AXLE_TYPE_4AXLE_125_2,              //4轴铰接列车
+    AXLE_TYPE_4AXLE_1222,               //4轴全挂汽车列车
+    AXLE_TYPE_4AXLE_115,                //4轴载货汽车
+    //5轴
+    AXLE_TYPE_5AXLE_155_1 = 0x0500,     //5轴中置轴挂车列车
+    AXLE_TYPE_5AXLE_1125_1,             //5轴中置轴挂车列车
+    AXLE_TYPE_5AXLE_155_2,              //5轴铰链列车
+    AXLE_TYPE_5AXLE_1125_2,             //5轴铰链列车
+    AXLE_TYPE_5AXLE_129,                //5轴铰链列车
+    AXLE_TYPE_5AXLE_1522,               //5轴全挂汽车列车
+    AXLE_TYPE_5AXLE_11222,              //5轴全挂汽车列车
+    //6轴
+    AXLE_TYPE_6AXLE_159_1 = 0x0600,     //6轴中置轴挂车列车
+    AXLE_TYPE_6AXLE_159_2,              //6轴中置轴挂车列车
+    AXLE_TYPE_6AXLE_1155_1,             //6轴中置轴挂车列车
+    AXLE_TYPE_6AXLE_1155_2,             //6轴中置轴挂车列车
+    AXLE_TYPE_6AXLE_159_3,              //6轴铰链列车
+    AXLE_TYPE_6AXLE_159_4,              //6轴铰链列车
+    AXLE_TYPE_6AXLE_1129,               //6轴铰链列车
+    AXLE_TYPE_6AXLE_11522_1,            //6轴全挂车
+    AXLE_TYPE_6AXLE_11522_2,            //6轴全挂车
+}TRUCK_AXLE_MODEL;
+
 //车辆称重
 typedef struct  tagNET_DVR_VEHICLE_WEIGHT_RESULT_
 {
     BYTE      byIsOverWeight;         //是否超限
     BYTE      byAxleNum;            //轴数
-    BYTE      byRes[2];               //预留 
+    WORD      wAxleModel;           //参考 enum TRUCK_AXLE_MODEL,可以根据类型解析出轴的个数
     float     fOverWeight;          //超限重量(吨)，实际值扩大1000倍传输（实际值精确到小数点后三位）
     float     fWeight;              //车身重量(吨)，实际值扩大1000倍传输（实际值精确到小数点后三位）
     float     fLimitWeight;         //限制重量(吨)，实际值扩大1000倍传输（实际值精确到小数点后三位）
     float     fAxleLen;             //轴距(米)，实际值扩大100倍传输（实际值精确到小数点后两位）
-    char      sDevDescInfo[MAX_DEVDESC_LEN/*64*/]; //设备描述信息
-    BYTE      byRes2[64];            //预留
+    char      sDevDescInfo[MAX_DEVDESC_LEN/*64*/];      //设备描述信息
+    WORD      wAxleWeight[MAX_TRUCK_AXLE_NUM/*10*/];    //车轴重量，单位千克（kg）第i个元素表示第i个轴重
+    WORD      wAxleDistance[MAX_TRUCK_AXLE_NUM/*10*/];  //车轴间距，单位毫米(mm).第i个元素表示第i轴和第i+1轴的间距
+    BYTE      byRes2[24];            //预留
 }NET_DVR_VEHICLE_WEIGHT_RESULT, *LPNET_DVR_VEHICLE_WEIGHT_RESULT;
 
 // 车牌检测结果
@@ -39410,6 +40192,15 @@ typedef struct tagNET_DVR_MODULE_INFO
     char    sDeviceVersionInfo[32];    //版本信息
     BYTE    byRes[128];                //保留
 }NET_DVR_MODULE_INFO,*LPNET_DVR_MODULE_INFO;
+
+typedef struct tagNET_DVR_ALARMHOST_DETECTOR_INFO
+{
+    DWORD		dwSize;
+    BYTE     byDetectorSerialNo[16];   //探测器序列号
+    DWORD   dwAlarmIn;   //防区号
+    WORD    wDetectorType;   // 探测器类型，DETECTOR_TYPE
+    BYTE   	byRes[126];      //保留
+}NET_DVR_ALARMHOST_DETECTOR_INFO, *LPNET_DVR_ALARMHOST_DETECTOR_INFO;
 
 typedef struct tagNET_DVR_ONE_OUTPUT_SCHEDULE_RULE_V40
 {
@@ -40352,7 +41143,8 @@ typedef struct tagNET_DVR_PRIVATE_PROTOCOL_CFG
     DWORD          dwSize;   
     NET_DVR_IPADDR     struIP; //消息上传的IP地址
     WORD          wPort;//消息上传的端口号
-    BYTE         byRes[2];
+    BYTE          byEnable;//使能,  0-保留，1-不启用，2-启用
+    BYTE        byRes;
     DWORD        dwInterval;//消息上传间隔(0-无时间间隔限制，以设备为准; >=0,以秒为单位的时间间隔)
     BYTE         byServerType;//服务类型 0-无，1-公安
     BYTE         byEcryptedSMSEnable;//0-不加密，1-加密
@@ -40977,7 +41769,7 @@ typedef struct tagNET_DVR_SETUP_CALIB_COND
 typedef struct tagNET_DVR_SETUP_CALIB_RESULT
 {
     DWORD dwSize;
-    BYTE  byCalibrateType;//标定类型，0-未进行标定，1-自动标定，2-手动标定
+    BYTE  byCalibrateType;//标定类型，0-未进行标定，1-自动标定，2-手动标定,3-智能标定
     BYTE  byRes1[3];
     float fTiltAngle;//俯仰角,单位：度；俯仰角默认值：0；俯仰角范围：0-180度,当byCalibrateType为2时有效
     float fHeelAngle;//倾斜角,单位：度；倾斜角默认值：0；倾斜角范围：-90-90度,当byCalibrateType为2时有效
@@ -42030,7 +42822,7 @@ typedef struct tagNET_DVR_ACS_EXTERNAL_DEV_CFG
     BYTE byIDCardUpMode;  //身份证信息上报，0：上传18位身份证号；1：上传全部信息
     BYTE byRes1;
     BYTE byCardVerifyMode; //刷卡认证模式，0：远程中心认证；1：客户端平台认证
-    BYTE byACSDevType; //设备型号，1：身份证读卡器，2：IC读卡器，3：二维码读卡器，4：指纹读卡器，5：字符屏+二维码读卡器，6：收卡器，7：字符屏，8：指纹头，9：语音模块；
+    BYTE byACSDevType; //设备型号，1：身份证读卡器，2：IC读卡器，3：二维码读卡器，4：指纹读卡器，5：字符屏+二维码读卡器，6：收卡器，7：字符屏，8：指纹头，9：语音模块；10：人证设备
     BYTE byDoorMode; //门出入类型，0：进门，1：出门；
     BYTE byRes2;
     WORD wDevDetailType; //外设的具体设备型号，1-iDR210，2-IDM10；
@@ -42477,7 +43269,8 @@ typedef struct tagNET_DVR_IMAGE_DIFF_DETECTION_CFG
     BYTE       byEnabled;    //是否启用，0-不启用，1-启用
     BYTE        byThreshold;             //阈值[0,100]
     BYTE         bySensitivity;        //灵敏度 [0,100]
-    BYTE     byRes[301];              //保留字节 
+    BYTE        byVideoInputType;  //视频输入口类型，0-自动，1-HDMI，2-VGA
+    BYTE     byRes[300];              //保留字节 
 }NET_DVR_IMAGE_DIFF_DETECTION_CFG, *LPNET_DVR_IMAGE_DIFF_DETECTION_CFG;
 
 typedef struct tagNET_DVR_RECORDING_PUBLISH_FILE_COND
@@ -42685,6 +43478,85 @@ typedef struct tagNET_DVR_SCREEM_FILE_DOWNLOAD_PARAM
     DWORD dwPPTPageNo;  //下载PPT页面图片时有效，为0表示下载PPT本身，其他值表示PPT页码值
     BYTE  byRes2[64];
 }NET_DVR_SCREEM_FILE_DOWNLOAD_PARAM, *LPNET_DVR_SCREEM_FILE_DOWNLOAD_PARAM;
+
+typedef struct tagNET_DVR_TV_SCREEN_COND
+{
+    DWORD  dwSize;//结构长度
+    DWORD    dwChannel;//通道号
+    WORD    wTVScreenNo;//导播屏编号 0-全部导播屏
+    BYTE     byRes[62];     //保留
+}NET_DVR_TV_SCREEN_COND, *LPNET_DVR_TV_SCREEN_COND;
+
+typedef struct tagNET_DVR_TV_SCREEN_CFG
+{
+    DWORD    dwSize;//结构长度
+    DWORD    dwPicStayTime;//画面停留时间 （0~255s）
+    BYTE     byRes[256];     //保留
+}NET_DVR_TV_SCREEN_CFG, *LPNET_DVR_TV_SCREEN_CFG;
+
+//获取设备抓取图片和附加信息结构体
+typedef struct tagNET_DVR_BV_CALIB_COND
+{
+    DWORD  dwSize;  //结构长度
+    DWORD dwChannels;  //通道号
+    BYTE  byRes[300]; //保留
+}NET_DVR_BV_CALIB_COND, *LPNET_DVR_BV_CALIB_COND;
+
+typedef struct tagNET_DVR_BV_CALIB_PIC
+{
+    DWORD  dwSize;  //结构长度
+    DWORD  dwPicID;
+    DWORD dwPicLen1;//图片1长度
+    DWORD dwPicLen2;//图片2长度
+    char*   pPicBuffer1;//图片缓存
+    char*   pPicBuffer2;//图片缓存
+    BYTE  byRes[600]; //保留
+}NET_DVR_BV_CALIB_PIC, *LPNET_DVR_BV_CALIB_PIC;
+
+
+//获取双目外参标定结果
+typedef struct tagNET_DVR_BV_CALIB_PARAM
+{
+    DWORD  dwPicID;
+    NET_VCA_POINT struPoint;//眉心坐标
+    BYTE  byRes[32]; //保留
+}NET_DVR_BV_CALIB_PARAM, *LPNET_DVR_BV_CALIB_PARAM;
+
+typedef struct tagNET_DVR_BV_CALIB_INFO
+{
+    DWORD  dwSize;  //结构长度
+    DWORD  dwBVCalibNumber; //样本个数
+    NET_DVR_BV_CALIB_PARAM struBVCalibParam[12];
+    DWORD  dwHumanHeight;  //人体真实身高，单位cm
+    DWORD  dwChannel;  //通道号
+    BYTE  byRes[300]; //保留
+}NET_DVR_BV_CALIB_INFO, *LPNET_DVR_BV_CALIB_INFO;
+
+typedef struct tagNET_DVR_BV_CALIB_RESULT
+{
+    DWORD  dwSize;  //结构长度
+    DWORD dwCameraHeight;  //摄像机高度，单位cm
+    float fPitchAngle;    //摄像机俯视角度[0°, 60°], （浮点数 + 360）* 1000
+    float fInclineAngle;   //摄像机斜角度[-20°,20°]，（浮点数 + 360） * 1000
+    BYTE  byRes[300]; //保留
+}NET_DVR_BV_CALIB_RESULT, *LPNET_DVR_BV_CALIB_RESULT;
+
+//获取双目高度矫正数据
+typedef struct tagNET_DVR_BV_HCORRECTION_COND
+{
+    DWORD  dwSize;  //结构长度
+    DWORD dwChannels;  //通道号
+    DWORD  dwPicID;
+    BYTE  byRes[300]; //保留
+}NET_DVR_BV_HCORRECTION_COND, *LPNET_DVR_BV_HCORRECTION_COND;
+
+typedef struct tagNET_DVR_BV_HCORRECTION_CFG
+{
+    DWORD  dwSize;  //结构长度
+    DWORD  dwHumanHeight;  //人体真实身高，单位cm
+    BYTE  byRes[300]; //保留
+}NET_DVR_BV_HCORRECTION_CFG, *LPNET_DVR_BV_HCORRECTION_CFG;
+
 
 //语音参数配置
 typedef    struct tagNET_DVR_TMEVOICE_CFG
@@ -44033,7 +44905,7 @@ typedef struct tagNET_DVR_DECODE_CHANNEL_OSD
 typedef    struct tagNET_DVR_THERMINTELL_PARAM
 {
     DWORD   dwSize;//结构体大小
-    BYTE    byIntellType;  //智能功能资源配置类型,0~测温+行为分析(默认)，1~船只检测，2~火点检测,3~画中画功能, 4~人脸测温
+    BYTE    byIntellType;  //智能功能资源配置类型,0~测温+行为分析(默认)，1~船只检测，2~火点检测,3~画中画功能, 4~人脸测温，5-测温+烟火检测，6-测温+火点检测
     BYTE    byRes[127];
 }NET_DVR_THERMINTELL_PARAM, *LPNET_DVR_THERMINTELL_PARAM;
 
@@ -44220,6 +45092,29 @@ typedef struct tagNET_DVR_GBT28181_AUDIO_OUTPUT_CFG
     BYTE             byRes[256];
 }NET_DVR_GBT28181_AUDIO_OUTPUT_CFG, *LPNET_DVR_GBT28181_AUDIO_OUTPUT_CFG;
 
+typedef struct tagNET_DVR_NOTICE_VIDEO_DATA
+{
+    DWORD dwSize;
+    DWORD dwFileSize;     //文件大小，单位：字节
+    BYTE  byNoticeNumber[MAX_NOTICE_NUMBER_LEN]; //公告编号
+    BYTE  byRes[2016];
+}NET_DVR_NOTICE_VIDEO_DATA, *LPNET_DVR_NOTICE_VIDEO_DATA;
+
+typedef struct tagNET_DVR_NOTICE_VIDEO_DATA_COND
+{
+    DWORD       dwSize;
+    BYTE  byRes[256];          //保留
+}NET_DVR_NOTICE_VIDEO_DATA_COND, *LPNET_DVR_NOTICE_VIDEO_DATA_COND;
+
+typedef struct tagNET_DVR_NOTICE_VIDEO_DATA_CFG
+{
+    DWORD    dwSize;
+    DWORD dwDataLen;     //数据长度
+    char*  pDataBuffer;     //数据指针
+    BYTE  byDataType;      //数据类型：0-无效，1-结构体数据（NET_DVR_NOTICE_VIDEO_DATA），2-视频数据
+    BYTE  byRes[63];
+}NET_DVR_NOTICE_VIDEO_DATA_CFG, *LPNET_DVR_NOTICE_VIDEO_DATA_CFG;
+
 typedef struct tagNET_DVR_UPGRADE_FIRMWARE_INFO
 {
     DWORD dwMagicNumber;    /* 魔术字段，固定值0x484b5753 */
@@ -44246,7 +45141,147 @@ typedef struct tagNET_DVR_SCHEDULE_FILE_RET
     BYTE    byRes[64];
 }NET_DVR_SCHEDULE_FILE_RET, *LPNET_DVR_SCHEDULE_FILE_RET;
 
+#define NET_SDK_MAX_EXAM_ROUND_NO       64  //考试场次编号最大长度
+#define NET_SDK_MAX_EXAM_NO             64  //考试编号最大长度
+#define NET_SDK_MAX_EXAM_SUBJECT        64  //考试科目最大长度
+#define NET_SDK_MAX_TEACHER_NO          64  //监考老师编号最大长度
+#define NET_SDK_MAX_TEACHER_NAME        64  //监考老师姓名最大长度
+#define NET_SDK_MAX_EXAMINEE_NO         64  //考生编号最大长度
+#define NET_SDK_MAX_ADMISSION_TICKET    64  //准考证号最大长度
 
+typedef struct tagNET_DVR_EXAM_INFO_COND
+{
+    DWORD dwSize;
+    DWORD dwExamNumber; //考试信息数目
+    BYTE  byRes[128];
+}NET_DVR_EXAM_INFO_COND, *LPNET_DVR_EXAM_INFO_COND;
+
+typedef struct tagNET_DVR_EXAM_INFO_CFG
+{
+    DWORD dwSize;
+    BYTE  byExamRoundNo[NET_SDK_MAX_EXAM_ROUND_NO/*64*/]; //考试场次编号（某堂具体考试）
+    BYTE  byExamNo[NET_SDK_MAX_EXAM_NO/*64*/]; //考试编号（某次考试，包含多场考试）
+    BYTE  byExamSubject[NET_SDK_MAX_EXAM_SUBJECT/*64*/]; //考试科目
+    BYTE  byTeacherNo[NET_SDK_MAX_TEACHER_NO/*64*/]; //监考老师编号
+    BYTE  byTeacherName[NET_SDK_MAX_TEACHER_NAME/*64*/]; //监考老师姓名
+    NET_DVR_TIME    struStartTime; //考试开始时间
+    NET_DVR_TIME    struEndTime; //考试结束时间
+    BYTE  byExamInfoValid; //考试信息是否有效：0-无效，1-有效（用于考试场次编号删除考试信息，该字段为0时代表删除）
+    BYTE  byRes[127];
+}NET_DVR_EXAM_INFO_CFG, *LPNET_DVR_EXAM_INFO_CFG;
+
+typedef struct tagNET_DVR_EXAM_INFO_STATUS
+{
+    DWORD dwSize;
+    BYTE  byExamRoundNo[NET_SDK_MAX_EXAM_ROUND_NO/*64*/]; //考试场次编号（某堂具体考试）
+    BYTE  byStatus;  //下发状态：0-无效，1-失败，2-成功（代表该考试场次下发是否成功）
+    BYTE  byRes[127];
+}NET_DVR_EXAM_INFO_STATUS, *LPNET_DVR_EXAM_INFO_STATUS;
+
+typedef struct tagNET_DVR_EXAMINEE_INFO_COND
+{
+    DWORD dwSize;
+    DWORD dwExamineeNumber; //考生信息数目
+    BYTE  byRes[128];
+}NET_DVR_EXAMINEE_INFO_COND, *LPNET_DVR_EXAMINEE_INFO_COND;
+
+typedef struct tagNET_DVR_EXAMINEE_INFO_CFG
+{
+    DWORD dwSize;
+    BYTE  byExamineeNo[NET_SDK_MAX_EXAMINEE_NO/*64*/]; //考生编号
+    BYTE  byAdmissionTicket[NET_SDK_MAX_ADMISSION_TICKET/*64*/]; //准考证号
+    BYTE  byExamRoundNo[NET_SDK_MAX_EXAM_ROUND_NO/*64*/]; //考试场次编号（某堂具体考试）
+    BYTE  byName[NAME_LEN/*32*/]; //姓名
+    BYTE  byCardNo[ACS_CARD_NO_LEN]; //考生关联的卡号
+    BYTE  bySex; //性别：0-无效，1-男，2-女
+    BYTE  byExamineeInfoValid; //考生信息是否有效：0-无效，1-有效（用于考生编号和考试场次编号删除考生信息，该字段为0时代表删除）
+    BYTE  byRes[126];
+}NET_DVR_EXAMINEE_INFO_CFG, *LPNET_DVR_EXAMINEE_INFO_CFG;
+
+typedef struct tagNET_DVR_EXAMINEE_INFO_STATUS
+{
+    DWORD dwSize;
+    BYTE  byExamineeNo[NET_SDK_MAX_EXAMINEE_NO/*64*/]; //考生编号
+    BYTE  byExamRoundNo[NET_SDK_MAX_EXAM_ROUND_NO/*64*/]; //考试场次编号（某堂具体考试）
+    BYTE  byStatus;  //下发状态：0-无效，1-失败，2-成功（代表该考生信息下发是否成功）
+    BYTE  byRes[127];
+}NET_DVR_EXAMINEE_INFO_STATUS, *LPNET_DVR_EXAMINEE_INFO_STATUS;
+
+typedef struct tagNET_DVR_EXAM_COMPARE_RESULT_COND
+{
+    DWORD dwSize;
+    BYTE  byExamRoundNo[NET_SDK_MAX_EXAM_ROUND_NO/*64*/]; //考试场次编号（某堂具体考试）
+    BYTE  byExamNo[NET_SDK_MAX_EXAM_NO/*64*/]; //考试编号（某次考试，包含多场考试）
+    NET_DVR_TIME    struStartTime; //开始时间
+    NET_DVR_TIME    struEndTime; //结束时间
+    BYTE  byRes[512];
+}NET_DVR_EXAM_COMPARE_RESULT_COND, *LPNET_DVR_EXAM_COMPARE_RESULT_COND;
+
+typedef struct tagNET_DVR_EXAM_COMPARE_RESULT_CFG
+{
+    DWORD dwSize;
+    NET_DVR_TIME    struTime; //时间
+    BYTE  byExamineeNo[NET_SDK_MAX_EXAMINEE_NO/*64*/]; //考生编号
+    BYTE  byAdmissionTicket[NET_SDK_MAX_ADMISSION_TICKET/*64*/]; //准考证号
+    BYTE  byExamNo[NET_SDK_MAX_EXAM_NO/*64*/]; //考试编号（某次考试，包含多场考试）
+    BYTE  byExamRoundNo[NET_SDK_MAX_EXAM_ROUND_NO/*64*/]; //考试场次编号（某堂具体考试）
+    BYTE  byName[NAME_LEN/*32*/]; //姓名
+    BYTE  byCardNo[ACS_CARD_NO_LEN]; //考生关联的卡号
+    DWORD dwPicDataLen; //比对抓拍图片数据大小，不为0是表示后面带数据
+    char  *pPicData; //比对抓拍图片指针
+    BYTE  byRes[256];
+}NET_DVR_EXAM_COMPARE_RESULT_CFG, *LPNET_DVR_EXAM_COMPARE_RESULT_CFG;
+
+typedef struct tagNET_DVR_BLACK_LIST_PICTURE_COND
+{
+    DWORD       dwSize;
+    DWORD       dwPictureNum; //图片数量
+    BYTE  byRes[128];
+}NET_DVR_BLACK_LIST_PICTURE_COND, *LPNET_DVR_BLACK_LIST_PICTURE_COND;
+
+typedef struct tagNET_DVR_BLACK_LIST_PICTURE_STATUS
+{
+    DWORD       dwSize;
+    BYTE  byCardNo[ACS_CARD_NO_LEN/*32*/]; //卡号
+    BYTE  byStatus; //状态：0-无效，，1-处理中，2-上传失败，3-成功
+    BYTE  byRes[63];
+}NET_DVR_BLACK_LIST_PICTURE_STATUS, *LPNET_DVR_BLACK_LIST_PICTURE_STATUS;
+
+typedef struct tagNET_DVR_BLACK_LIST_PICTURE_CFG
+{
+    DWORD  dwSize;
+    BYTE  byCardNo[ACS_CARD_NO_LEN/*32*/]; //卡号
+    BYTE  byName[NAME_LEN/*32*/]; //姓名
+    BYTE  bySex; //性别：0-无效，1-男，2-女
+    BYTE  byPictureValid; //黑名单图片是否有效：0-无效，1-有效（用于按卡号删除黑名单图片，该字段为0时代表删除，删除时不传递黑名单图片）
+    BYTE  byRes1[2];
+    DWORD dwPictureLen; //黑名单图片长度（图片大小不超过1M）
+    char*  pPictureBuffer; //黑名单图片指针
+    BYTE  byRes[128];
+}NET_DVR_BLACK_LIST_PICTURE_CFG, *LPNET_DVR_BLACK_LIST_PICTURE_CFG;
+
+typedef struct tagNET_DVR_UPLOAD_ID_BLACK_LIST_COND
+{
+    DWORD       dwSize;
+    DWORD       dwBlackListNum; //黑名单数量
+    BYTE  byRes[128];
+}NET_DVR_UPLOAD_ID_BLACK_LIST_COND, *LPNET_DVR_UPLOAD_ID_BLACK_LIST_COND;
+
+typedef struct tagNET_DVR_UPLOAD_ID_BLACK_LIST_CFG
+{
+    DWORD       dwSize;
+    NET_DVR_ID_CARD_INFO  struIDCardCfg;//身份证信息（该结构体中姓名和身份证号码为必填项，其他字段为选填项）
+    BYTE  byBlackListValid; //身份证黑名单是否有效：0-无效，1-有效（用于按身份证号码删除身份证黑名单，该字段为0时代表删除）
+    BYTE  byRes[127];
+}NET_DVR_UPLOAD_ID_BLACK_LIST_CFG, *LPNET_DVR_UPLOAD_ID_BLACK_LIST_CFG;
+
+typedef struct tagNET_DVR_UPLOAD_ID_BLACK_LIST_STATUS
+{
+    DWORD       dwSize;
+    BYTE  byIDNum[MAX_ID_NUM_LEN];   //身份证号码
+    BYTE  byStatus; //状态：0-无效，1-处理中，2-上传失败，3-成功
+    BYTE  byRes[63];
+}NET_DVR_UPLOAD_ID_BLACK_LIST_STATUS, *LPNET_DVR_UPLOAD_ID_BLACK_LIST_STATUS;
 
 /********************************SDK接口函数声明*********************************/
 NET_DVR_API BOOL __stdcall NET_DVR_Init();
@@ -44436,10 +45471,12 @@ NET_DVR_API void __stdcall NET_DVR_ReleaseG722Encoder(void *pEncodeHandle);
 NET_DVR_API void* __stdcall NET_DVR_InitG726Decoder(void** pDecMoudle);
 NET_DVR_API void __stdcall NET_DVR_ReleaseG726Decoder(void *pDecHandle);
 NET_DVR_API BOOL __stdcall NET_DVR_DecodeG726Frame(void *pDecMoudle, BYTE* pInBuffer, BYTE* pOutBuffer, BYTE byReset);
+
 //编码
 NET_DVR_API void* __stdcall NET_DVR_InitG726Encoder(void** pEncMoudle);
 NET_DVR_API BOOL __stdcall NET_DVR_EncodeG726Frame(void *pEncMoudle,BYTE* pInBuffer, BYTE* pOutBuffer, BYTE byReset);
 NET_DVR_API void __stdcall NET_DVR_ReleaseG726Encoder(void *pEncHandle);
+
 //远程控制本地显示
 NET_DVR_API BOOL __stdcall NET_DVR_ClickKey(LONG lUserID, LONG lKeyIndex);
 //远程控制设备端手动录像

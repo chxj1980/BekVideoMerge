@@ -742,9 +742,6 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			//考车初始化
 			if (0 == m_mapCarManagers.count(nCarNo))
 			{
-				//CCarManager carManager;
-				//carManager.InitCar(userId, nCarNo, byDecChan);
-				//m_mapCarManagers[nCarNo] = carManager;
 				m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
 			}
 		}
@@ -841,7 +838,7 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			}
 		}
 
-		/*//获取电视墙的一些显示参数
+		//获取电视墙的一些显示参数
 		DWORD *pStatus = new DWORD[dwDispNum];
 		NET_DVR_WALLOUTPUTPARAM *pStruWallOutput = new NET_DVR_WALLOUTPUTPARAM[dwDispNum];
 		if (!NET_DVR_GetDeviceConfig(userId, NET_DVR_WALLOUTPUT_GET, dwDispNum, pDispChan, sizeof(DWORD) * dwDispNum,
@@ -861,7 +858,7 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			L_ERROR(_T("NET_DVR_GetDeviceConfig NET_DVR_WALLOUTPUT_SET fail, errorCode=%d\n"), errorCode);
 		}
 		delete[]pStruWallOutput;
-		delete[]pStatus;*/
+		delete[]pStatus;
 
 		DWORD *pDispStatus = new DWORD[dwDispNum];
 		NET_DVR_VIDEOWALLDISPLAYPOSITION *pStruWallDispPos = new NET_DVR_VIDEOWALLDISPLAYPOSITION[dwDispNum];

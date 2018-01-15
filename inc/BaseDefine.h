@@ -13,8 +13,18 @@ using namespace std;
 #define  LISTENING_PORT_UDP		6709
 //电视墙视频叠加服务监听的TCP端口
 #define LISTENING_PORT_TCP_WALL	6800
+
+//配置成四画面或者六画面，只能选其一
+//#define DISPLAY_4	
+#define DISPLAY_6	
+
 //显示通道关联的解码通道个数
+#ifdef DISPLAY_4
+#define DISPLAY_CHAN_NUMS		4
+#endif // DISPLAY_4
+#ifdef DISPLAY_6
 #define DISPLAY_CHAN_NUMS		6
+#endif // DISPLAY_6
 
 //合码器显示通道长宽
 #define DISPLAY_CHAN_WIDTH	1920

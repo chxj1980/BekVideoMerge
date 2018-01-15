@@ -52,10 +52,13 @@ bool CTranscodingBase::Init(wstring path, int carNo, int lpHanble)
 		m_pBmpInfoHeader->biClrImportant = 0;
 		m_pBmpInfoHeader->biCompression = 0;
 		m_pBmpInfoHeader->biHeight = 288;
+		//m_pBmpInfoHeader->biHeight = 640;
 		m_pBmpInfoHeader->biPlanes = 1;
 		m_pBmpInfoHeader->biSize = sizeof(BITMAPINFOHEADER);
 		m_pBmpInfoHeader->biSizeImage = 405504;
+		//m_pBmpInfoHeader->biSizeImage = 1638400;
 		m_pBmpInfoHeader->biWidth = 352;
+		//m_pBmpInfoHeader->biWidth = 640;
 		m_pBmpInfoHeader->biXPelsPerMeter = 0;
 		m_pBmpInfoHeader->biYPelsPerMeter = 0;
 

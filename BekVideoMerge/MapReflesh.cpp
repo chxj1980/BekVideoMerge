@@ -387,8 +387,8 @@ BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 				//绘制地图
 				mapRefleshClass->DrawMap(&graphics, nCarRelativeX, nCarRelativeY);
 
-				//绘制背景，叠加在地图上
-				mapRefleshClass->DrawBackground(&graphics);
+				////绘制背景，叠加在地图上
+				//mapRefleshClass->DrawBackground(&graphics);
 
 				//绘制车模型
 				if (mapRefleshClass -> m_bDrawCar)
@@ -396,8 +396,8 @@ BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 					mapRefleshClass->DrawCar(&graphics, carSignal.fDirectionAngle);
 				}
 
-				//绘制项目实时状态信息
-				mapRefleshClass->DrawStatus(carSignal);
+				////绘制项目实时状态信息
+				//mapRefleshClass->DrawStatus(carSignal);
 
 				//刷新四合一界面
 				mapRefleshClass->Reflesh();
@@ -445,27 +445,25 @@ void CMapReflesh::DrawBackground(Graphics *graphics)
 			return;
 		}
 
-		//项目牌背景
-		Image *imgXMBackground = Image::FromFile(wsXMBackground.c_str());	
-		graphics->DrawImage(imgXMBackground, Rect(264, 0, 88, 288), 264, 0, 88, 288, UnitPixel);
+		////项目牌背景
+		//Image *imgXMBackground = Image::FromFile(wsXMBackground.c_str());	
+		//graphics->DrawImage(imgXMBackground, Rect(264, 0, 88, 288), 264, 0, 88, 288, UnitPixel);
 
-		//项目牌列表
-		Image *imgXMList = Image::FromFile(wsXMList.c_str());
-		if (KSKM_3 == m_nKskm || m_bBigCar)
-		{
-			graphics->DrawImage(imgXMList, Rect(264, 0, 88, 288), 0, 0, 88, 288, UnitPixel);
-		}
-		else
-		{
-			graphics->DrawImage(imgXMList, Rect(264, 36, 88, 252), 0, 0, 88, 252, UnitPixel);
-		}
+		////项目牌列表
+		//Image *imgXMList = Image::FromFile(wsXMList.c_str());
+		//if (KSKM_3 == m_nKskm || m_bBigCar)
+		//{
+		//	graphics->DrawImage(imgXMList, Rect(264, 0, 88, 288), 0, 0, 88, 288, UnitPixel);
+		//}
+		//else
+		//{
+		//	graphics->DrawImage(imgXMList, Rect(264, 36, 88, 252), 0, 0, 88, 252, UnitPixel);
+		//}
 
 		//地图背景
 		Image *imgMapBackground = Image::FromFile(wsMapBackground.c_str());	
-		graphics->DrawImage(imgMapBackground, Rect(0, 0, VIDEO_WIDTH - 88, VIDEO_HEIGHT));
+		graphics->DrawImage(imgMapBackground, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));
 
-		delete imgXMBackground;
-		delete imgXMList;
 		delete imgMapBackground;
 	}
 	catch (...)
@@ -530,8 +528,8 @@ void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
 		int relativeX = carX % m_mapSplitWidth + m_mapSplitWidth;
 		int relativeY = carY % m_mapSplitWidth + m_mapSplitWidth;
 		L_DEBUG(_T("car relative cordirate in ninemaps, x=%d, y=%d\n"), relativeX, relativeY);
-		graphics->DrawImage(&bm, Rect(0, 0, VIDEO_WIDTH - 88, VIDEO_HEIGHT), 
-			(relativeX - (VIDEO_WIDTH - 88) / 2), (relativeY - VIDEO_HEIGHT / 2), VIDEO_WIDTH - 88, VIDEO_HEIGHT, UnitPixel);
+		graphics->DrawImage(&bm, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT), 
+			(relativeX - (VIDEO_WIDTH) / 2), (relativeY - VIDEO_HEIGHT / 2), VIDEO_WIDTH, VIDEO_HEIGHT, UnitPixel);
 
 		delete imgLeftTop;
 		delete imgTop;
@@ -554,9 +552,9 @@ void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
 //绘制车模型
 void CMapReflesh::DrawCar(Graphics *graphics, float angle)
 {
-	graphics->TranslateTransform((VIDEO_WIDTH - 88) / 2, VIDEO_HEIGHT / 2);
+	graphics->TranslateTransform(VIDEO_WIDTH / 2, VIDEO_HEIGHT / 2);
 	graphics->RotateTransform(angle);
-	graphics->TranslateTransform(-(VIDEO_WIDTH - 88) / 2, -VIDEO_HEIGHT / 2);
+	graphics->TranslateTransform(-VIDEO_WIDTH / 2, -VIDEO_HEIGHT / 2);
 
 	wstring wsImgCar = m_wsProgramPath + IMG_PATH_CAR_SKIN;
 	if (!CWinUtils::FileExists(wsImgCar))
@@ -566,8 +564,10 @@ void CMapReflesh::DrawCar(Graphics *graphics, float angle)
 	}
 
 	Image *imgCar = Image::FromFile(wsImgCar.c_str());
-	graphics->DrawImage(imgCar, Rect(0, 0, VIDEO_WIDTH - 88, VIDEO_HEIGHT), 
-		88 / 2, 0, VIDEO_WIDTH - 88, VIDEO_HEIGHT, UnitPixel);
+	int carWidth = imgCar->GetWidth();
+	int carHeight = imgCar->GetHeight();
+	graphics->DrawImage(imgCar, Rect(VIDEO_WIDTH / 2 - 100, VIDEO_HEIGHT / 2 - 100, 200, 200), 
+		carWidth / 2 - 100, carHeight / 2 - 100, 200, 200, UnitPixel);
 	graphics->ResetTransform();
 
 	delete imgCar;

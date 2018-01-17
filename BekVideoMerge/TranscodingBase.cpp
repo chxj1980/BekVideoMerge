@@ -51,14 +51,11 @@ bool CTranscodingBase::Init(wstring path, int carNo, int lpHanble)
 		m_pBmpInfoHeader->biBitCount = 32;
 		m_pBmpInfoHeader->biClrImportant = 0;
 		m_pBmpInfoHeader->biCompression = 0;
-		m_pBmpInfoHeader->biHeight = 288;
-		//m_pBmpInfoHeader->biHeight = 640;
+		m_pBmpInfoHeader->biHeight = VIDEO_HEIGHT;
+		m_pBmpInfoHeader->biWidth = VIDEO_WIDTH;
+		m_pBmpInfoHeader->biSizeImage = VIDEO_WIDTH * VIDEO_HEIGHT * 4;
 		m_pBmpInfoHeader->biPlanes = 1;
 		m_pBmpInfoHeader->biSize = sizeof(BITMAPINFOHEADER);
-		m_pBmpInfoHeader->biSizeImage = 405504;
-		//m_pBmpInfoHeader->biSizeImage = 1638400;
-		m_pBmpInfoHeader->biWidth = 352;
-		//m_pBmpInfoHeader->biWidth = 640;
 		m_pBmpInfoHeader->biXPelsPerMeter = 0;
 		m_pBmpInfoHeader->biYPelsPerMeter = 0;
 
@@ -189,7 +186,7 @@ int CTranscodingBase::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 bool CTranscodingBase::WriteAVIFile(wstring aviFilePath)
 {
 	bool breturn = true;
-	BYTE lpData[405504];
+	BYTE *lpData = new BYTE[VIDEO_WIDTH * VIDEO_HEIGHT * 4];
 	int nFrames = 0;
 	PAVIFILE pfile;
 	PAVISTREAM ps;
@@ -200,7 +197,7 @@ bool CTranscodingBase::WriteAVIFile(wstring aviFilePath)
 		CFile::Remove(aviFilePath.c_str());
 	}
 	
-	GetDIBits(m_DC.m_hDC, m_bmpBackground, 0, 288, &lpData, &m_bitmapInfo, DIB_RGB_COLORS);
+	GetDIBits(m_DC.m_hDC, m_bmpBackground, 0, VIDEO_HEIGHT, lpData, &m_bitmapInfo, DIB_RGB_COLORS);
 
 	WaitForSingleObject(m_mutexMakeAvi, 3000);//ª•≥‚¡ø
 	AVIFileInit();
@@ -236,6 +233,12 @@ bool CTranscodingBase::WriteAVIFile(wstring aviFilePath)
 	AVIFileExit();
 	ReleaseMutex(m_mutexMakeAvi);//ª•≥‚¡ø
 
+	if (NULL != lpData)
+	{
+		delete []lpData;
+		lpData = NULL;
+	}
+
 	return true;
 }
 
@@ -252,8 +255,9 @@ bool CTranscodingBase::Transcode(wstring aviFilePath, wstring yuvFilePath)
 	}
 
 	wstring wsPathMencoder = m_wsProgramPath + THIRDPARTY_PATH_MENCODER;
-	wstring wsCommand = _T(" -ovc x264 -x264encopts bitrate=256 -vf scale=352:288 \"") + aviFilePath +
-												_T("\" -O \"") + yuvFilePath + _T("\"");
+	wstring wsScale = CStringUtils::Format(_T("scale=%d:%d"), VIDEO_WIDTH, VIDEO_HEIGHT);
+	wstring wsCommand = _T(" -ovc x264 -x264encopts bitrate=256 -vf ") + wsScale + _T(" \"") + aviFilePath +
+		_T("\" -O \"") + yuvFilePath + _T("\"");
 
 	PROCESS_INFORMATION  ProcessInfo;
 	STARTUPINFO  StartupInfo;
@@ -261,7 +265,6 @@ bool CTranscodingBase::Transcode(wstring aviFilePath, wstring yuvFilePath)
 	StartupInfo.cb = sizeof(StartupInfo);
 	StartupInfo.dwFlags = STARTF_USESHOWWINDOW;
 	StartupInfo.wShowWindow = SW_HIDE;
-	//	StartupInfo.wShowWindow = SW_SHOW;		
 	if (CreateProcess(wsPathMencoder.c_str(), (LPWSTR)wsCommand.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &StartupInfo, &ProcessInfo))
 	{
 		DWORD dwWait = WaitForSingleObject(ProcessInfo.hProcess, 5403);

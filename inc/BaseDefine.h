@@ -30,8 +30,8 @@ using namespace std;
 #define DISPLAY_CHAN_WIDTH	1920
 #define DISPLAY_CHAN_HEIGHT	1920
 
-#define VIDEO_WIDTH	352
-#define VIDEO_HEIGHT	288
+#define VIDEO_WIDTH	640
+#define VIDEO_HEIGHT	360
 
 //科目二远景摄像头编号
 #define CAMERA_KM2_PUBLIC				_T("10086_1")

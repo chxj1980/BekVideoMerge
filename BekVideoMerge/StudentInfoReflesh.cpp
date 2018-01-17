@@ -72,7 +72,7 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 				//刷新四合一界面
 				studentInfoRefleshClass->Reflesh();
 
-				Sleep(1000);
+				Sleep(500);
 
 				//考试结束后，继续显示一段时间
 				if (studentInfoRefleshClass->m_nDisplayDelays > 0)

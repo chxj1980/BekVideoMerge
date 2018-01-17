@@ -24,7 +24,6 @@ public:
 	wstring m_wsProgramPath;
 	int m_nCarNo;
 
-
 private:
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 	bool WriteAVIFile(wstring aviFilePath);

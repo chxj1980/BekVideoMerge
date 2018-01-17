@@ -26,9 +26,6 @@ private:
 	StudentInfo m_studentInfo;
 	HANDLE	m_refleshEvent;
 
-	int m_nWidth;
-	int m_nHeight;
-
 	bool m_bStartExam;	//开始考试
 	bool m_bEndExam;		//考试结束
 	bool m_bPass;		//考试是否通过

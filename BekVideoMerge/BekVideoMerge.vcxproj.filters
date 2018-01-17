@@ -110,5 +110,11 @@
     <Image Include="res\Background.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\MapBackground.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\StuBackground.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

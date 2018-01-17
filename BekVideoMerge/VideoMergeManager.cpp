@@ -896,7 +896,7 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			return false;
 		}
 
-		//开窗 ，每个显示通道开6个窗
+		//开窗 ，每个显示通道开5个窗
 		int nWinCount = DISPLAY_CHAN_NUMS;
 		DWORD *pWinNo = new DWORD[nWinCount * dwDispNum];
 		DWORD *pRetWinNo = new DWORD[nWinCount * dwDispNum];
@@ -922,12 +922,12 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			{
 				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH;
 				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
-				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3 * 2;
 				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
 			}
 			else if (2 == i % nWinCount)
 			{
-				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
 				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
 				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
 				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
@@ -935,18 +935,11 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			else if (3 == i % nWinCount)
 			{
 				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
-				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
-				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
-				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
-			}
-			else if (4 == i % nWinCount)
-			{
-				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
 				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3;
 				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
 				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
 			}
-			else if (5 == i % nWinCount)
+			else if (4 == i % nWinCount)
 			{
 				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
 				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT;
@@ -1126,7 +1119,7 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 3);
+			it->second.StartDynamicDecode(channel, 2);
 		}
 		key = CStringUtils::Format(_T("考车%d_2"), it->first);
 		if (!GetVideoChannel(key, channel))
@@ -1135,7 +1128,7 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 4);
+			it->second.StartDynamicDecode(channel, 3);
 		}
 		key = CStringUtils::Format(_T("考车%d_3"), it->first);
 		if (!GetVideoChannel(key, channel))
@@ -1144,7 +1137,7 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 5);
+			it->second.StartDynamicDecode(channel, 4);
 		}
 		
 		//被动解码

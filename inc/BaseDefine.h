@@ -16,15 +16,10 @@ using namespace std;
 
 //配置成四画面或者六画面，只能选其一
 //#define DISPLAY_4	
-#define DISPLAY_6	
+//#define DISPLAY_6	
 
 //显示通道关联的解码通道个数
-#ifdef DISPLAY_4
-#define DISPLAY_CHAN_NUMS		4
-#endif // DISPLAY_4
-#ifdef DISPLAY_6
-#define DISPLAY_CHAN_NUMS		6
-#endif // DISPLAY_6
+#define DISPLAY_CHAN_NUMS		5
 
 //合码器显示通道长宽
 #define DISPLAY_CHAN_WIDTH	1920
@@ -81,7 +76,7 @@ using namespace std;
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
 #define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
 #define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
-#define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.skin")
+#define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.png")
 #define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
@@ -151,6 +146,12 @@ typedef enum PACKTYPE {
 	M17C54,
 	M17C55,
 	M17C56
+};
+
+//画面类型
+typedef enum PassiveWindowType {
+	WINDOW_TYPE_MAP = 0,
+	WINDOW_TYPE_STUINFO = 1
 };
 
 //数据库类型

@@ -230,6 +230,8 @@
     <Image Include="res\Background.bmp" />
     <Image Include="res\BekVideoMerge.ico" />
     <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\MapBackground.bmp" />
+    <Image Include="res\StuBackground.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

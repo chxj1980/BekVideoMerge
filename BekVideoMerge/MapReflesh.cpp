@@ -483,7 +483,7 @@ void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
 
 		if (0 == rowNum && 0 == columnNum)
 		{
-			L_DEBUG(_T("maybe error, rowNum=%d, columnNum=%d\n"), rowNum, columnNum);
+			L_DEBUG(_T("maybe wrong, rowNum=%d, columnNum=%d\n"), rowNum, columnNum);
 			rowNum = 1;
 			columnNum = 1;
 			carX += m_mapSplitWidth;

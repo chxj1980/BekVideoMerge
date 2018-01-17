@@ -7,9 +7,6 @@ CStudentInfoReflesh::CStudentInfoReflesh()
 {
 	m_refleshEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-	m_nWidth = DISPLAY_CHAN_WIDTH / 3;
-	m_nHeight = DISPLAY_CHAN_HEIGHT / 3;
-
 	m_bStartExam = false;
 	m_bEndExam = false;
 	m_bPass = false;
@@ -103,11 +100,10 @@ void CStudentInfoReflesh::DrawBackground(Graphics *graphics)
 			return;
 		}
 
-		//fix me，坐标写死了
-		//项目牌背景
 		Image *imgStuBackground = Image::FromFile(wsStuBackground.c_str());
-		graphics->DrawImage(imgStuBackground, Rect(0, 0, 352, 288), 0, 0, 352, 288, UnitPixel);
-		
+		int width = imgStuBackground->GetWidth();
+		int height = imgStuBackground->GetHeight();
+		graphics->DrawImage(imgStuBackground, Rect(0, 0, m_nWidth, m_nHeight), 0, 0, width, height, UnitPixel);
 
 		delete imgStuBackground;
 	}

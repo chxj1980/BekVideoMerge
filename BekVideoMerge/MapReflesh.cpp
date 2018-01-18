@@ -30,6 +30,8 @@ CMapReflesh::CMapReflesh()
 
 	m_nStartXmStatus = 0;
 	m_nEndXmStatus = 0;
+
+	SetEvent(m_refleshEvent);
 }
 
 CMapReflesh::~CMapReflesh()
@@ -374,7 +376,7 @@ BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 		DWORD dwRet = WaitForSingleObject(mapRefleshClass->m_refleshEvent, INFINITE);
 		if (WAIT_OBJECT_0 == dwRet)
 		{
-			if (mapRefleshClass->m_bStartExam || mapRefleshClass->m_nDisplayDelays > 0)
+			if (mapRefleshClass->m_bStartExam || !mapRefleshClass->m_bEndExam || mapRefleshClass->m_nDisplayDelays > 0)
 			{
 				//获取车辆实时位置
 				int nCarRelativeX = 0;

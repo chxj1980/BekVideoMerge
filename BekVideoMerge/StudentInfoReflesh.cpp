@@ -11,6 +11,8 @@ CStudentInfoReflesh::CStudentInfoReflesh()
 	m_bEndExam = false;
 	m_bPass = false;
 	m_nDisplayDelays = 0;
+
+	SetEvent(m_refleshEvent);
 }
 
 CStudentInfoReflesh::~CStudentInfoReflesh()
@@ -61,7 +63,7 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 		DWORD dwRet = WaitForSingleObject(studentInfoRefleshClass->m_refleshEvent, INFINITE);
 		if (WAIT_OBJECT_0 == dwRet)
 		{
-			if (studentInfoRefleshClass->m_bStartExam || studentInfoRefleshClass->m_nDisplayDelays > 0)
+			if (studentInfoRefleshClass->m_bStartExam || !studentInfoRefleshClass->m_bEndExam || studentInfoRefleshClass->m_nDisplayDelays > 0)
 			{
 				//这里进行一些绘制工作
 				studentInfoRefleshClass->DrawBackground(&graphics);

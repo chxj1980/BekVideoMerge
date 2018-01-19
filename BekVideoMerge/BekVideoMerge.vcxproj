@@ -204,7 +204,9 @@
     <ClInclude Include="VideoMergeManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Function.cpp" />
+    <ClCompile Include="..\src\Function.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\src\TCPSockz.cpp" />
     <ClCompile Include="BekVideoMerge.cpp" />
     <ClCompile Include="BekVideoMergeDlg.cpp" />

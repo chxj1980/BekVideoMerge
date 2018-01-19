@@ -59,15 +59,27 @@ BOOL CBekVideoMergeApp::InitInstance()
 		return FALSE;
 	}
 
-	//日志模块初始化
+	//文件目录初始化
 	wstring wstrCurrentPath = _T("");
-	wstring wstrLogConfPath = _T("");
 	CWinUtils::GetCurrentProcessPath(wstrCurrentPath);
-	wstrLogConfPath = wstrCurrentPath + _T("\\log");
-	if (!CWinUtils::FileExists(wstrLogConfPath))
+	wstring wstrLogPath = wstrCurrentPath + FILE_PATH_LOG;
+	if (!CWinUtils::FileExists(wstrLogPath))
 	{
-		CWinUtils::CreateDirectorys(wstrLogConfPath);
+		CWinUtils::CreateDirectorys(wstrLogPath);
 	}
+	wstring wstrVideoPath = wstrCurrentPath + FILE_PATH_VIDEO;
+	if (CWinUtils::FileExists(wstrVideoPath))
+	{
+		CWinUtils::RemoveDirectorys(wstrVideoPath);
+	}
+	wstring wstrPhotoPath = wstrCurrentPath + FILE_PATH_PHOTO;
+	if (CWinUtils::FileExists(wstrPhotoPath))
+	{
+		CWinUtils::RemoveDirectorys(wstrPhotoPath);
+	}
+	CWinUtils::CreateDirectorys(wstrPhotoPath);
+
+	//日志模块初始化
 	LogBase_init(LOG_CONF_BEKVIDEOMERGE);
 
 	//gdiplus初始化

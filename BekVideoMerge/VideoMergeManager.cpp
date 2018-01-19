@@ -95,7 +95,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 		case SIGNAL_TYPE_17C51:	//考试开始，没有特殊字段要处理
 		{
 			StudentInfo studentInfo;
-			GetStudentInfo(wsCertificateNo, studentInfo);
+			GetStudentInfo(wsCertificateNo, nCarNo, studentInfo);
 
 			m_mapCarManagers[nCarNo].Handle17C51(studentInfo);
 			
@@ -1176,13 +1176,25 @@ bool CVideoMergeManager::GetCarManager(int carNo)
 }
 
 //从数据库查询考生信息
-bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, StudentInfo &studentInfo)
+bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, int carNo, StudentInfo &studentInfo)
 {
 	L_TRACE_ENTER(_T("\n"));
 	
 	try
 	{
 		wstring wsSql = _T("");
+
+		//删除上个考生照片
+		wstring wsPhotoName = m_wsProgramPath + FILE_PATH_PHOTO + CStringUtils::Format(PHOTO_ID_FORMAT, carNo);
+		if (CWinUtils::FileExists(wsPhotoName))
+		{
+			DeleteFile(wsPhotoName.c_str());
+		}
+		wstring wsLoginPhotoName = m_wsProgramPath + FILE_PATH_PHOTO + CStringUtils::Format(PHOTO_LOGIN_FORMAT, carNo);
+		if (CWinUtils::FileExists(wsLoginPhotoName))
+		{
+			DeleteFile(wsLoginPhotoName.c_str());
+		}
 		
 		if (DB_ORACLE == m_nDBType)
 		{
@@ -1199,6 +1211,7 @@ bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, StudentInfo &stud
 
 		L_DEBUG(_T("GetStudentInfo sql : %s\n"), wsSql.c_str());
 
+		//取考生信息
 		VARIANT cnt;
 		cnt.vt = VT_INT;
 		_RecordsetPtr pSet = m_pDB->Execute((_bstr_t)wsSql.c_str(), &cnt, adCmdUnknown);
@@ -1288,7 +1301,109 @@ bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, StudentInfo &stud
 			pSet->Close();
 			pSet.Release();
 		}
-	
+
+		//取考生照片
+		_RecordsetPtr pSetPhoto;
+		pSetPhoto.CreateInstance("ADODB.Recordset");
+		pSetPhoto->CursorLocation = adUseClient;
+		wsSql = _T("select 照片,门禁照片 from StudentPhoto where 准考证明编号='") + certificateNo + _T("'");
+		pSetPhoto->Open((_variant_t)_bstr_t(wsSql.c_str()), _variant_t((IDispatch*)m_pDB, true),
+			adOpenDynamic, adLockOptimistic, adCmdText);
+		if (1 != pSetPhoto->RecordCount)
+		{
+			L_ERROR(_T("student photo not exist, certificateNo = %s\n"), certificateNo.c_str());
+			return false;
+		}
+		long lSizePhoto = pSetPhoto->GetFields()->GetItem("照片")->ActualSize; 
+		long lSizeLoginPhoto = pSetPhoto->GetFields()->GetItem("门禁照片")->ActualSize;
+		_variant_t vatPhoto;
+		_variant_t vatLoginPhoto;
+		if (lSizePhoto > 0)
+		{
+			vatPhoto = pSetPhoto->GetFields()->GetItem("照片")->GetChunk(lSizePhoto);
+		}
+		if (lSizeLoginPhoto > 0)
+		{
+			vatLoginPhoto = pSetPhoto->GetFields()->GetItem("门禁照片")->GetChunk(lSizeLoginPhoto);
+		}
+
+		pSetPhoto->Close();
+		pSetPhoto.Release();
+
+		CLSID pngClsid;
+		GetEncoderClsid(L"image/png", &pngClsid);
+
+		if ((VT_ARRAY | VT_UI1) == vatPhoto.vt)
+		{
+			LPVOID lpPhoto = new char[lSizePhoto + 1];
+
+			char *pBuf = NULL;
+			SafeArrayAccessData(vatPhoto.parray, (void **)&pBuf);
+			memcpy(lpPhoto, pBuf, lSizePhoto);
+			SafeArrayUnaccessData(vatPhoto.parray);
+
+			IStream *pStream = NULL;
+			LONGLONG lSize = lSizePhoto;
+			HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, lSize);
+			if (NULL == hGlobal)
+			{
+				L_ERROR(_T("GetStudentInfo fail.\n"));
+				return false;
+			}
+
+			LPVOID pvData = GlobalLock(hGlobal);
+			memcpy(pvData, lpPhoto, lSize);
+			GlobalUnlock(hGlobal);
+			CreateStreamOnHGlobal(hGlobal, TRUE, &pStream);
+
+			Image *imgPhoto = Image::FromStream(pStream, FALSE);
+			imgPhoto->Save(wsPhotoName.c_str(), &pngClsid, NULL);
+			delete imgPhoto;
+
+			pStream->Release();
+			GlobalFree(hGlobal);
+			if (lpPhoto)
+			{
+				delete lpPhoto;
+				lpPhoto = NULL;
+			}
+		}
+
+		if ((VT_ARRAY | VT_UI1) == vatLoginPhoto.vt)
+		{
+			LPVOID lpLoginPhoto = new char[lSizeLoginPhoto + 1];
+
+			char *pBuf = NULL;
+			SafeArrayAccessData(vatLoginPhoto.parray, (void **)&pBuf);
+			memcpy(lpLoginPhoto, pBuf, lSizeLoginPhoto);
+			SafeArrayUnaccessData(vatLoginPhoto.parray);
+
+			IStream *pStream = NULL;
+			LONGLONG lSize = lSizeLoginPhoto;
+			HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, lSize);
+			if (NULL == hGlobal)
+			{
+				L_ERROR(_T("GetStudentInfo fail.\n"));
+				return false;
+			}
+
+			LPVOID pvData = GlobalLock(hGlobal);
+			memcpy(pvData, lpLoginPhoto, lSize);
+			GlobalUnlock(hGlobal);
+			CreateStreamOnHGlobal(hGlobal, TRUE, &pStream);
+
+			Image *imgLoginPhoto = Image::FromStream(pStream, FALSE);
+			imgLoginPhoto->Save(wsLoginPhotoName.c_str(), &pngClsid, NULL);
+			delete imgLoginPhoto;
+
+			pStream->Release();
+			GlobalFree(hGlobal);
+			if (lpLoginPhoto)
+			{
+				delete lpLoginPhoto;
+				lpLoginPhoto = NULL;
+			}
+		}
 	}
 	catch (...)
 	{

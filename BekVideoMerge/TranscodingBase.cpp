@@ -109,7 +109,7 @@ void CTranscodingBase::Reflesh()
 
 bool CTranscodingBase::SendDataToHikDevice()
 {
-	wstring wsVideoPath = m_wsProgramPath + _T("\\video");
+	wstring wsVideoPath = m_wsProgramPath + FILE_PATH_VIDEO;
 	if (!CWinUtils::FileExists(wsVideoPath))
 	{
 		CWinUtils::CreateDirectorys(wsVideoPath);
@@ -165,35 +165,6 @@ void CTranscodingBase::SavePngFile()
 
 	wstring wsFile = _T("D:\\TETETETET.png");
 	mbitmap.Save(wsFile.c_str(), &pngClsid);
-}
-
-int CTranscodingBase::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
-{
-	UINT num = 0;
-	UINT size = 0;
-	ImageCodecInfo* pImageCodecInfo = NULL;
-	GetImageEncodersSize(&num, &size);
-	if (size == 0)
-	{
-		return -1;
-	}
-	pImageCodecInfo = (ImageCodecInfo*)(malloc(size));
-	if (pImageCodecInfo == NULL)
-	{
-		return -1;
-	}
-	GetImageEncoders(num, size, pImageCodecInfo);
-	for (UINT j = 0; j < num; ++j)
-	{
-		if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
-		{
-			*pClsid = pImageCodecInfo[j].Clsid;
-			free(pImageCodecInfo);
-			return j;
-		}
-	}
-	free(pImageCodecInfo);
-	return -1;
 }
 
 bool CTranscodingBase::WriteAVIFile(wstring aviFilePath)

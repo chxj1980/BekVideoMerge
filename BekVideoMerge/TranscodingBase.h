@@ -27,7 +27,6 @@ public:
 	int m_nHeight;
 
 private:
-	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 	bool WriteAVIFile(wstring aviFilePath);
 	bool Transcode(wstring aviFilePath, wstring yuvFilePath);
 	bool MatrixSendData(wstring yuvFilePath);

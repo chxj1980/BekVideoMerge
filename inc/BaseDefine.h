@@ -6,6 +6,9 @@
 #include <string>
 using namespace std;
 
+#include "gdiplus/inc/GdiPlus.h"
+using namespace Gdiplus;
+
 #define  LISTENING_ADDRESS	_T("0.0.0.0")
 //TCP 监听端口
 #define  LISTENING_PORT_TCP		6708
@@ -72,6 +75,11 @@ using namespace std;
 #define CONF_KEY_WND2						_T("WND2")
 #define CONF_KEY_BIGCAR					_T("BIGCAR")
 
+//文件目录
+#define FILE_PATH_LOG		_T("\\log")
+#define FILE_PATH_VIDEO		_T("\\video")
+#define FILE_PATH_PHOTO		_T("\\photo")
+
 //资源文件
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
 #define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
@@ -79,7 +87,10 @@ using namespace std;
 #define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.png")
 #define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
+#define IMG_PATH_GEAR_1		_T("\\res\\Gear_1.png")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
+#define PHOTO_ID_FORMAT		_T("\\%d_id_photo.png")
+#define PHOTO_LOGIN_FORMAT		_T("\\%d_login_photo.png")
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")

@@ -7,6 +7,8 @@ CTranscodingBase::CTranscodingBase()
 {
 	m_nCarNo = -1;
 	m_lpHandle = -1;
+	m_nWidth = 0;
+	m_nHeight = 0;
 
 	opts[0] = &pCompressOption;
 }
@@ -24,13 +26,15 @@ CTranscodingBase::~CTranscodingBase()
 	}
 }
 
-bool CTranscodingBase::Init(wstring path, int carNo, int lpHanble)
+bool CTranscodingBase::Init(wstring path, int carNo, int lpHanble, int width, int height, int windowType)
 {
 	try
 	{
 		m_wsProgramPath = path;
 		m_nCarNo = carNo;
 		m_lpHandle = lpHanble;
+		m_nWidth = width;
+		m_nHeight = height;
 
 		m_mutexMakeAvi = CreateMutex(NULL, FALSE, NULL);	//创建互斥对象
 		
@@ -39,7 +43,16 @@ bool CTranscodingBase::Init(wstring path, int carNo, int lpHanble)
 			L_ERROR(_T("CreateCompatibleDC return NULL\n"));
 			return false;
 		}
-		m_bmpBackground.LoadBitmapW(MAKEINTRESOURCEW(IDB_BITMAP_BACKGROUND));
+
+		if (WINDOW_TYPE_MAP == windowType)
+		{
+			m_bmpBackground.LoadBitmapW(MAKEINTRESOURCEW(IDB_BITMAP_MAPBACKGROUND));
+		}
+		else if (WINDOW_TYPE_STUINFO == windowType)
+		{
+			m_bmpBackground.LoadBitmapW(MAKEINTRESOURCEW(IDB_BITMAP_STUBACKGROUND));
+		}
+
 		if (NULL == m_bmpBackground.m_hObject)
 		{
 			L_ERROR(_T("LoadBitmapW return NULL\n"));
@@ -51,11 +64,11 @@ bool CTranscodingBase::Init(wstring path, int carNo, int lpHanble)
 		m_pBmpInfoHeader->biBitCount = 32;
 		m_pBmpInfoHeader->biClrImportant = 0;
 		m_pBmpInfoHeader->biCompression = 0;
-		m_pBmpInfoHeader->biHeight = 288;
+		m_pBmpInfoHeader->biHeight = m_nHeight;
+		m_pBmpInfoHeader->biWidth = m_nWidth;
+		m_pBmpInfoHeader->biSizeImage = m_nWidth * m_nHeight * 4;
 		m_pBmpInfoHeader->biPlanes = 1;
 		m_pBmpInfoHeader->biSize = sizeof(BITMAPINFOHEADER);
-		m_pBmpInfoHeader->biSizeImage = 405504;
-		m_pBmpInfoHeader->biWidth = 352;
 		m_pBmpInfoHeader->biXPelsPerMeter = 0;
 		m_pBmpInfoHeader->biYPelsPerMeter = 0;
 
@@ -96,7 +109,7 @@ void CTranscodingBase::Reflesh()
 
 bool CTranscodingBase::SendDataToHikDevice()
 {
-	wstring wsVideoPath = m_wsProgramPath + _T("\\video");
+	wstring wsVideoPath = m_wsProgramPath + FILE_PATH_VIDEO;
 	if (!CWinUtils::FileExists(wsVideoPath))
 	{
 		CWinUtils::CreateDirectorys(wsVideoPath);
@@ -154,39 +167,10 @@ void CTranscodingBase::SavePngFile()
 	mbitmap.Save(wsFile.c_str(), &pngClsid);
 }
 
-int CTranscodingBase::GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
-{
-	UINT num = 0;
-	UINT size = 0;
-	ImageCodecInfo* pImageCodecInfo = NULL;
-	GetImageEncodersSize(&num, &size);
-	if (size == 0)
-	{
-		return -1;
-	}
-	pImageCodecInfo = (ImageCodecInfo*)(malloc(size));
-	if (pImageCodecInfo == NULL)
-	{
-		return -1;
-	}
-	GetImageEncoders(num, size, pImageCodecInfo);
-	for (UINT j = 0; j < num; ++j)
-	{
-		if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
-		{
-			*pClsid = pImageCodecInfo[j].Clsid;
-			free(pImageCodecInfo);
-			return j;
-		}
-	}
-	free(pImageCodecInfo);
-	return -1;
-}
-
 bool CTranscodingBase::WriteAVIFile(wstring aviFilePath)
 {
 	bool breturn = true;
-	BYTE lpData[405504];
+	BYTE *lpData = new BYTE[m_nWidth * m_nHeight * 4];
 	int nFrames = 0;
 	PAVIFILE pfile;
 	PAVISTREAM ps;
@@ -197,7 +181,7 @@ bool CTranscodingBase::WriteAVIFile(wstring aviFilePath)
 		CFile::Remove(aviFilePath.c_str());
 	}
 	
-	GetDIBits(m_DC.m_hDC, m_bmpBackground, 0, 288, &lpData, &m_bitmapInfo, DIB_RGB_COLORS);
+	GetDIBits(m_DC.m_hDC, m_bmpBackground, 0, m_nHeight, lpData, &m_bitmapInfo, DIB_RGB_COLORS);
 
 	WaitForSingleObject(m_mutexMakeAvi, 3000);//互斥量
 	AVIFileInit();
@@ -233,6 +217,12 @@ bool CTranscodingBase::WriteAVIFile(wstring aviFilePath)
 	AVIFileExit();
 	ReleaseMutex(m_mutexMakeAvi);//互斥量
 
+	if (NULL != lpData)
+	{
+		delete []lpData;
+		lpData = NULL;
+	}
+
 	return true;
 }
 
@@ -249,8 +239,9 @@ bool CTranscodingBase::Transcode(wstring aviFilePath, wstring yuvFilePath)
 	}
 
 	wstring wsPathMencoder = m_wsProgramPath + THIRDPARTY_PATH_MENCODER;
-	wstring wsCommand = _T(" -ovc x264 -x264encopts bitrate=256 -vf scale=352:288 \"") + aviFilePath +
-												_T("\" -O \"") + yuvFilePath + _T("\"");
+	wstring wsScale = CStringUtils::Format(_T("scale=%d:%d"), m_nWidth, m_nHeight);
+	wstring wsCommand = _T(" -ovc x264 -x264encopts bitrate=256 -vf ") + wsScale + _T(" \"") + aviFilePath +
+		_T("\" -O \"") + yuvFilePath + _T("\"");
 
 	PROCESS_INFORMATION  ProcessInfo;
 	STARTUPINFO  StartupInfo;
@@ -258,7 +249,6 @@ bool CTranscodingBase::Transcode(wstring aviFilePath, wstring yuvFilePath)
 	StartupInfo.cb = sizeof(StartupInfo);
 	StartupInfo.dwFlags = STARTF_USESHOWWINDOW;
 	StartupInfo.wShowWindow = SW_HIDE;
-	//	StartupInfo.wShowWindow = SW_SHOW;		
 	if (CreateProcess(wsPathMencoder.c_str(), (LPWSTR)wsCommand.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &StartupInfo, &ProcessInfo))
 	{
 		DWORD dwWait = WaitForSingleObject(ProcessInfo.hProcess, 5403);

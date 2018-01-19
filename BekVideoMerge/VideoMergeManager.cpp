@@ -95,7 +95,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 		case SIGNAL_TYPE_17C51:	//考试开始，没有特殊字段要处理
 		{
 			StudentInfo studentInfo;
-			GetStudentInfo(wsCertificateNo, studentInfo);
+			GetStudentInfo(wsCertificateNo, nCarNo, studentInfo);
 
 			m_mapCarManagers[nCarNo].Handle17C51(studentInfo);
 			
@@ -742,9 +742,6 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			//考车初始化
 			if (0 == m_mapCarManagers.count(nCarNo))
 			{
-				//CCarManager carManager;
-				//carManager.InitCar(userId, nCarNo, byDecChan);
-				//m_mapCarManagers[nCarNo] = carManager;
 				m_mapCarManagers[nCarNo].InitCar(userId, nCarNo, byDecChan);
 			}
 		}
@@ -841,7 +838,7 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			}
 		}
 
-		/*//获取电视墙的一些显示参数
+		//获取电视墙的一些显示参数
 		DWORD *pStatus = new DWORD[dwDispNum];
 		NET_DVR_WALLOUTPUTPARAM *pStruWallOutput = new NET_DVR_WALLOUTPUTPARAM[dwDispNum];
 		if (!NET_DVR_GetDeviceConfig(userId, NET_DVR_WALLOUTPUT_GET, dwDispNum, pDispChan, sizeof(DWORD) * dwDispNum,
@@ -861,7 +858,7 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			L_ERROR(_T("NET_DVR_GetDeviceConfig NET_DVR_WALLOUTPUT_SET fail, errorCode=%d\n"), errorCode);
 		}
 		delete[]pStruWallOutput;
-		delete[]pStatus;*/
+		delete[]pStatus;
 
 		DWORD *pDispStatus = new DWORD[dwDispNum];
 		NET_DVR_VIDEOWALLDISPLAYPOSITION *pStruWallDispPos = new NET_DVR_VIDEOWALLDISPLAYPOSITION[dwDispNum];
@@ -899,7 +896,7 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			return false;
 		}
 
-		//开窗 ，每个显示通道开6个窗
+		//开窗 ，每个显示通道开5个窗
 		int nWinCount = DISPLAY_CHAN_NUMS;
 		DWORD *pWinNo = new DWORD[nWinCount * dwDispNum];
 		DWORD *pRetWinNo = new DWORD[nWinCount * dwDispNum];
@@ -925,12 +922,12 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			{
 				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH;
 				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
-				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3 * 2;
 				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
 			}
 			else if (2 == i % nWinCount)
 			{
-				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3;
+				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
 				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
 				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
 				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
@@ -938,18 +935,11 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 			else if (3 == i % nWinCount)
 			{
 				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
-				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
-				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
-				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
-			}
-			else if (4 == i % nWinCount)
-			{
-				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
 				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3;
 				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3;
 				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
 			}
-			else if (5 == i % nWinCount)
+			else if (4 == i % nWinCount)
 			{
 				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH + DISPLAY_CHAN_WIDTH / 3 * 2;
 				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT;
@@ -1129,7 +1119,7 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 3);
+			it->second.StartDynamicDecode(channel, 2);
 		}
 		key = CStringUtils::Format(_T("考车%d_2"), it->first);
 		if (!GetVideoChannel(key, channel))
@@ -1138,7 +1128,7 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 4);
+			it->second.StartDynamicDecode(channel, 3);
 		}
 		key = CStringUtils::Format(_T("考车%d_3"), it->first);
 		if (!GetVideoChannel(key, channel))
@@ -1147,7 +1137,7 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 5);
+			it->second.StartDynamicDecode(channel, 4);
 		}
 		
 		//被动解码
@@ -1186,13 +1176,25 @@ bool CVideoMergeManager::GetCarManager(int carNo)
 }
 
 //从数据库查询考生信息
-bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, StudentInfo &studentInfo)
+bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, int carNo, StudentInfo &studentInfo)
 {
 	L_TRACE_ENTER(_T("\n"));
 	
 	try
 	{
 		wstring wsSql = _T("");
+
+		//删除上个考生照片
+		wstring wsPhotoName = m_wsProgramPath + FILE_PATH_PHOTO + CStringUtils::Format(PHOTO_ID_FORMAT, carNo);
+		if (CWinUtils::FileExists(wsPhotoName))
+		{
+			DeleteFile(wsPhotoName.c_str());
+		}
+		wstring wsLoginPhotoName = m_wsProgramPath + FILE_PATH_PHOTO + CStringUtils::Format(PHOTO_LOGIN_FORMAT, carNo);
+		if (CWinUtils::FileExists(wsLoginPhotoName))
+		{
+			DeleteFile(wsLoginPhotoName.c_str());
+		}
 		
 		if (DB_ORACLE == m_nDBType)
 		{
@@ -1209,6 +1211,7 @@ bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, StudentInfo &stud
 
 		L_DEBUG(_T("GetStudentInfo sql : %s\n"), wsSql.c_str());
 
+		//取考生信息
 		VARIANT cnt;
 		cnt.vt = VT_INT;
 		_RecordsetPtr pSet = m_pDB->Execute((_bstr_t)wsSql.c_str(), &cnt, adCmdUnknown);
@@ -1298,7 +1301,109 @@ bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, StudentInfo &stud
 			pSet->Close();
 			pSet.Release();
 		}
-	
+
+		//取考生照片
+		_RecordsetPtr pSetPhoto;
+		pSetPhoto.CreateInstance("ADODB.Recordset");
+		pSetPhoto->CursorLocation = adUseClient;
+		wsSql = _T("select 照片,门禁照片 from StudentPhoto where 准考证明编号='") + certificateNo + _T("'");
+		pSetPhoto->Open((_variant_t)_bstr_t(wsSql.c_str()), _variant_t((IDispatch*)m_pDB, true),
+			adOpenDynamic, adLockOptimistic, adCmdText);
+		if (1 != pSetPhoto->RecordCount)
+		{
+			L_ERROR(_T("student photo not exist, certificateNo = %s\n"), certificateNo.c_str());
+			return false;
+		}
+		long lSizePhoto = pSetPhoto->GetFields()->GetItem("照片")->ActualSize; 
+		long lSizeLoginPhoto = pSetPhoto->GetFields()->GetItem("门禁照片")->ActualSize;
+		_variant_t vatPhoto;
+		_variant_t vatLoginPhoto;
+		if (lSizePhoto > 0)
+		{
+			vatPhoto = pSetPhoto->GetFields()->GetItem("照片")->GetChunk(lSizePhoto);
+		}
+		if (lSizeLoginPhoto > 0)
+		{
+			vatLoginPhoto = pSetPhoto->GetFields()->GetItem("门禁照片")->GetChunk(lSizeLoginPhoto);
+		}
+
+		pSetPhoto->Close();
+		pSetPhoto.Release();
+
+		CLSID pngClsid;
+		GetEncoderClsid(L"image/png", &pngClsid);
+
+		if ((VT_ARRAY | VT_UI1) == vatPhoto.vt)
+		{
+			LPVOID lpPhoto = new char[lSizePhoto + 1];
+
+			char *pBuf = NULL;
+			SafeArrayAccessData(vatPhoto.parray, (void **)&pBuf);
+			memcpy(lpPhoto, pBuf, lSizePhoto);
+			SafeArrayUnaccessData(vatPhoto.parray);
+
+			IStream *pStream = NULL;
+			LONGLONG lSize = lSizePhoto;
+			HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, lSize);
+			if (NULL == hGlobal)
+			{
+				L_ERROR(_T("GetStudentInfo fail.\n"));
+				return false;
+			}
+
+			LPVOID pvData = GlobalLock(hGlobal);
+			memcpy(pvData, lpPhoto, lSize);
+			GlobalUnlock(hGlobal);
+			CreateStreamOnHGlobal(hGlobal, TRUE, &pStream);
+
+			Image *imgPhoto = Image::FromStream(pStream, FALSE);
+			imgPhoto->Save(wsPhotoName.c_str(), &pngClsid, NULL);
+			delete imgPhoto;
+
+			pStream->Release();
+			GlobalFree(hGlobal);
+			if (lpPhoto)
+			{
+				delete lpPhoto;
+				lpPhoto = NULL;
+			}
+		}
+
+		if ((VT_ARRAY | VT_UI1) == vatLoginPhoto.vt)
+		{
+			LPVOID lpLoginPhoto = new char[lSizeLoginPhoto + 1];
+
+			char *pBuf = NULL;
+			SafeArrayAccessData(vatLoginPhoto.parray, (void **)&pBuf);
+			memcpy(lpLoginPhoto, pBuf, lSizeLoginPhoto);
+			SafeArrayUnaccessData(vatLoginPhoto.parray);
+
+			IStream *pStream = NULL;
+			LONGLONG lSize = lSizeLoginPhoto;
+			HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, lSize);
+			if (NULL == hGlobal)
+			{
+				L_ERROR(_T("GetStudentInfo fail.\n"));
+				return false;
+			}
+
+			LPVOID pvData = GlobalLock(hGlobal);
+			memcpy(pvData, lpLoginPhoto, lSize);
+			GlobalUnlock(hGlobal);
+			CreateStreamOnHGlobal(hGlobal, TRUE, &pStream);
+
+			Image *imgLoginPhoto = Image::FromStream(pStream, FALSE);
+			imgLoginPhoto->Save(wsLoginPhotoName.c_str(), &pngClsid, NULL);
+			delete imgLoginPhoto;
+
+			pStream->Release();
+			GlobalFree(hGlobal);
+			if (lpLoginPhoto)
+			{
+				delete lpLoginPhoto;
+				lpLoginPhoto = NULL;
+			}
+		}
 	}
 	catch (...)
 	{

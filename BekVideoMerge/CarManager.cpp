@@ -42,10 +42,12 @@ void CCarManager::InitPassiveMode(int studentInfoHandle, int mapHandle)
 	m_nStudentInfoHandle = studentInfoHandle;
 	m_nMapHandle = mapHandle;
 
-	m_studentInfoRefleshClass.Init(m_wsProgramPath, m_nCarNo, m_nStudentInfoHandle);
+	m_studentInfoRefleshClass.Init(m_wsProgramPath, m_nCarNo, m_nStudentInfoHandle, VIDEO_WIDTH * 2, VIDEO_HEIGHT,
+		WINDOW_TYPE_STUINFO);
 	m_studentInfoRefleshClass.StartWork();
 
-	m_mapRefleshClass.Init(m_wsProgramPath, m_nCarNo, m_nMapHandle);
+	m_mapRefleshClass.Init(m_wsProgramPath, m_nCarNo, m_nMapHandle, VIDEO_WIDTH, VIDEO_HEIGHT,
+		WINDOW_TYPE_MAP);
 	m_mapRefleshClass.StartWork();
 }
 

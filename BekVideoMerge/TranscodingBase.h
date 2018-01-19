@@ -16,17 +16,17 @@ public:
 	~CTranscodingBase();
 
 public:
-	bool Init(wstring path, int carNo, int lpHanble);
+	bool Init(wstring path, int carNo, int lpHanble, int width, int height, int windowType);
 	void Reflesh();
 
 public:
 	CDC m_DC;
 	wstring m_wsProgramPath;
 	int m_nCarNo;
-
+	int m_nWidth;
+	int m_nHeight;
 
 private:
-	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 	bool WriteAVIFile(wstring aviFilePath);
 	bool Transcode(wstring aviFilePath, wstring yuvFilePath);
 	bool MatrixSendData(wstring yuvFilePath);

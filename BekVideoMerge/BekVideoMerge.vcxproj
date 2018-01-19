@@ -204,7 +204,9 @@
     <ClInclude Include="VideoMergeManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Function.cpp" />
+    <ClCompile Include="..\src\Function.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\src\TCPSockz.cpp" />
     <ClCompile Include="BekVideoMerge.cpp" />
     <ClCompile Include="BekVideoMergeDlg.cpp" />
@@ -230,6 +232,8 @@
     <Image Include="res\Background.bmp" />
     <Image Include="res\BekVideoMerge.ico" />
     <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\MapBackground.bmp" />
+    <Image Include="res\StuBackground.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

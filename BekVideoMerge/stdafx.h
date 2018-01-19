@@ -42,6 +42,7 @@ using namespace std;
 #define WIN32_LEAN_AND_MEAN
 
 #include "BaseDefine.h"
+#include "Function.h"
 
 //CommonDll
 #include "Common/ServiceUtils.h"

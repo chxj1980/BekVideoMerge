@@ -4,6 +4,8 @@
 
 #include "TranscodingBase.h"
 
+using namespace Gdiplus;
+
 class CStudentInfoReflesh : public CTranscodingBase
 {
 public:
@@ -20,14 +22,13 @@ protected:
 
 private:
 	void DrawBackground(Graphics *graphics);	//绘制背景
+	void DrawStudentInfo(Graphics *graphics);		//绘制考生信息
+	void DrawPhoto(Graphics *graphics);		//绘制照片
 
 private:
 	IThread* m_studentInfoRefleshThread;
 	StudentInfo m_studentInfo;
 	HANDLE	m_refleshEvent;
-
-	int m_nWidth;
-	int m_nHeight;
 
 	bool m_bStartExam;	//开始考试
 	bool m_bEndExam;		//考试结束

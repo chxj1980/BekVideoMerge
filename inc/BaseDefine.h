@@ -6,6 +6,9 @@
 #include <string>
 using namespace std;
 
+#include "gdiplus/inc/GdiPlus.h"
+using namespace Gdiplus;
+
 #define  LISTENING_ADDRESS	_T("0.0.0.0")
 //TCP 监听端口
 #define  LISTENING_PORT_TCP		6708
@@ -13,15 +16,20 @@ using namespace std;
 #define  LISTENING_PORT_UDP		6709
 //电视墙视频叠加服务监听的TCP端口
 #define LISTENING_PORT_TCP_WALL	6800
+
+//配置成四画面或者六画面，只能选其一
+//#define DISPLAY_4	
+//#define DISPLAY_6	
+
 //显示通道关联的解码通道个数
-#define DISPLAY_CHAN_NUMS		6
+#define DISPLAY_CHAN_NUMS		5
 
 //合码器显示通道长宽
 #define DISPLAY_CHAN_WIDTH	1920
 #define DISPLAY_CHAN_HEIGHT	1920
 
-#define VIDEO_WIDTH	352
-#define VIDEO_HEIGHT	288
+#define VIDEO_WIDTH	640
+#define VIDEO_HEIGHT	360
 
 //科目二远景摄像头编号
 #define CAMERA_KM2_PUBLIC				_T("10086_1")
@@ -67,14 +75,22 @@ using namespace std;
 #define CONF_KEY_WND2						_T("WND2")
 #define CONF_KEY_BIGCAR					_T("BIGCAR")
 
+//文件目录
+#define FILE_PATH_LOG		_T("\\log")
+#define FILE_PATH_VIDEO		_T("\\video")
+#define FILE_PATH_PHOTO		_T("\\photo")
+
 //资源文件
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
 #define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
 #define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
-#define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.skin")
+#define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.png")
 #define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
+#define IMG_PATH_GEAR_1		_T("\\res\\Gear_1.png")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
+#define PHOTO_ID_FORMAT		_T("\\%d_id_photo.png")
+#define PHOTO_LOGIN_FORMAT		_T("\\%d_login_photo.png")
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")
@@ -141,6 +157,12 @@ typedef enum PACKTYPE {
 	M17C54,
 	M17C55,
 	M17C56
+};
+
+//画面类型
+typedef enum PassiveWindowType {
+	WINDOW_TYPE_MAP = 0,
+	WINDOW_TYPE_STUINFO = 1
 };
 
 //数据库类型

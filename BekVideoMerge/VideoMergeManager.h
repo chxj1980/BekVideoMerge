@@ -27,7 +27,7 @@ private:
 	bool Run();
 	bool GetVideoChannel(wstring key, CHANNEL_CONFIG &videoChannel);	//根据编号查找视频通道信息
 	bool GetCarManager(int carNo);	//根据考车号查找考车管理类
-	bool GetStudentInfo(wstring cetificateNo, StudentInfo &studentInfo);	//从数据库查询考生信息
+	bool GetStudentInfo(wstring cetificateNo, int carNo, StudentInfo &studentInfo);	//从数据库查询考生信息
 	wstring GetExamReason(wstring code);	//根据考试原因编号，获取考试原因
 
 private:

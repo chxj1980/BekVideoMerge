@@ -524,7 +524,7 @@ bool CVideoMergeManager::InitItems()
 					vat = pSet->GetCollect(DB_FIELD_KFLX);
 					if (vat.vt != NULL)
 					{
-						strncpy(m_mapItems[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 10);
+						strncpy(m_mapItems[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 30);
 					}
 					vat = pSet->GetCollect(DB_FIELD_KCFS);
 					if (vat.vt != NULL)

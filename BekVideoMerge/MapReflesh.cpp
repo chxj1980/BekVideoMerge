@@ -25,8 +25,6 @@ CMapReflesh::CMapReflesh()
 	m_bEndExam = false;
 	m_wsExamStatus = _T("");
 	m_nDisplayDelays = 0;
-	m_nCurrentScore = EXAM_TOTAL_SCORE;
-	m_mapJudgeInfos.clear();
 
 	m_nStartXmStatus = 0;
 	m_nEndXmStatus = 0;
@@ -132,7 +130,6 @@ void CMapReflesh::Handle17C51()
 	m_wsExamStatus = _T("考试开始");
 	m_startTime = CTime::GetCurrentTime();
 	m_nDisplayDelays = 0;
-	m_mapJudgeInfos.clear();
 	m_nStartXmStatus = 0;
 	m_nEndXmStatus = 0;
 
@@ -326,29 +323,16 @@ void CMapReflesh::Handle17C52(int xmNo, wstring xmName)
 
 }
 
-void CMapReflesh::Handle17C53(ERROR_DATA judgeInfo)
-{
-	int nIndex = m_mapJudgeInfos.size();
-	m_mapJudgeInfos[nIndex] = judgeInfo;
-
-	m_nCurrentScore -= judgeInfo.ikcfs;
-	if (m_nCurrentScore < 0)
-	{
-		m_nCurrentScore = 0;
-	}
-}
-
 void CMapReflesh::Handle17C55(int xmNo, wstring xmName)
 {
 	//int nXmNo = _wtoi(xmNo.c_str());
 }
 
-void CMapReflesh::Handle17C56(bool bPass, int nScore)
+void CMapReflesh::Handle17C56(bool bPass)
 {
 	m_bStartExam = false;	//考试结束
 	m_bEndExam = true;
 	m_bPass = bPass;	//考试是否通过
-	m_nCurrentScore = nScore;	//考试得分
 	m_nDisplayDelays = DISPLAY_DELAY_SECONDS; //延迟显示一段时间
 	m_endTime = CTime::GetCurrentTime();
 
@@ -602,10 +586,6 @@ void CMapReflesh::DrawStatus(CarSignal carSignal)
 		wstring wsMileage = CStringUtils::Format(_T("%6.1f m"), carSignal.fMileage);
 		m_DC.DrawText(wsMileage.c_str(), CRect(0, 262, 73, 288), DT_RIGHT | DT_SINGLELINE | DT_VCENTER);
 
-		//成绩
-		wstring wsScore = CStringUtils::Format(_T("成绩:%d"), m_nCurrentScore);
-		m_DC.DrawText(wsScore.c_str(), CRect(198, 236, 264, 262), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
-
 		//时间
 		CTimeSpan span;
 		if (m_bStartExam)
@@ -620,18 +600,18 @@ void CMapReflesh::DrawStatus(CarSignal carSignal)
 			span.GetMinutes() / 10, span.GetMinutes() % 10, span.GetSeconds() / 10, span.GetSeconds() % 10);
 		m_DC.DrawText(wsTimeSpan.c_str(), CRect(198, 262, 264, 288), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
 
-		//扣分信息
-		m_DC.SetTextColor(RGB(255, 0, 0));
-		for (int i = 0; i < 3; i++)
-		{
-			if (0 == m_mapJudgeInfos.count(i))
-			{
-				break;
-			}
-			ERROR_DATA judgeInfo = m_mapJudgeInfos[i];
-			wstring wsJudgeMsg = CStringUtils::Format(_T("[%d] %s 扣%d分"), i + 1, judgeInfo.errorlx, judgeInfo.ikcfs);
-			m_DC.DrawText(wsJudgeMsg.c_str(), CRect(5, 215-i*20, 260, 235-i*20), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
-		}
+		////扣分信息
+		//m_DC.SetTextColor(RGB(255, 0, 0));
+		//for (int i = 0; i < 3; i++)
+		//{
+		//	if (0 == m_mapJudgeInfos.count(i))
+		//	{
+		//		break;
+		//	}
+		//	ERROR_DATA judgeInfo = m_mapJudgeInfos[i];
+		//	wstring wsJudgeMsg = CStringUtils::Format(_T("[%d] %s 扣%d分"), i + 1, judgeInfo.errorlx, judgeInfo.ikcfs);
+		//	m_DC.DrawText(wsJudgeMsg.c_str(), CRect(5, 215-i*20, 260, 235-i*20), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+		//}
 
 		font.DeleteObject();
 	}

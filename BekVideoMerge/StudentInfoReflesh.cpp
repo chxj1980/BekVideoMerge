@@ -11,6 +11,8 @@ CStudentInfoReflesh::CStudentInfoReflesh()
 	m_bEndExam = false;
 	m_bPass = false;
 	m_nDisplayDelays = 0;
+	m_nCurrentScore = EXAM_TOTAL_SCORE;
+	m_mapJudgeInfos.clear();
 
 	SetEvent(m_refleshEvent);
 }
@@ -34,10 +36,7 @@ void CStudentInfoReflesh::Handle17C51(StudentInfo studentInfo)
 {
 	m_studentInfo = studentInfo;
 
-	//CLSID pngClsid;
-	//GetEncoderClsid(L"image/png", &pngClsid);
-	//m_studentInfo.imgPhoto->Save(L"D:\\1d.png", &pngClsid, NULL);
-
+	m_mapJudgeInfos.clear();
 	m_bStartExam = true;
 	m_bEndExam = false;
 	m_nDisplayDelays = 0;
@@ -45,10 +44,25 @@ void CStudentInfoReflesh::Handle17C51(StudentInfo studentInfo)
 	SetEvent(m_refleshEvent);
 }
 
-void CStudentInfoReflesh::Handle17C56(bool bPass)
+void CStudentInfoReflesh::Handle17C53(ERROR_DATA judgeInfo)
+{
+	int nIndex = m_mapJudgeInfos.size();
+	if (nIndex < 5)	//最多展示5条扣分信息
+	{
+		m_mapJudgeInfos[nIndex] = judgeInfo;
+	}
+
+	m_nCurrentScore -= judgeInfo.ikcfs;
+	if (m_nCurrentScore < 0)
+	{
+		m_nCurrentScore = 0;
+	}
+}
+
+void CStudentInfoReflesh::Handle17C56(bool bPass, int nScore)
 {
 	m_bPass = bPass;
-
+	m_nCurrentScore = nScore;
 	m_bStartExam = false;
 	m_bEndExam = true;
 	m_nDisplayDelays = DISPLAY_DELAY_SECONDS;
@@ -83,10 +97,11 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 
 				if (studentInfoRefleshClass->m_bStartExam || studentInfoRefleshClass->m_nDisplayDelays > 0)	//考试中才展示这些信息
 				{
-					//绘制考生信息
+					//绘制考生基本信息
 					studentInfoRefleshClass->DrawStudentInfo(&graphics);
 
-
+					//绘制扣分信息
+					studentInfoRefleshClass->DrawJudgement(&graphics);
 				}
 
 				//刷新四合一界面
@@ -143,12 +158,10 @@ void CStudentInfoReflesh::DrawStudentInfo(Graphics *graphics)
 		//绘制考生照片
 		DrawPhoto(graphics);
 
-		Gdiplus::Font myFont(L"微软雅黑", 18, FontStyleRegular, UnitPoint);
+		Gdiplus::Font myFont(FONT_MICROSOFT_YAHEI, 18, FontStyleRegular, UnitPoint);
 		StringFormat format;
-		//format.SetAlignment(StringAlignmentCenter);
 		format.SetAlignment(StringAlignmentNear);
 		SolidBrush blackBrush(Color(0, 0, 0));
-		//SolidBrush blackBrush(Color(255, 255, 255));
 
 		int x = 155;
 		int y = 2;
@@ -201,6 +214,48 @@ void CStudentInfoReflesh::DrawStudentInfo(Graphics *graphics)
 	catch (...)
 	{
 		L_ERROR(_T("DrawStudentInfo catch an error.\n"));
+	}
+}
+
+void CStudentInfoReflesh::DrawJudgement(Graphics *graphics)
+{
+	try
+	{
+		Gdiplus::Font myFont(FONT_MICROSOFT_YAHEI, 15, FontStyleRegular, UnitPoint);
+		StringFormat format;
+		format.SetAlignment(StringAlignmentNear);
+		SolidBrush blackBrush(Color(0, 0, 0));
+
+		int x = 605;
+		int y = 150;
+		int splitHeight = 26;
+		int width = 600;
+
+		for (int i = 0; i < m_mapJudgeInfos.size(); i++)
+		{
+			ERROR_DATA judgeInfo = m_mapJudgeInfos[i];
+			
+			int yDisplay = y + i * splitHeight;
+			wstring wsNo = CStringUtils::Format(_T("%d"), i + 1);
+			wstring wsDeduction = CStringUtils::Format(_T("%d"), judgeInfo.ikcfs);
+			string sDes = CStringUtils::Format("%s", judgeInfo.errorlx);
+			wstring wsDes = _T("");
+			CStringUtils::ASCII2Unicode(sDes, wsDes);
+
+			if (!wsNo.empty() && !wsDes.empty() && !wsDeduction.empty())
+			{
+				graphics->DrawString(wsNo.c_str(), wsNo.length(), &myFont,
+					RectF(x, yDisplay, width, splitHeight), &format, &blackBrush);
+				graphics->DrawString(wsDes.c_str(), wsDes.length(), &myFont,
+					RectF(x + 55, yDisplay, width, splitHeight), &format, &blackBrush);
+				graphics->DrawString(wsDeduction.c_str(), wsDeduction.length(), &myFont,
+					RectF(x + 590, yDisplay, width, splitHeight), &format, &blackBrush);
+			}
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("DrawJudgement catch an error.\n"));
 	}
 }
 

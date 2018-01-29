@@ -103,10 +103,7 @@ bool CCarManager::Handle17C52(int xmNo, wstring xmName)
 //项目扣分
 bool CCarManager::Handle17C53(ERROR_DATA judgeInfo)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.Handle17C53(judgeInfo);
-	}
+	m_studentInfoRefleshClass.Handle17C53(judgeInfo);
 
 	return true;
 }
@@ -125,7 +122,8 @@ bool CCarManager::Handle17C55(int xmNo, wstring xmName)
 //考试结束
 bool CCarManager::Handle17C56(bool bPass, int nScore)
 {
-	m_mapRefleshClass.Handle17C56(bPass, nScore);
+	m_mapRefleshClass.Handle17C56(bPass);
+	m_studentInfoRefleshClass.Handle17C56(bPass, nScore);
 
 	return true;
 }

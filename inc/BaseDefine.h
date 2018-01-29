@@ -17,6 +17,9 @@ using namespace Gdiplus;
 //电视墙视频叠加服务监听的TCP端口
 #define LISTENING_PORT_TCP_WALL	6800
 
+//字体
+#define FONT_MICROSOFT_YAHEI	_T("微软雅黑")
+
 //配置成四画面或者六画面，只能选其一
 //#define DISPLAY_4	
 //#define DISPLAY_6	

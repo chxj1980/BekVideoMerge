@@ -15,9 +15,8 @@ public:
 	void SetCarSignal(CarSignal signal);
 	void Handle17C51();
 	void Handle17C52(int xmNo, wstring xmName);
-	void Handle17C53(ERROR_DATA judgeInfo);
 	void Handle17C55(int xmNo, wstring xmName);
-	void Handle17C56(bool bPass, int nScore);
+	void Handle17C56(bool bPass);
 
 protected:
 	static BOOL MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent);
@@ -47,16 +46,13 @@ private:
 
 	bool m_bBigCar;		//大车的项目牌与小车不一样
 	int m_nKskm;	//考试科目
-
 	bool m_bStartExam;	//开始考试
 	bool m_bEndExam;	//结束考试
 	bool m_bPass;		//考试是否通过
 	int m_nDisplayDelays;		//考试结束后延迟一段时间再结束画面
-	int m_nCurrentScore;	//当前得分
 	wstring m_wsExamStatus;	//考试状态描述
 	CTime m_startTime;	//考试开始时间
 	CTime m_endTime;		//考试结束时间
-	map<int, ERROR_DATA> m_mapJudgeInfos;	//扣分信息
 	int m_nStartXmStatus;		//标识哪些项目已经开始
 	int m_nEndXmStatus;		//标识哪些项目已经结束
 };

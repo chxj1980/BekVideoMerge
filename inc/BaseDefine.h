@@ -82,6 +82,7 @@ using namespace Gdiplus;
 #define FILE_PATH_LOG		_T("\\log")
 #define FILE_PATH_VIDEO		_T("\\video")
 #define FILE_PATH_PHOTO		_T("\\photo")
+#define FILE_PATH_ITEM		_T("\\res\\item\\")
 
 //资源文件
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
@@ -95,6 +96,40 @@ using namespace Gdiplus;
 #define PHOTO_ID_FORMAT		_T("\\%d_id_photo.png")
 #define PHOTO_LOGIN_FORMAT		_T("\\%d_login_photo.png")
 #define IMG_PATH_GEAR_FORMAT		_T("\\res\\signal\\Gear_%d.png")
+
+//项目简写
+//上车准备
+#define ITEM_SCZB		_T("SCZB")
+//起步
+#define ITEM_QB			_T("QB")
+//直线行驶
+#define ITEM_ZXXS		_T("ZXXS")
+//加减档
+#define ITEM_JJD			_T("JJD")
+//变更车道
+#define ITEM_BGCD		_T("BGCD")
+//靠边停车
+#define ITEM_KBTC		_T("KBTC")
+//直行通过路口
+#define ITEM_ZX				_T("ZX")
+//左转
+#define ITEM_ZZ				_T("ZZ")
+//右转
+#define ITEM_YZ				_T("YZ")
+//人行横道
+#define ITEM_RXHD		_T("RXHD")
+//学校区域
+#define ITEM_XXQY		_T("XXQY")
+//公交车站
+#define ITEM_GJCZ			_T("GJCZ")
+//会车
+#define ITEM_HC			_T("HC")
+//超车
+#define ITEM_CC			_T("CC")
+//掉头
+#define ITEM_DT			_T("DT")
+//夜间
+#define ITEM_YJ				_T("YJ")
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")

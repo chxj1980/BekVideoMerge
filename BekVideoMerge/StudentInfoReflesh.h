@@ -24,6 +24,9 @@ protected:
 
 private:
 	void DrawBackground(Graphics *graphics);	//绘制背景
+	void DrawItemBackground(Graphics *graphics);	//绘制项目牌背景
+	void DrawKM3Background(Graphics *graphics);	//科目三项目牌背景
+	void DrawNormalItem(Graphics *graphics, int x, int y, int width, int height, wstring wsItem);	//绘制单个项目图标
 	void DrawStudentInfo(Graphics *graphics);		//绘制考生信息
 	void DrawJudgement(Graphics *graphics);		//绘制扣分信息
 	void DrawPhoto(Graphics *graphics);		//绘制照片

@@ -56,6 +56,7 @@ void CStudentInfoReflesh::Handle17C51(StudentInfo studentInfo)
 	m_bStartExam = true;
 	m_bEndExam = false;
 	m_nDisplayDelays = 0;
+	m_nCurrentScore = EXAM_TOTAL_SCORE;
 
 	SetEvent(m_refleshEvent);
 }
@@ -106,10 +107,9 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 		{
 			if (studentInfoRefleshClass->m_bStartExam || !studentInfoRefleshClass->m_bEndExam || studentInfoRefleshClass->m_nDisplayDelays > 0)
 			{				
-				//graphics.Clear(RGB(255, 255, 255));
-				
 				//绘制背景
 				studentInfoRefleshClass->DrawBackground(&graphics);
+				studentInfoRefleshClass->DrawItemBackground(&graphics);
 
 				if (studentInfoRefleshClass->m_bStartExam || studentInfoRefleshClass->m_nDisplayDelays > 0)	//考试中才展示这些信息
 				{
@@ -171,6 +171,89 @@ void CStudentInfoReflesh::DrawBackground(Graphics *graphics)
 	{
 		L_ERROR(_T("DrawBackground catch an error.\n"));
 	}
+}
+
+//绘制项目牌背景
+void CStudentInfoReflesh::DrawItemBackground(Graphics *graphics)
+{
+	DrawKM3Background(graphics);
+}
+
+void CStudentInfoReflesh::DrawKM3Background(Graphics *graphics)
+{
+	try
+	{
+		int x = 20;
+		int y = 300;
+		int imgWidth = 50;
+		int splitWidth = 80;
+
+		//上车准备
+		DrawNormalItem(graphics, x + 0 * splitWidth, y, imgWidth, imgWidth, ITEM_SCZB);
+		
+		//起步
+		DrawNormalItem(graphics, x + 1 * splitWidth, y, imgWidth, imgWidth, ITEM_QB);
+
+		//直线行驶
+		DrawNormalItem(graphics, x + 2 * splitWidth, y, imgWidth, imgWidth, ITEM_ZXXS);
+
+		//加减档
+		DrawNormalItem(graphics, x + 3 * splitWidth, y, imgWidth, imgWidth, ITEM_JJD);
+
+		//变更车道
+		DrawNormalItem(graphics, x + 4 * splitWidth, y, imgWidth, imgWidth, ITEM_BGCD);
+		
+		//靠边停车
+		DrawNormalItem(graphics, x + 5 * splitWidth, y, imgWidth, imgWidth, ITEM_KBTC);
+
+		//直行通过路口
+		DrawNormalItem(graphics, x + 6 * splitWidth, y, imgWidth, imgWidth, ITEM_ZX);
+
+		//左转
+		DrawNormalItem(graphics, x + 7 * splitWidth, y, imgWidth, imgWidth, ITEM_ZZ);
+
+		//右转
+		DrawNormalItem(graphics, x + 8 * splitWidth, y, imgWidth, imgWidth, ITEM_YZ);
+
+		//人行横道
+		DrawNormalItem(graphics, x + 9 * splitWidth, y, imgWidth, imgWidth, ITEM_RXHD);
+
+		//学校区域
+		DrawNormalItem(graphics, x + 10 * splitWidth, y, imgWidth, imgWidth, ITEM_XXQY);
+
+		//公交车站
+		DrawNormalItem(graphics, x + 11 * splitWidth, y, imgWidth, imgWidth, ITEM_GJCZ);
+
+		//会车
+		DrawNormalItem(graphics, x + 12 * splitWidth, y, imgWidth, imgWidth, ITEM_HC);
+
+		//超车
+		DrawNormalItem(graphics, x + 13 * splitWidth, y, imgWidth, imgWidth, ITEM_CC);
+
+		//掉头
+		DrawNormalItem(graphics, x + 14 * splitWidth, y, imgWidth, imgWidth, ITEM_DT);
+
+		//夜间
+		DrawNormalItem(graphics, x + 15 * splitWidth, y, imgWidth, imgWidth, ITEM_YJ);
+	}
+	catch (...)
+	{
+		L_ERROR(_T("DrawItemBackground catch an error.\n"));
+	}
+}
+
+void CStudentInfoReflesh::DrawNormalItem(Graphics *graphics, int x, int y, int width, int height, wstring wsItem)
+{
+	wstring wsPath = m_wsProgramPath + FILE_PATH_ITEM + wsItem + _T("_Normal.jpg");
+	if (!CWinUtils::FileExists(wsPath))
+	{
+		L_ERROR(_T("file not exist : %s\n"), wsPath.c_str());
+		return;
+	}
+
+	Image *imgItem = Image::FromFile(wsPath.c_str());
+	graphics->DrawImage(imgItem, Rect(x, y, width, height));
+	delete imgItem;
 }
 
 void CStudentInfoReflesh::DrawStudentInfo(Graphics *graphics)
@@ -472,6 +555,8 @@ void CStudentInfoReflesh::DrawSignal(Graphics *graphics)
 		ySource = carSignal.skd * splitSource;
 		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
 			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		delete imgSignal;
 	}
 	catch (...)
 	{

@@ -14,6 +14,7 @@ public:
 
 public:
 	void StartWork();
+	void SetCarSignal(CarSignal signal);
 	void Handle17C51(StudentInfo studentInfo);
 	void Handle17C53(ERROR_DATA judgeInfo);
 	void Handle17C56(bool bPass, int nScore);
@@ -26,9 +27,13 @@ private:
 	void DrawStudentInfo(Graphics *graphics);		//绘制考生信息
 	void DrawJudgement(Graphics *graphics);		//绘制扣分信息
 	void DrawPhoto(Graphics *graphics);		//绘制照片
+	void DrawSignal(Graphics *graphics);	//绘制信号
+	void DrawScore(Graphics *graphics);	//绘制得分
 
 private:
 	IThread* m_studentInfoRefleshThread;
+	CarSignal m_carSignal;		//车载信号数据
+	CRITICAL_SECTION m_carSignalLock;	//车载信号锁
 	StudentInfo m_studentInfo;
 	HANDLE	m_refleshEvent;
 

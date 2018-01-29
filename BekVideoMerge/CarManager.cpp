@@ -72,10 +72,7 @@ bool CCarManager::StopDynamicDecode(int wnd)
 //处理车载信号
 bool CCarManager::HandleCarSignal(CarSignal signal)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.SetCarSignal(signal);
-	}
+	m_mapRefleshClass.SetCarSignal(signal);
 
 	return true;
 }

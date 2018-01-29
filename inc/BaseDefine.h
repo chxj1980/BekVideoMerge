@@ -90,10 +90,11 @@ using namespace Gdiplus;
 #define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.png")
 #define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
-#define IMG_PATH_GEAR_1		_T("\\res\\Gear_1.png")
+#define IMG_PATH_SIGNAL		_T("\\res\\signal\\signal.png")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
 #define PHOTO_ID_FORMAT		_T("\\%d_id_photo.png")
 #define PHOTO_LOGIN_FORMAT		_T("\\%d_login_photo.png")
+#define IMG_PATH_GEAR_FORMAT		_T("\\res\\signal\\Gear_%d.png")
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")
@@ -244,6 +245,27 @@ typedef struct tagCarSignal
 	float fSpeed;	//速度
 	float fMileage;		//里程
 
+	int aqd;   //安全带
+	int js;	//脚刹
+	int ss;	//手刹
+	int fs;	//副刹
+	int lh;	//离合
+	int lb;	//喇叭
+	int zzx;	//左转向
+	int yzx;	//右转向
+	int ygd;	//远光灯
+	int jgd;		//近光灯
+	int jsd;		//警示灯
+	int xh;		//熄火
+	int kgm;	//开关门
+	int dw;		//档位
+	int yg;		//雨刮
+	int wd;		//雾灯
+	int skd;	//示廓灯
+	int dh;		//点火
+	float   fSpeedCar;	//原车速度
+	float   fSpeedEngine;	//转速
+
 	tagCarSignal()
 	{
 		dX = 0.0;
@@ -251,6 +273,27 @@ typedef struct tagCarSignal
 		fDirectionAngle = 0.0;
 		fSpeed = 0.0;
 		fMileage = 0.0;
+
+		aqd = 0;
+		js = 0;
+		ss = 0;
+		fs = 0;
+		lh = 0;
+		lb = 0;
+		zzx = 0;
+		yzx = 0;
+		ygd = 0;
+		jgd = 0;
+		jsd = 0;
+		xh = 0;
+		kgm = 0;
+		dw = 0;
+		yg = 0;
+		wd = 0;
+		skd = 0;
+		dh = 0;
+		fSpeedCar = 0.0;
+		fSpeedEngine = 0.0;
 	}
 
 }CarSignal, *pCarSignal;

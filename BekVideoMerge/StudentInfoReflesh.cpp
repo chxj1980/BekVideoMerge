@@ -5,6 +5,7 @@
 
 CStudentInfoReflesh::CStudentInfoReflesh()
 {
+	InitializeCriticalSection(&this->m_carSignalLock);
 	m_refleshEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
 	m_bStartExam = false;
@@ -24,12 +25,27 @@ CStudentInfoReflesh::~CStudentInfoReflesh()
 		this->m_studentInfoRefleshThread->StopMainThread();
 		delete this->m_studentInfoRefleshThread;
 	}
+
+	CloseHandle(this->m_refleshEvent);
+
+	//清理锁以及其他
+	DeleteCriticalSection(&this->m_carSignalLock);
 }
 
 void CStudentInfoReflesh::StartWork()
 {
 	m_studentInfoRefleshThread = CreateIThreadInstance(StudentInfoRefleshThreadProc, LPVOID(this));
 	m_studentInfoRefleshThread->StartMainThread();
+}
+
+void CStudentInfoReflesh::SetCarSignal(CarSignal signal)
+{
+	if (m_bStartExam)
+	{
+		EnterCriticalSection(&this->m_carSignalLock);
+		m_carSignal = signal;
+		LeaveCriticalSection(&this->m_carSignalLock);
+	}
 }
 
 void CStudentInfoReflesh::Handle17C51(StudentInfo studentInfo)
@@ -102,6 +118,12 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 
 					//绘制扣分信息
 					studentInfoRefleshClass->DrawJudgement(&graphics);
+
+					//绘制实时信号
+					studentInfoRefleshClass->DrawSignal(&graphics);
+
+					//绘制成绩
+					studentInfoRefleshClass->DrawScore(&graphics);
 				}
 
 				//刷新四合一界面
@@ -297,5 +319,187 @@ void CStudentInfoReflesh::DrawPhoto(Graphics *graphics)
 	catch (...)
 	{
 		L_ERROR(_T("DrawPhoto catch an error.\n"));
+	}
+}
+
+void CStudentInfoReflesh::DrawSignal(Graphics *graphics)
+{
+	try
+	{
+		EnterCriticalSection(&m_carSignalLock);
+		CarSignal carSignal = m_carSignal;
+		LeaveCriticalSection(&m_carSignalLock);
+
+		//档位信号
+		wstring wsGearPath = m_wsProgramPath + CStringUtils::Format(IMG_PATH_GEAR_FORMAT, m_carSignal.dw);
+		if (!CWinUtils::FileExists(wsGearPath))
+		{	
+			L_ERROR(_T("file not exist : %s\n"), wsGearPath.c_str());
+		}
+		Image *imgGear = Image::FromFile(wsGearPath.c_str());
+		graphics->DrawImage(imgGear, Rect(1130, 0, 156, 132));
+		delete imgGear;
+
+		wstring wsSignalPath = m_wsProgramPath + IMG_PATH_SIGNAL;
+		if (!CWinUtils::FileExists(wsSignalPath))
+		{
+			L_ERROR(_T("file not exist : %s\n"), wsSignalPath.c_str());
+			return;
+		}
+		Image *imgSignal = Image::FromFile(wsSignalPath.c_str());
+
+		int x = 700;
+		int y = 13;
+		int splitSource = 40;
+		int splitDest = 55;
+
+		int xDest = 0;
+		int yDest = y;
+		int xSource = 0;
+		int ySource = 0;
+
+		//安全带
+		xDest = x + 0 * splitDest;
+		xSource = 0 * splitSource;
+		ySource = carSignal.aqd * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//脚刹
+		xDest = x + 1 * splitDest;
+		xSource = 12 * splitSource;
+		ySource = carSignal.js * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//手刹
+		xDest = x + 2 * splitDest;
+		xSource = 9 * splitSource;
+		ySource = carSignal.ss * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//副刹
+		xDest = x + 3 * splitDest;
+		xSource = 13 * splitSource;
+		ySource = carSignal.fs * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//喇叭
+		xDest = x + 4 * splitDest;
+		xSource = 7 * splitSource;
+		ySource = carSignal.lb * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//左转向
+		xDest = x + 5 * splitDest;
+		xSource = 1 * splitSource;
+		ySource = carSignal.zzx * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//右转向
+		xDest = x + 6 * splitDest;
+		xSource = 2 * splitSource;
+		ySource = carSignal.yzx * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//远光灯
+		xDest = x + 7 * splitDest;
+		xSource = 4 * splitSource;
+		ySource = carSignal.ygd* splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//换一行
+		yDest += splitDest;
+
+		//近光灯
+		xDest = x + 0 * splitDest;
+		xSource = 3 * splitSource;
+		ySource = carSignal.jgd* splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//熄火
+		xDest = x + 1 * splitDest;
+		xSource = 10 * splitSource;
+		ySource = carSignal.xh* splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//开关门
+		xDest = x + 2 * splitDest;
+		xSource = 6 * splitSource;
+		ySource = carSignal.kgm* splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//离合
+		xDest = x + 3 * splitDest;
+		xSource = 16 * splitSource;
+		ySource = carSignal.kgm* splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//警示灯
+		xDest = x + 4 * splitDest;
+		xSource = 25 * splitSource;
+		ySource = carSignal.jsd * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//雨刮
+		xDest = x + 5 * splitDest;
+		xSource = 26 * splitSource;
+		ySource = carSignal.yg * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//雾灯
+		xDest = x + 6 * splitDest;
+		xSource = 27 * splitSource;
+		ySource = carSignal.wd * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+
+		//示廓灯
+		xDest = x + 7 * splitDest;
+		xSource = 14 * splitSource;
+		ySource = carSignal.skd * splitSource;
+		graphics->DrawImage(imgSignal, Rect(xDest, yDest, splitSource, splitSource),
+			xSource, ySource, splitSource, splitSource, UnitPixel);
+	}
+	catch (...)
+	{
+		L_ERROR(_T("DrawSignal catch an error.\n"));
+	}
+}
+
+void CStudentInfoReflesh::DrawScore(Graphics *graphics)
+{
+	try
+	{
+		Gdiplus::Font myFont(FONT_MICROSOFT_YAHEI, 50, FontStyleRegular, UnitPoint);
+		StringFormat format;
+		format.SetAlignment(StringAlignmentFar);	//靠右对齐
+		SolidBrush blackBrush(Color(0, 0, 200));
+
+		wstring wsScore = CStringUtils::Format(_T("%d"), m_nCurrentScore);
+		graphics->DrawString(wsScore.c_str(), wsScore.length(), &myFont,
+			RectF(440, 5, 150, 150), &format, &blackBrush);
+
+		Gdiplus::Font fontSmall(FONT_MICROSOFT_YAHEI, 25, FontStyleRegular, UnitPoint);
+		format.SetAlignment(StringAlignmentNear);	//靠左对齐
+		wstring wsDes = _T("分");
+		graphics->DrawString(wsDes.c_str(), wsDes.length(), &fontSmall,
+			RectF(580, 40, 200, 200), &format, &blackBrush);
+	}
+	catch (...)
+	{
+		L_ERROR(_T("DrawScore catch an error.\n"));
 	}
 }

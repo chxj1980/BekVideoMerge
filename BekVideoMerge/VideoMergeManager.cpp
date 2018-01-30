@@ -117,7 +117,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				}
 				else
 				{
-					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 5);
+					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 4);
 				}
 			}
 
@@ -183,7 +183,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 			}
 			else
 			{
-				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 5);
+				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 4);
 			}
 
 			if (0 == m_mapItems.count(wsXmNo))

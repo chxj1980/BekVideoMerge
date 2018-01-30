@@ -481,6 +481,10 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 	CStudentInfoReflesh *studentInfoRefleshClass = (CStudentInfoReflesh*)parameter;
 
 	Graphics graphics(studentInfoRefleshClass->m_DC.GetSafeHdc());
+	graphics.SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);
+	graphics.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeHighQuality);
+	graphics.SetCompositingMode(Gdiplus::CompositingMode::CompositingModeSourceOver);
+
 	CFont fontz;
 	fontz.CreateFont(20, 0, 0, 0, FW_BOLD, FALSE, FALSE, 0, ANSI_CHARSET,
 		OUT_STROKE_PRECIS, CLIP_STROKE_PRECIS,
@@ -516,6 +520,12 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 
 					//绘制实时项目状态
 					studentInfoRefleshClass->DrawCurrentItem(&graphics);
+
+					//考试结束时显示考试是否通过
+					if (studentInfoRefleshClass->m_bEndExam && studentInfoRefleshClass->m_nDisplayDelays > 0)
+					{
+						studentInfoRefleshClass->DrawResult(&graphics);
+					}
 				}
 
 				//刷新四合一界面
@@ -575,9 +585,9 @@ void CStudentInfoReflesh::DrawKM3Background(Graphics *graphics)
 {
 	try
 	{
-		int x = 20;
-		int y = 300;
-		int imgWidth = 50;
+		int x = 15;
+		int y = 295;
+		int imgWidth = 60;
 		int splitWidth = 80;
 
 		//上车准备
@@ -1010,9 +1020,9 @@ void CStudentInfoReflesh::DrawCurrentItem(Graphics *graphics)
 
 void CStudentInfoReflesh::DrawKM3EnterItem(Graphics *graphics)
 {
-	int x = 20;
-	int y = 300;
-	int imgWidth = 50;
+	int x = 15;
+	int y = 295;
+	int imgWidth = 60;
 	int splitWidth = 80;
 	
 	//上车准备
@@ -1114,9 +1124,9 @@ void CStudentInfoReflesh::DrawKM3EnterItem(Graphics *graphics)
 
 void CStudentInfoReflesh::DrawKM3ELeaveItem(Graphics *graphics)
 {
-	int x = 20;
-	int y = 300;
-	int imgWidth = 50;
+	int x = 15;
+	int y = 295;
+	int imgWidth = 60;
 	int splitWidth = 80;
 
 	//上车准备
@@ -1213,5 +1223,42 @@ void CStudentInfoReflesh::DrawKM3ELeaveItem(Graphics *graphics)
 	if (m_nEndXmStatus & ITEM_YJ_FLAG)
 	{
 		DrawLeaveItem(graphics, x + 15 * splitWidth, y, imgWidth, imgWidth, ITEM_YJ);
+	}
+}
+
+void CStudentInfoReflesh::DrawResult(Graphics *graphics)
+{
+	try
+	{
+		//档位信号
+		wstring wsResultPath = m_wsProgramPath + IMG_PATH_RESULT;
+		if (!CWinUtils::FileExists(wsResultPath))
+		{
+			L_ERROR(_T("file not exist : %s\n"), wsResultPath.c_str());
+		}
+		Image *imgResult = Image::FromFile(wsResultPath.c_str());
+
+		int x = 80;
+		int y = 50;
+		int width = 220;
+		int height = 200;
+
+		int imgWidth = imgResult->GetWidth();
+		int imgHeight = imgResult->GetHeight();
+
+		if (m_bPass)
+		{
+			graphics->DrawImage(imgResult, Rect(x, y, width, height), 0, 0, imgWidth / 2, imgHeight, UnitPixel);
+		}
+		else
+		{
+			graphics->DrawImage(imgResult, Rect(x, y, width, height), imgWidth / 2, 0, imgWidth / 2, imgHeight, UnitPixel);
+		}
+
+		delete imgResult;
+	}
+	catch (...)
+	{
+		L_ERROR(_T("DrawResult catch an error.\n"));
 	}
 }

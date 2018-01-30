@@ -92,6 +92,7 @@ using namespace Gdiplus;
 #define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
 #define IMG_PATH_SIGNAL		_T("\\res\\signal\\signal.png")
+#define IMG_PATH_RESULT		_T("\\res\\result.png")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
 #define PHOTO_ID_FORMAT		_T("\\%d_id_photo.png")
 #define PHOTO_LOGIN_FORMAT		_T("\\%d_login_photo.png")

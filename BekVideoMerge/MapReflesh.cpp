@@ -143,7 +143,8 @@ BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 	CMapReflesh *mapRefleshClass = (CMapReflesh*)parameter;
 
 	Graphics graphics(mapRefleshClass->m_DC.GetSafeHdc());
-	
+	graphics.SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);
+	graphics.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeHighQuality);
 
 	while (true)
 	{

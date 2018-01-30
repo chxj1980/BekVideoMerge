@@ -39,6 +39,7 @@ private:
 	void DrawCurrentItem(Graphics *graphics);	//绘制实时项目状态
 	void DrawKM3EnterItem(Graphics *graphics);	//绘制正在进行的项目
 	void DrawKM3ELeaveItem(Graphics *graphics);	//绘制正在进行的项目
+	void DrawResult(Graphics *graphics);	//绘制考试结果
 
 private:
 	IThread* m_studentInfoRefleshThread;

@@ -73,6 +73,7 @@ bool CCarManager::StopDynamicDecode(int wnd)
 bool CCarManager::HandleCarSignal(CarSignal signal)
 {
 	m_mapRefleshClass.SetCarSignal(signal);
+	m_studentInfoRefleshClass.SetCarSignal(signal);
 
 	return true;
 }
@@ -89,10 +90,7 @@ bool CCarManager::Handle17C51(StudentInfo studentInfo)
 //项目开始
 bool CCarManager::Handle17C52(int xmNo, wstring xmName)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.Handle17C52(xmNo, xmName);
-	}
+	m_studentInfoRefleshClass.Handle17C52(xmNo, xmName);
 	
 	return true;
 }
@@ -108,10 +106,7 @@ bool CCarManager::Handle17C53(ERROR_DATA judgeInfo)
 //项目结束
 bool CCarManager::Handle17C55(int xmNo, wstring xmName)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.Handle17C55(xmNo, xmName);
-	}
+	m_studentInfoRefleshClass.Handle17C55(xmNo, xmName);
 
 	return true;
 }

@@ -131,6 +131,25 @@ using namespace Gdiplus;
 //夜间
 #define ITEM_YJ				_T("YJ")
 
+//项目标识
+//科目三
+#define ITEM_SCZB_FLAG		0x0001
+#define ITEM_QB_FLAG			0x0002
+#define ITEM_ZXXS_FLAG		0x0004
+#define ITEM_JJD_FLAG			0x0008
+#define ITEM_BGCD_FLAG		0x0010
+#define ITEM_KBTC_FLAG		0x0020
+#define ITEM_ZHIXING_FLAG	0x0040
+#define ITEM_ZZ_FLAG			0x0080
+#define ITEM_YZ_FLAG			0x0100
+#define ITEM_RXHD_FLAG		0x0200
+#define ITEM_XXQY_FLAG		0x0400
+#define ITEM_GJCZ_FLAG		0x0800
+#define ITEM_HC_FLAG			0x1000
+#define ITEM_CC_FLAG			0x2000
+#define ITEM_DT_FLAG			0x4000
+#define ITEM_YJ_FLAG			0x8000
+
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")
 #define  DB_TABLE_ERRORDATA			_T("ErrorData")

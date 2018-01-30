@@ -44,6 +44,8 @@ bool CTranscodingBase::Init(wstring path, int carNo, int lpHanble, int width, in
 			return false;
 		}
 
+		m_DC.SetGraphicsMode(Gdiplus::SmoothingModeHighQuality);//¿¹¾â³Ý
+
 		if (WINDOW_TYPE_MAP == windowType)
 		{
 			m_bmpBackground.LoadBitmapW(MAKEINTRESOURCEW(IDB_BITMAP_MAPBACKGROUND));

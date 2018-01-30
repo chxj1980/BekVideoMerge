@@ -18,16 +18,10 @@ CMapReflesh::CMapReflesh()
 	m_mapHeight = 0;
 	m_mapSplitWidth = 0;
 
-	m_bBigCar = false;
-	m_nKskm = 2;
-
 	m_bStartExam = false;
 	m_bEndExam = false;
 	m_wsExamStatus = _T("");
 	m_nDisplayDelays = 0;
-
-	m_nStartXmStatus = 0;
-	m_nEndXmStatus = 0;
 
 	SetEvent(m_refleshEvent);
 }
@@ -64,16 +58,6 @@ void CMapReflesh::LoadMapConfig()
 	if (1 == nDrawCar)
 	{
 		m_bDrawCar = true;
-	}
-
-	//考试科目
-	m_nKskm = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_KSKM, 2, wsEnvConfPath.c_str());
-
-	//是否是大车程序
-	int nBigCar = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_BIGCAR, 0, wsEnvConfPath.c_str());
-	if (1 == nBigCar)
-	{
-		m_bBigCar = true;
 	}
 
 	m_mapMaxX = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_MAXX, 0, wsMapConfPath.c_str());
@@ -130,202 +114,8 @@ void CMapReflesh::Handle17C51()
 	m_wsExamStatus = _T("考试开始");
 	m_startTime = CTime::GetCurrentTime();
 	m_nDisplayDelays = 0;
-	m_nStartXmStatus = 0;
-	m_nEndXmStatus = 0;
 
 	SetEvent(m_refleshEvent);
-}
-
-void CMapReflesh::Handle17C52(int xmNo, wstring xmName)
-{
-	m_wsExamStatus = xmName;
-	
-	//fix me
-	//编号修改为宏定义
-	if (KSKM_2 == m_nKskm)	//科目二
-	{
-		int nType = xmNo / 1000;
-
-		if (!m_bBigCar)
-		{
-			if (201 == nType)
-			{
-				m_nStartXmStatus |= 0x0001;
-			}
-			else if (204 == nType)
-			{
-				m_nStartXmStatus |= 0x0002;
-			}
-			else if (203 == nType)
-			{
-				m_nStartXmStatus |= 0x0004;
-			}
-			else if (206 == nType)
-			{
-				m_nStartXmStatus |= 0x0008;
-			}
-			else if (207 == nType)
-			{
-				m_nStartXmStatus |= 0x0010;
-			}
-			else if (214 == nType)
-			{
-				m_nStartXmStatus |= 0x0040;
-			}
-			else if (215 == nType)
-			{
-				m_nStartXmStatus |= 0x0020;
-			}
-			else if (216 == nType)
-			{
-				m_nStartXmStatus |= 0x0020;
-			}
-		}
-		else
-		{
-			if (202 == nType)
-			{
-				m_nStartXmStatus |= 0x0001;
-			}
-			else if (204 == nType)
-			{
-				m_nStartXmStatus |= 0x0002;
-			}
-			else if (203 == nType)
-			{
-				m_nStartXmStatus |= 0x0004;
-			}
-			else if (205 == nType)
-			{
-				m_nStartXmStatus |= 0x0008;
-			}
-			else if (209 == nType)
-			{
-				m_nStartXmStatus |= 0x0010;
-			}
-			else if (208 == nType)
-			{
-				m_nStartXmStatus |= 0x0020;
-			}
-			else if (207 == nType)
-			{
-				m_nStartXmStatus |= 0x0040;
-			}
-			else if (206 == nType)
-			{
-				m_nStartXmStatus |= 0x0080;
-			}
-			else if (210 == nType)
-			{
-				m_nStartXmStatus |= 0x0100;
-			}
-			else if (211 == nType)
-			{
-				m_nStartXmStatus |= 0x0200;
-			}
-			else if (213 == nType)
-			{
-				m_nStartXmStatus |= 0x0400;
-			}
-			else if (216 == nType)
-			{
-				m_nStartXmStatus |= 0x0800;
-			}
-			else if (215 == nType)
-			{
-				m_nStartXmStatus |= 0x1000;
-			}
-			else if (214 == nType)
-			{
-				m_nStartXmStatus |= 0x2000;
-			}
-			else if (212 == nType)
-			{
-				m_nStartXmStatus |= 0x4000;
-			}
-			else if (217 == nType)
-			{
-				m_nStartXmStatus |= 0x8000;
-			}
-		}
-	}
-	else  //科目三
-	{
-		if (201 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0001;
-		}
-		else if (202 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0002;
-		}
-		else if (203 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0004;
-		}
-		else if (204 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0010;
-		}
-		else if (205 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0040;
-		}
-		else if (206 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0200;
-		}
-		else if (207 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0400;
-		}
-		else if (208 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0800;
-		}
-		else if (209 == xmNo)
-		{
-			m_nStartXmStatus |= 0x1000;
-		}
-		else if (210 == xmNo)
-		{
-			m_nStartXmStatus |= 0x2000;
-		}
-		else if (211 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0020;
-		}
-		else if (212 == xmNo)
-		{
-			m_nStartXmStatus |= 0x4000;
-		}
-		else if (213 == xmNo)
-		{
-			m_nStartXmStatus |= 0x8000;
-		}
-		else if (214 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0080;
-		}
-		else if (215 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0100;
-		}
-		else if (216 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0040;
-		}
-		else if (217 == xmNo)
-		{
-			m_nStartXmStatus |= 0x0008;
-		}
-	}
-
-}
-
-void CMapReflesh::Handle17C55(int xmNo, wstring xmName)
-{
-	//int nXmNo = _wtoi(xmNo.c_str());
 }
 
 void CMapReflesh::Handle17C56(bool bPass)
@@ -373,17 +163,14 @@ BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 				//绘制地图
 				mapRefleshClass->DrawMap(&graphics, nCarRelativeX, nCarRelativeY);
 
-				////绘制背景，叠加在地图上
-				//mapRefleshClass->DrawBackground(&graphics);
-
 				//绘制车模型
-				if (mapRefleshClass -> m_bDrawCar)
-				{
-					mapRefleshClass->DrawCar(&graphics, carSignal.fDirectionAngle);
-				}
+				mapRefleshClass->DrawCar(&graphics, carSignal.fDirectionAngle);
 
-				////绘制项目实时状态信息
-				//mapRefleshClass->DrawStatus(carSignal);
+				if (mapRefleshClass->m_bStartExam || mapRefleshClass->m_nDisplayDelays > 0)	//考试中才展示这些信息
+				{
+					//绘制项目实时状态信息
+					mapRefleshClass->DrawStatus(&graphics, carSignal);
+				}
 
 				//刷新四合一界面
 				mapRefleshClass->Reflesh();
@@ -560,60 +347,35 @@ void CMapReflesh::DrawCar(Graphics *graphics, float angle)
 }
 
 //绘制状态信息
-void CMapReflesh::DrawStatus(CarSignal carSignal)
+void CMapReflesh::DrawStatus(Graphics *graphics, CarSignal carSignal)
 {
 	try
 	{
-		CFont font;
-		//font.CreateFont(13, 0, 0, 0, FW_BOLD, TRUE, FALSE, 0, ANSI_CHARSET,
-		//	OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-		//	DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("宋体"));
-		font.CreateFont(13, 0, 0, 0, FW_NORMAL, FALSE, FALSE, 0, ANSI_CHARSET,
-			OUT_STROKE_PRECIS, CLIP_STROKE_PRECIS,
-			DRAFT_QUALITY, DEFAULT_PITCH | FF_SWISS, _T("宋体"));
-		m_DC.SetBkMode(TRANSPARENT);	//透明
-		m_DC.SelectObject(&font);
-		m_DC.SetTextColor(RGB(255, 255, 255));
+		//背景
+		Gdiplus::SolidBrush brush(Gdiplus::Color(220, 220, 220));	//灰色
+		graphics->FillEllipse(&brush, 10, 10, 70, 70);
+		graphics->FillEllipse(&brush, 10, 100, 70, 70);
 
-		//项目状态信息，显示在title
-		m_DC.DrawText(m_wsExamStatus.c_str(), CRect(0, 0, VIDEO_WIDTH - 88, 30), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+		Gdiplus::Font font(FONT_MICROSOFT_YAHEI, 10, FontStyleRegular, UnitPoint);
+		StringFormat format;
+		format.SetAlignment(StringAlignmentCenter);
+		SolidBrush blackBrush(Color(0, 0, 200));
 
 		//速度
-		wstring wsSpeed = CStringUtils::Format(_T("%4.1f km/h"), carSignal.fSpeed);
-		m_DC.DrawText(wsSpeed.c_str(), CRect(0, 236, 73, 262), DT_RIGHT | DT_SINGLELINE | DT_VCENTER);
+		wstring wsSpeedCar = CStringUtils::Format(_T("%.1f"), carSignal.fSpeed);
+		wstring wsUnitCar = _T("km/h");
+		graphics->DrawString(wsSpeedCar.c_str(), wsSpeedCar.length(), &font,
+			RectF(10, 25, 70, 35), &format, &blackBrush);
+		graphics->DrawString(wsUnitCar.c_str(), wsUnitCar.length(), &font,
+			RectF(10, 45, 70, 35), &format, &blackBrush);
 
-		//里程
-		wstring wsMileage = CStringUtils::Format(_T("%6.1f m"), carSignal.fMileage);
-		m_DC.DrawText(wsMileage.c_str(), CRect(0, 262, 73, 288), DT_RIGHT | DT_SINGLELINE | DT_VCENTER);
-
-		//时间
-		CTimeSpan span;
-		if (m_bStartExam)
-		{
-			span = CTime::GetCurrentTime() - m_startTime;
-		}
-		else
-		{
-			span = m_endTime - m_startTime;
-		}
-		wstring wsTimeSpan = CStringUtils::Format(_T("%d%d:%d%d:%d%d"), span.GetHours() / 10, span.GetHours() % 10,
-			span.GetMinutes() / 10, span.GetMinutes() % 10, span.GetSeconds() / 10, span.GetSeconds() % 10);
-		m_DC.DrawText(wsTimeSpan.c_str(), CRect(198, 262, 264, 288), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
-
-		////扣分信息
-		//m_DC.SetTextColor(RGB(255, 0, 0));
-		//for (int i = 0; i < 3; i++)
-		//{
-		//	if (0 == m_mapJudgeInfos.count(i))
-		//	{
-		//		break;
-		//	}
-		//	ERROR_DATA judgeInfo = m_mapJudgeInfos[i];
-		//	wstring wsJudgeMsg = CStringUtils::Format(_T("[%d] %s 扣%d分"), i + 1, judgeInfo.errorlx, judgeInfo.ikcfs);
-		//	m_DC.DrawText(wsJudgeMsg.c_str(), CRect(5, 215-i*20, 260, 235-i*20), DT_LEFT | DT_SINGLELINE | DT_VCENTER);
-		//}
-
-		font.DeleteObject();
+		//转速
+		wstring wsSpeedEngine = CStringUtils::Format(_T("%.1f"), carSignal.fSpeedEngine);
+		wstring wsUnitEngine = _T("r/min");
+		graphics->DrawString(wsSpeedEngine.c_str(), wsSpeedEngine.length(), &font,
+			RectF(10, 115, 70, 35), &format, &blackBrush);
+		graphics->DrawString(wsUnitEngine.c_str(), wsUnitEngine.length(), &font,
+			RectF(10, 135, 70, 35), &format, &blackBrush);
 	}
 	catch (...)
 	{

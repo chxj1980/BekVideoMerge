@@ -15,6 +15,11 @@ CStudentInfoReflesh::CStudentInfoReflesh()
 	m_nCurrentScore = EXAM_TOTAL_SCORE;
 	m_mapJudgeInfos.clear();
 
+	m_nStartXmStatus = 0;
+	m_nEndXmStatus = 0;
+	m_nKskm = KSKM_2;
+	m_bBigCar = false;
+
 	SetEvent(m_refleshEvent);
 }
 
@@ -34,6 +39,18 @@ CStudentInfoReflesh::~CStudentInfoReflesh()
 
 void CStudentInfoReflesh::StartWork()
 {
+	wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
+	
+	//考试科目
+	m_nKskm = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_KSKM, 2, wsEnvConfPath.c_str());
+
+	//是否是大车程序
+	int nBigCar = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_BIGCAR, 0, wsEnvConfPath.c_str());
+	if (1 == nBigCar)
+	{
+		m_bBigCar = true;
+	}
+	
 	m_studentInfoRefleshThread = CreateIThreadInstance(StudentInfoRefleshThreadProc, LPVOID(this));
 	m_studentInfoRefleshThread->StartMainThread();
 }
@@ -58,7 +75,379 @@ void CStudentInfoReflesh::Handle17C51(StudentInfo studentInfo)
 	m_nDisplayDelays = 0;
 	m_nCurrentScore = EXAM_TOTAL_SCORE;
 
+	m_nStartXmStatus = 0;
+	m_nEndXmStatus = 0;
+
 	SetEvent(m_refleshEvent);
+}
+
+void CStudentInfoReflesh::Handle17C52(int xmNo, wstring xmName)
+{
+	//fix me
+	//编号修改为宏定义
+	if (KSKM_2 == m_nKskm)	//科目二
+	{
+		int nType = xmNo / 1000;
+
+		if (!m_bBigCar)
+		{
+			if (201 == nType)
+			{
+				m_nStartXmStatus |= 0x0001;
+			}
+			else if (204 == nType)
+			{
+				m_nStartXmStatus |= 0x0002;
+			}
+			else if (203 == nType)
+			{
+				m_nStartXmStatus |= 0x0004;
+			}
+			else if (206 == nType)
+			{
+				m_nStartXmStatus |= 0x0008;
+			}
+			else if (207 == nType)
+			{
+				m_nStartXmStatus |= 0x0010;
+			}
+			else if (214 == nType)
+			{
+				m_nStartXmStatus |= 0x0040;
+			}
+			else if (215 == nType)
+			{
+				m_nStartXmStatus |= 0x0020;
+			}
+			else if (216 == nType)
+			{
+				m_nStartXmStatus |= 0x0020;
+			}
+		}
+		else
+		{
+			if (202 == nType)
+			{
+				m_nStartXmStatus |= 0x0001;
+			}
+			else if (204 == nType)
+			{
+				m_nStartXmStatus |= 0x0002;
+			}
+			else if (203 == nType)
+			{
+				m_nStartXmStatus |= 0x0004;
+			}
+			else if (205 == nType)
+			{
+				m_nStartXmStatus |= 0x0008;
+			}
+			else if (209 == nType)
+			{
+				m_nStartXmStatus |= 0x0010;
+			}
+			else if (208 == nType)
+			{
+				m_nStartXmStatus |= 0x0020;
+			}
+			else if (207 == nType)
+			{
+				m_nStartXmStatus |= 0x0040;
+			}
+			else if (206 == nType)
+			{
+				m_nStartXmStatus |= 0x0080;
+			}
+			else if (210 == nType)
+			{
+				m_nStartXmStatus |= 0x0100;
+			}
+			else if (211 == nType)
+			{
+				m_nStartXmStatus |= 0x0200;
+			}
+			else if (213 == nType)
+			{
+				m_nStartXmStatus |= 0x0400;
+			}
+			else if (216 == nType)
+			{
+				m_nStartXmStatus |= 0x0800;
+			}
+			else if (215 == nType)
+			{
+				m_nStartXmStatus |= 0x1000;
+			}
+			else if (214 == nType)
+			{
+				m_nStartXmStatus |= 0x2000;
+			}
+			else if (212 == nType)
+			{
+				m_nStartXmStatus |= 0x4000;
+			}
+			else if (217 == nType)
+			{
+				m_nStartXmStatus |= 0x8000;
+			}
+		}
+	}
+	else  //科目三
+	{
+		if (201 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_SCZB_FLAG;
+		}
+		else if (202 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_QB_FLAG;
+		}
+		else if (203 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_ZXXS_FLAG;
+		}
+		else if (204 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_BGCD_FLAG;
+		}
+		else if (205 == xmNo)
+		{
+			//没有处理
+		}
+		else if (206 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_RXHD_FLAG;
+		}
+		else if (207 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_XXQY_FLAG;
+		}
+		else if (208 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_GJCZ_FLAG;
+		}
+		else if (209 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_HC_FLAG;
+		}
+		else if (210 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_CC_FLAG;
+		}
+		else if (211 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_KBTC_FLAG;
+		}
+		else if (212 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_DT_FLAG;
+		}
+		else if (213 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_YJ_FLAG;
+		}
+		else if (214 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_ZZ_FLAG;
+		}
+		else if (215 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_YZ_FLAG;
+		}
+		else if (216 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_ZHIXING_FLAG;
+		}
+		else if (217 == xmNo)
+		{
+			m_nStartXmStatus |= ITEM_JJD_FLAG;
+		}
+	}
+
+}
+
+void CStudentInfoReflesh::Handle17C55(int xmNo, wstring xmName)
+{
+	//fix me
+	//编号修改为宏定义
+	if (KSKM_2 == m_nKskm)	//科目二
+	{
+		int nType = xmNo / 1000;
+
+		if (!m_bBigCar)
+		{
+			if (201 == nType)
+			{
+				m_nEndXmStatus |= 0x0001;
+			}
+			else if (204 == nType)
+			{
+				m_nEndXmStatus |= 0x0002;
+			}
+			else if (203 == nType)
+			{
+				m_nEndXmStatus |= 0x0004;
+			}
+			else if (206 == nType)
+			{
+				m_nEndXmStatus |= 0x0008;
+			}
+			else if (207 == nType)
+			{
+				m_nEndXmStatus |= 0x0010;
+			}
+			else if (214 == nType)
+			{
+				m_nEndXmStatus |= 0x0040;
+			}
+			else if (215 == nType)
+			{
+				m_nEndXmStatus |= 0x0020;
+			}
+			else if (216 == nType)
+			{
+				m_nEndXmStatus |= 0x0020;
+			}
+		}
+		else
+		{
+			if (202 == nType)
+			{
+				m_nEndXmStatus |= 0x0001;
+			}
+			else if (204 == nType)
+			{
+				m_nEndXmStatus |= 0x0002;
+			}
+			else if (203 == nType)
+			{
+				m_nEndXmStatus |= 0x0004;
+			}
+			else if (205 == nType)
+			{
+				m_nEndXmStatus |= 0x0008;
+			}
+			else if (209 == nType)
+			{
+				m_nEndXmStatus |= 0x0010;
+			}
+			else if (208 == nType)
+			{
+				m_nEndXmStatus |= 0x0020;
+			}
+			else if (207 == nType)
+			{
+				m_nEndXmStatus |= 0x0040;
+			}
+			else if (206 == nType)
+			{
+				m_nEndXmStatus |= 0x0080;
+			}
+			else if (210 == nType)
+			{
+				m_nEndXmStatus |= 0x0100;
+			}
+			else if (211 == nType)
+			{
+				m_nEndXmStatus |= 0x0200;
+			}
+			else if (213 == nType)
+			{
+				m_nEndXmStatus |= 0x0400;
+			}
+			else if (216 == nType)
+			{
+				m_nEndXmStatus |= 0x0800;
+			}
+			else if (215 == nType)
+			{
+				m_nEndXmStatus |= 0x1000;
+			}
+			else if (214 == nType)
+			{
+				m_nEndXmStatus |= 0x2000;
+			}
+			else if (212 == nType)
+			{
+				m_nEndXmStatus |= 0x4000;
+			}
+			else if (217 == nType)
+			{
+				m_nEndXmStatus |= 0x8000;
+			}
+		}
+	}
+	else  //科目三
+	{
+		if (201 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_SCZB_FLAG;
+		}
+		else if (202 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_QB_FLAG;
+		}
+		else if (203 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_ZXXS_FLAG;
+		}
+		else if (204 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_BGCD_FLAG;
+		}
+		else if (205 == xmNo)
+		{
+			//没有处理
+		}
+		else if (206 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_RXHD_FLAG;
+		}
+		else if (207 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_XXQY_FLAG;
+		}
+		else if (208 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_GJCZ_FLAG;
+		}
+		else if (209 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_HC_FLAG;
+		}
+		else if (210 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_CC_FLAG;
+		}
+		else if (211 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_KBTC_FLAG;
+		}
+		else if (212 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_DT_FLAG;
+		}
+		else if (213 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_YJ_FLAG;
+		}
+		else if (214 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_ZZ_FLAG;
+		}
+		else if (215 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_YZ_FLAG;
+		}
+		else if (216 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_ZHIXING_FLAG;
+		}
+		else if (217 == xmNo)
+		{
+			m_nEndXmStatus |= ITEM_JJD_FLAG;
+		}
+	}
 }
 
 void CStudentInfoReflesh::Handle17C53(ERROR_DATA judgeInfo)
@@ -124,6 +513,9 @@ BOOL CStudentInfoReflesh::StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE 
 
 					//绘制成绩
 					studentInfoRefleshClass->DrawScore(&graphics);
+
+					//绘制实时项目状态
+					studentInfoRefleshClass->DrawCurrentItem(&graphics);
 				}
 
 				//刷新四合一界面
@@ -256,6 +648,34 @@ void CStudentInfoReflesh::DrawNormalItem(Graphics *graphics, int x, int y, int w
 	delete imgItem;
 }
 
+void CStudentInfoReflesh::DrawEnterItem(Graphics *graphics, int x, int y, int width, int height, wstring wsItem)
+{
+	wstring wsPath = m_wsProgramPath + FILE_PATH_ITEM + wsItem + _T("_Enter.jpg");
+	if (!CWinUtils::FileExists(wsPath))
+	{
+		L_ERROR(_T("file not exist : %s\n"), wsPath.c_str());
+		return;
+	}
+
+	Image *imgItem = Image::FromFile(wsPath.c_str());
+	graphics->DrawImage(imgItem, Rect(x, y, width, height));
+	delete imgItem;
+}
+
+void CStudentInfoReflesh::DrawLeaveItem(Graphics *graphics, int x, int y, int width, int height, wstring wsItem)
+{
+	wstring wsPath = m_wsProgramPath + FILE_PATH_ITEM + wsItem + _T("_Leave.jpg");
+	if (!CWinUtils::FileExists(wsPath))
+	{
+		L_ERROR(_T("file not exist : %s\n"), wsPath.c_str());
+		return;
+	}
+
+	Image *imgItem = Image::FromFile(wsPath.c_str());
+	graphics->DrawImage(imgItem, Rect(x, y, width, height));
+	delete imgItem;
+}
+
 void CStudentInfoReflesh::DrawStudentInfo(Graphics *graphics)
 {
 	try
@@ -305,16 +725,6 @@ void CStudentInfoReflesh::DrawStudentInfo(Graphics *graphics)
 		graphics->DrawString(wsDayCount.c_str(), wsDayCount.length(), &myFont,
 			RectF(x, y + 9 * splitHeight, width, splitHeight), &format, &blackBrush);
 		
-
-
-		
-		//RectF layoutRect(200.0f, 220.0f, 200.0f, 50.0f);
-		//
-		//graphics->DrawString(m_studentInfo.wsName.c_str(), m_studentInfo.wsName.length(), &myFont,
-		//	layoutRect, &format, &blackBrush);
-
-
-		//m_DC.DrawText(m_studentInfo.wsName.c_str(), CRect(200, 220, 200, 50), DT_RIGHT | DT_SINGLELINE | DT_VCENTER);
 	}
 	catch (...)
 	{
@@ -586,5 +996,222 @@ void CStudentInfoReflesh::DrawScore(Graphics *graphics)
 	catch (...)
 	{
 		L_ERROR(_T("DrawScore catch an error.\n"));
+	}
+}
+
+void CStudentInfoReflesh::DrawCurrentItem(Graphics *graphics)
+{
+	if (KSKM_3 == m_nKskm)
+	{
+		DrawKM3EnterItem(graphics);
+		DrawKM3ELeaveItem(graphics);
+	}
+}
+
+void CStudentInfoReflesh::DrawKM3EnterItem(Graphics *graphics)
+{
+	int x = 20;
+	int y = 300;
+	int imgWidth = 50;
+	int splitWidth = 80;
+	
+	//上车准备
+	if (m_nStartXmStatus & ITEM_SCZB_FLAG)
+	{
+		DrawEnterItem(graphics, x + 0 * splitWidth, y, imgWidth, imgWidth, ITEM_SCZB);
+	}
+
+	//起步
+	if (m_nStartXmStatus & ITEM_QB_FLAG)
+	{
+		DrawEnterItem(graphics, x + 1 * splitWidth, y, imgWidth, imgWidth, ITEM_QB);
+	}
+
+	//直线行驶
+	if (m_nStartXmStatus & ITEM_ZXXS_FLAG)
+	{
+		DrawEnterItem(graphics, x + 2 * splitWidth, y, imgWidth, imgWidth, ITEM_ZXXS);
+	}
+
+	//加减档
+	if (m_nStartXmStatus & ITEM_JJD_FLAG)
+	{
+		DrawEnterItem(graphics, x + 3 * splitWidth, y, imgWidth, imgWidth, ITEM_JJD);
+	}
+
+	//变更车道
+	if (m_nStartXmStatus & ITEM_BGCD_FLAG)
+	{
+		DrawEnterItem(graphics, x + 4 * splitWidth, y, imgWidth, imgWidth, ITEM_BGCD);
+	}
+
+	//靠边停车
+	if (m_nStartXmStatus & ITEM_KBTC_FLAG)
+	{
+		DrawEnterItem(graphics, x + 5 * splitWidth, y, imgWidth, imgWidth, ITEM_KBTC);
+	}
+
+	//直行通过路口
+	if (m_nStartXmStatus & ITEM_ZHIXING_FLAG)
+	{
+		DrawEnterItem(graphics, x + 6 * splitWidth, y, imgWidth, imgWidth, ITEM_ZX);
+	}
+
+	//左转
+	if (m_nStartXmStatus & ITEM_ZZ_FLAG)
+	{
+		DrawEnterItem(graphics, x + 7 * splitWidth, y, imgWidth, imgWidth, ITEM_ZZ);
+	}
+
+	//右转
+	if (m_nStartXmStatus & ITEM_YZ_FLAG)
+	{
+		DrawEnterItem(graphics, x + 8 * splitWidth, y, imgWidth, imgWidth, ITEM_YZ);
+	}
+
+	//人行横道
+	if (m_nStartXmStatus & ITEM_RXHD_FLAG)
+	{
+		DrawEnterItem(graphics, x + 9 * splitWidth, y, imgWidth, imgWidth, ITEM_RXHD);
+	}
+
+	//学校区域
+	if (m_nStartXmStatus & ITEM_XXQY_FLAG)
+	{
+		DrawEnterItem(graphics, x + 10 * splitWidth, y, imgWidth, imgWidth, ITEM_XXQY);
+	}
+
+	//公交车站
+	if (m_nStartXmStatus & ITEM_GJCZ_FLAG)
+	{
+		DrawEnterItem(graphics, x + 11 * splitWidth, y, imgWidth, imgWidth, ITEM_GJCZ);
+	}
+
+	//会车
+	if (m_nStartXmStatus & ITEM_HC_FLAG)
+	{
+		DrawEnterItem(graphics, x + 12 * splitWidth, y, imgWidth, imgWidth, ITEM_HC);
+	}
+
+	//超车
+	if (m_nStartXmStatus & ITEM_CC_FLAG)
+	{
+		DrawEnterItem(graphics, x + 13 * splitWidth, y, imgWidth, imgWidth, ITEM_CC);
+	}
+
+	//掉头
+	if (m_nStartXmStatus & ITEM_DT_FLAG)
+	{
+		DrawEnterItem(graphics, x + 14 * splitWidth, y, imgWidth, imgWidth, ITEM_DT);
+	}
+
+	//夜间
+	if (m_nStartXmStatus & ITEM_YJ_FLAG)
+	{
+		DrawEnterItem(graphics, x + 15 * splitWidth, y, imgWidth, imgWidth, ITEM_YJ);
+	}
+}
+
+void CStudentInfoReflesh::DrawKM3ELeaveItem(Graphics *graphics)
+{
+	int x = 20;
+	int y = 300;
+	int imgWidth = 50;
+	int splitWidth = 80;
+
+	//上车准备
+	if (m_nEndXmStatus & ITEM_SCZB_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 0 * splitWidth, y, imgWidth, imgWidth, ITEM_SCZB);
+	}
+
+	//起步
+	if (m_nEndXmStatus & ITEM_QB_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 1 * splitWidth, y, imgWidth, imgWidth, ITEM_QB);
+	}
+
+	//直线行驶
+	if (m_nEndXmStatus & ITEM_ZXXS_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 2 * splitWidth, y, imgWidth, imgWidth, ITEM_ZXXS);
+	}
+
+	//加减档
+	if (m_nEndXmStatus & ITEM_JJD_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 3 * splitWidth, y, imgWidth, imgWidth, ITEM_JJD);
+	}
+
+	//变更车道
+	if (m_nEndXmStatus & ITEM_BGCD_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 4 * splitWidth, y, imgWidth, imgWidth, ITEM_BGCD);
+	}
+
+	//靠边停车
+	if (m_nEndXmStatus & ITEM_KBTC_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 5 * splitWidth, y, imgWidth, imgWidth, ITEM_KBTC);
+	}
+
+	//直行通过路口
+	if (m_nEndXmStatus & ITEM_ZHIXING_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 6 * splitWidth, y, imgWidth, imgWidth, ITEM_ZX);
+	}
+
+	//左转
+	if (m_nEndXmStatus & ITEM_ZZ_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 7 * splitWidth, y, imgWidth, imgWidth, ITEM_ZZ);
+	}
+
+	//右转
+	if (m_nEndXmStatus & ITEM_YZ_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 8 * splitWidth, y, imgWidth, imgWidth, ITEM_YZ);
+	}
+
+	//人行横道
+	if (m_nEndXmStatus & ITEM_RXHD_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 9 * splitWidth, y, imgWidth, imgWidth, ITEM_RXHD);
+	}
+
+	//学校区域
+	if (m_nEndXmStatus & ITEM_XXQY_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 10 * splitWidth, y, imgWidth, imgWidth, ITEM_XXQY);
+	}
+
+	//公交车站
+	if (m_nEndXmStatus & ITEM_GJCZ_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 11 * splitWidth, y, imgWidth, imgWidth, ITEM_GJCZ);
+	}
+
+	//会车
+	if (m_nEndXmStatus & ITEM_HC_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 12 * splitWidth, y, imgWidth, imgWidth, ITEM_HC);
+	}
+
+	//超车
+	if (m_nEndXmStatus & ITEM_CC_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 13 * splitWidth, y, imgWidth, imgWidth, ITEM_CC);
+	}
+
+	//掉头
+	if (m_nEndXmStatus & ITEM_DT_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 14 * splitWidth, y, imgWidth, imgWidth, ITEM_DT);
+	}
+
+	//夜间
+	if (m_nEndXmStatus & ITEM_YJ_FLAG)
+	{
+		DrawLeaveItem(graphics, x + 15 * splitWidth, y, imgWidth, imgWidth, ITEM_YJ);
 	}
 }

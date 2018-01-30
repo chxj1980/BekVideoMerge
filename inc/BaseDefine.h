@@ -75,6 +75,7 @@ using namespace Gdiplus;
 #define CONF_KEY_ZOOMIN					_T("ZOOMIN")
 #define CONF_KEY_SPLITWIDTH			_T("SPLITWIDTH")
 #define CONF_KEY_KSKM						_T("KSKM")
+#define CONF_KEY_KM2_ITEM_COUNT		_T("Km2ItemCount")
 #define CONF_KEY_WND2						_T("WND2")
 #define CONF_KEY_BIGCAR					_T("BIGCAR")
 
@@ -131,6 +132,20 @@ using namespace Gdiplus;
 #define ITEM_DT			_T("DT")
 //夜间
 #define ITEM_YJ				_T("YJ")
+//倒车入库
+#define ITEM_DCRK			_T("DCRK")
+//侧方停车
+#define ITEM_CFTC			_T("CFTC")
+//半坡起步
+#define ITEM_BPQB			_T("BPQB")
+//直角转弯
+#define ITEM_ZJZW			_T("ZJZW")
+//曲线行驶
+#define ITEM_QXXS			_T("QXXS")
+//雨雾湿滑
+#define ITEM_YWSH			_T("YWSH")
+//模拟隧道
+#define ITEM_MNSD			_T("MNSD")
 
 //项目标识
 //科目三
@@ -150,6 +165,14 @@ using namespace Gdiplus;
 #define ITEM_CC_FLAG			0x2000
 #define ITEM_DT_FLAG			0x4000
 #define ITEM_YJ_FLAG			0x8000
+//科目二小车
+#define ITEM_DCRK_FLAG		0x0001
+#define ITEM_CFTC_FLAG		0x0002
+#define ITEM_BPQB_FLAG		0x0004
+#define ITEM_QXXS_FLAG		0x0008
+#define ITEM_ZJZW_FLAG		0x0010
+#define ITEM_YWSH_FLAG		0x0020
+#define ITEM_MNSD_FLAG	0x0040
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")
@@ -197,8 +220,6 @@ using namespace Gdiplus;
 #define  DB_VALUE_BK							_T("补考")
 #define  DB_VALUE_KSYYWZ					_T("考试原因：未知")
 
-
-
 #define WM_SOCKET_TCP	   WM_USER + 1001
 #define WM_SOCKET_UDP	   WM_USER + 1002
 #define WM_SOCKET_TCP_WALL WM_USER + 1003
@@ -234,6 +255,13 @@ typedef enum DatabaseType {
 typedef enum KSKMType {
 	KSKM_2 = 2,
 	KSKM_3 = 3
+};
+
+//科目二项目数量
+typedef enum ItemCount {
+	ITEM_COUNT_5 = 5,	//标准是5项
+	ITEM_COUNT_7 = 7,	//贵州地区是7项
+	ITEM_COUNT_16 = 16,	//大车16项
 };
 
 //解码设备类型

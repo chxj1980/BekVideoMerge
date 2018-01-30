@@ -18,6 +18,7 @@ CStudentInfoReflesh::CStudentInfoReflesh()
 	m_nStartXmStatus = 0;
 	m_nEndXmStatus = 0;
 	m_nKskm = KSKM_2;
+	m_nKM2ItemCount = ItemCount::ITEM_COUNT_5;
 	m_bBigCar = false;
 
 	SetEvent(m_refleshEvent);
@@ -39,18 +40,8 @@ CStudentInfoReflesh::~CStudentInfoReflesh()
 
 void CStudentInfoReflesh::StartWork()
 {
-	wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
-	
-	//考试科目
-	m_nKskm = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_KSKM, 2, wsEnvConfPath.c_str());
+	LoadConfig();
 
-	//是否是大车程序
-	int nBigCar = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_BIGCAR, 0, wsEnvConfPath.c_str());
-	if (1 == nBigCar)
-	{
-		m_bBigCar = true;
-	}
-	
 	m_studentInfoRefleshThread = CreateIThreadInstance(StudentInfoRefleshThreadProc, LPVOID(this));
 	m_studentInfoRefleshThread->StartMainThread();
 }
@@ -85,7 +76,7 @@ void CStudentInfoReflesh::Handle17C52(int xmNo, wstring xmName)
 {
 	//fix me
 	//编号修改为宏定义
-	if (KSKM_2 == m_nKskm)	//科目二
+	if (KSKMType::KSKM_2 == m_nKskm)	//科目二
 	{
 		int nType = xmNo / 1000;
 
@@ -93,35 +84,35 @@ void CStudentInfoReflesh::Handle17C52(int xmNo, wstring xmName)
 		{
 			if (201 == nType)
 			{
-				m_nStartXmStatus |= 0x0001;
+				m_nStartXmStatus |= ITEM_DCRK_FLAG;
 			}
 			else if (204 == nType)
 			{
-				m_nStartXmStatus |= 0x0002;
+				m_nStartXmStatus |= ITEM_CFTC_FLAG;
 			}
 			else if (203 == nType)
 			{
-				m_nStartXmStatus |= 0x0004;
+				m_nStartXmStatus |= ITEM_BPQB_FLAG;
 			}
 			else if (206 == nType)
 			{
-				m_nStartXmStatus |= 0x0008;
+				m_nStartXmStatus |= ITEM_QXXS_FLAG;
 			}
 			else if (207 == nType)
 			{
-				m_nStartXmStatus |= 0x0010;
+				m_nStartXmStatus |= ITEM_ZJZW_FLAG;
 			}
 			else if (214 == nType)
 			{
-				m_nStartXmStatus |= 0x0040;
+				m_nStartXmStatus |= ITEM_MNSD_FLAG;
 			}
 			else if (215 == nType)
 			{
-				m_nStartXmStatus |= 0x0020;
+				m_nStartXmStatus |= ITEM_YWSH_FLAG;
 			}
 			else if (216 == nType)
 			{
-				m_nStartXmStatus |= 0x0020;
+				m_nStartXmStatus |= ITEM_YWSH_FLAG;
 			}
 		}
 		else
@@ -278,35 +269,35 @@ void CStudentInfoReflesh::Handle17C55(int xmNo, wstring xmName)
 		{
 			if (201 == nType)
 			{
-				m_nEndXmStatus |= 0x0001;
+				m_nEndXmStatus |= ITEM_DCRK_FLAG;
 			}
 			else if (204 == nType)
 			{
-				m_nEndXmStatus |= 0x0002;
+				m_nEndXmStatus |= ITEM_CFTC_FLAG;
 			}
 			else if (203 == nType)
 			{
-				m_nEndXmStatus |= 0x0004;
+				m_nEndXmStatus |= ITEM_BPQB_FLAG;
 			}
 			else if (206 == nType)
 			{
-				m_nEndXmStatus |= 0x0008;
+				m_nEndXmStatus |= ITEM_QXXS_FLAG;
 			}
 			else if (207 == nType)
 			{
-				m_nEndXmStatus |= 0x0010;
+				m_nEndXmStatus |= ITEM_ZJZW_FLAG;
 			}
 			else if (214 == nType)
 			{
-				m_nEndXmStatus |= 0x0040;
+				m_nEndXmStatus |= ITEM_MNSD_FLAG;
 			}
 			else if (215 == nType)
 			{
-				m_nEndXmStatus |= 0x0020;
+				m_nEndXmStatus |= ITEM_YWSH_FLAG;
 			}
 			else if (216 == nType)
 			{
-				m_nEndXmStatus |= 0x0020;
+				m_nEndXmStatus |= ITEM_YWSH_FLAG;
 			}
 		}
 		else
@@ -550,6 +541,28 @@ EXIT:
 	return TRUE;
 }
 
+void CStudentInfoReflesh::LoadConfig()
+{
+	wstring wsEnvConfPath = m_wsProgramPath + CONF_PATH_ENV;
+
+	//考试科目
+	m_nKskm = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_KSKM, 2, wsEnvConfPath.c_str());
+
+	//是否是大车程序
+	int nBigCar = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_BIGCAR, 0, wsEnvConfPath.c_str());
+	if (1 == nBigCar)
+	{
+		m_bBigCar = true;
+	}
+
+	//小车科目二项目数量
+	if (KSKMType::KSKM_2 == m_nKskm)
+	{
+		m_nKM2ItemCount = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_KM2_ITEM_COUNT, 
+			ItemCount::ITEM_COUNT_5, wsEnvConfPath.c_str());
+	}
+}
+
 //绘制背景
 void CStudentInfoReflesh::DrawBackground(Graphics *graphics)
 {
@@ -578,17 +591,24 @@ void CStudentInfoReflesh::DrawBackground(Graphics *graphics)
 //绘制项目牌背景
 void CStudentInfoReflesh::DrawItemBackground(Graphics *graphics)
 {
-	DrawKM3Background(graphics);
+	if (KSKMType::KSKM_2 == m_nKskm)
+	{
+		DrawKM2Background(graphics);
+	}
+	else if (KSKMType::KSKM_3 == m_nKskm)
+	{
+		DrawKM3Background(graphics);
+	}
 }
 
 void CStudentInfoReflesh::DrawKM3Background(Graphics *graphics)
 {
 	try
 	{
-		int x = 15;
-		int y = 295;
 		int imgWidth = 60;
-		int splitWidth = 80;
+		int splitWidth = DISPLAY_CHAN_WIDTH / 3 * 2 / ItemCount::ITEM_COUNT_16;
+		int x = (splitWidth - imgWidth) / 2;
+		int y = 295;
 
 		//上车准备
 		DrawNormalItem(graphics, x + 0 * splitWidth, y, imgWidth, imgWidth, ITEM_SCZB);
@@ -644,9 +664,47 @@ void CStudentInfoReflesh::DrawKM3Background(Graphics *graphics)
 	}
 }
 
+void CStudentInfoReflesh::DrawKM2Background(Graphics *graphics)
+{
+	try
+	{
+		int imgWidth = 60;
+		int splitWidth = DISPLAY_CHAN_WIDTH / 3 * 2 / m_nKM2ItemCount;
+		int x = (splitWidth - imgWidth) / 2;
+		int y = 295;
+
+		//大部分地方科目二都是5个项目
+		if (ItemCount::ITEM_COUNT_5 == m_nKM2ItemCount || ItemCount::ITEM_COUNT_7 == m_nKM2ItemCount)
+		{
+			//倒车入库
+			DrawNormalItem(graphics, x + 0 * splitWidth, y, imgWidth, imgWidth, ITEM_DCRK);
+			//侧方停车
+			DrawNormalItem(graphics, x + 1 * splitWidth, y, imgWidth, imgWidth, ITEM_CFTC);
+			//半坡起步
+			DrawNormalItem(graphics, x + 2 * splitWidth, y, imgWidth, imgWidth, ITEM_BPQB);
+			//曲线行驶
+			DrawNormalItem(graphics, x + 3 * splitWidth, y, imgWidth, imgWidth, ITEM_QXXS);
+			//直角转弯
+			DrawNormalItem(graphics, x + 4 * splitWidth, y, imgWidth, imgWidth, ITEM_ZJZW);
+
+			if (ItemCount::ITEM_COUNT_7 == m_nKM2ItemCount)
+			{
+				//雨雾湿滑
+				DrawNormalItem(graphics, x + 5 * splitWidth, y, imgWidth, imgWidth, ITEM_YWSH);
+				//模拟隧道
+				DrawNormalItem(graphics, x + 6 * splitWidth, y, imgWidth, imgWidth, ITEM_MNSD);
+			}
+		}
+	}
+	catch (...)
+	{
+		L_ERROR(_T("DrawKM2Background catch an error.\n"));
+	}
+}
+
 void CStudentInfoReflesh::DrawNormalItem(Graphics *graphics, int x, int y, int width, int height, wstring wsItem)
 {
-	wstring wsPath = m_wsProgramPath + FILE_PATH_ITEM + wsItem + _T("_Normal.jpg");
+	wstring wsPath = m_wsProgramPath + FILE_PATH_ITEM + wsItem + _T("_Normal.png");
 	if (!CWinUtils::FileExists(wsPath))
 	{
 		L_ERROR(_T("file not exist : %s\n"), wsPath.c_str());
@@ -660,7 +718,7 @@ void CStudentInfoReflesh::DrawNormalItem(Graphics *graphics, int x, int y, int w
 
 void CStudentInfoReflesh::DrawEnterItem(Graphics *graphics, int x, int y, int width, int height, wstring wsItem)
 {
-	wstring wsPath = m_wsProgramPath + FILE_PATH_ITEM + wsItem + _T("_Enter.jpg");
+	wstring wsPath = m_wsProgramPath + FILE_PATH_ITEM + wsItem + _T("_Enter.png");
 	if (!CWinUtils::FileExists(wsPath))
 	{
 		L_ERROR(_T("file not exist : %s\n"), wsPath.c_str());
@@ -674,7 +732,7 @@ void CStudentInfoReflesh::DrawEnterItem(Graphics *graphics, int x, int y, int wi
 
 void CStudentInfoReflesh::DrawLeaveItem(Graphics *graphics, int x, int y, int width, int height, wstring wsItem)
 {
-	wstring wsPath = m_wsProgramPath + FILE_PATH_ITEM + wsItem + _T("_Leave.jpg");
+	wstring wsPath = m_wsProgramPath + FILE_PATH_ITEM + wsItem + _T("_Leave.png");
 	if (!CWinUtils::FileExists(wsPath))
 	{
 		L_ERROR(_T("file not exist : %s\n"), wsPath.c_str());
@@ -1011,10 +1069,15 @@ void CStudentInfoReflesh::DrawScore(Graphics *graphics)
 
 void CStudentInfoReflesh::DrawCurrentItem(Graphics *graphics)
 {
-	if (KSKM_3 == m_nKskm)
+	if (KSKMType::KSKM_2 == m_nKskm)
+	{
+		DrawKM2EnterItem(graphics);
+		DrawKM2LeaveItem(graphics);
+	}
+	else if (KSKMType::KSKM_3 == m_nKskm)
 	{
 		DrawKM3EnterItem(graphics);
-		DrawKM3ELeaveItem(graphics);
+		DrawKM3LeaveItem(graphics);
 	}
 }
 
@@ -1122,7 +1185,7 @@ void CStudentInfoReflesh::DrawKM3EnterItem(Graphics *graphics)
 	}
 }
 
-void CStudentInfoReflesh::DrawKM3ELeaveItem(Graphics *graphics)
+void CStudentInfoReflesh::DrawKM3LeaveItem(Graphics *graphics)
 {
 	int x = 15;
 	int y = 295;
@@ -1223,6 +1286,110 @@ void CStudentInfoReflesh::DrawKM3ELeaveItem(Graphics *graphics)
 	if (m_nEndXmStatus & ITEM_YJ_FLAG)
 	{
 		DrawLeaveItem(graphics, x + 15 * splitWidth, y, imgWidth, imgWidth, ITEM_YJ);
+	}
+}
+
+void CStudentInfoReflesh::DrawKM2EnterItem(Graphics *graphics)
+{
+	int imgWidth = 60;
+	int splitWidth = DISPLAY_CHAN_WIDTH / 3 * 2 / m_nKM2ItemCount;
+	int x = (splitWidth - imgWidth) / 2;
+	int y = 295;
+
+	//大部分地方科目二都是5个项目
+	if (ItemCount::ITEM_COUNT_5 == m_nKM2ItemCount || ItemCount::ITEM_COUNT_7 == m_nKM2ItemCount)
+	{
+		//倒车入库
+		if (m_nStartXmStatus & ITEM_DCRK_FLAG)
+		{
+			DrawEnterItem(graphics, x + 0 * splitWidth, y, imgWidth, imgWidth, ITEM_DCRK);
+		}
+		//侧方停车
+		if (m_nStartXmStatus & ITEM_CFTC_FLAG)
+		{
+			DrawEnterItem(graphics, x + 1 * splitWidth, y, imgWidth, imgWidth, ITEM_CFTC);
+		}
+		//半坡起步
+		if (m_nStartXmStatus & ITEM_BPQB_FLAG)
+		{
+			DrawEnterItem(graphics, x + 2 * splitWidth, y, imgWidth, imgWidth, ITEM_BPQB);
+		}
+		//曲线行驶
+		if (m_nStartXmStatus & ITEM_QXXS_FLAG)
+		{
+			DrawEnterItem(graphics, x + 3 * splitWidth, y, imgWidth, imgWidth, ITEM_QXXS);
+		}
+		//直角转弯
+		if (m_nStartXmStatus & ITEM_ZJZW_FLAG)
+		{
+			DrawEnterItem(graphics, x + 4 * splitWidth, y, imgWidth, imgWidth, ITEM_ZJZW);
+		}
+
+		if (ItemCount::ITEM_COUNT_7 == m_nKM2ItemCount)
+		{
+			//雨雾湿滑
+			if (m_nStartXmStatus & ITEM_YWSH_FLAG)
+			{
+				DrawEnterItem(graphics, x + 5 * splitWidth, y, imgWidth, imgWidth, ITEM_YWSH);
+			}
+			//模拟隧道
+			if (m_nStartXmStatus & ITEM_MNSD_FLAG)
+			{
+				DrawEnterItem(graphics, x + 6 * splitWidth, y, imgWidth, imgWidth, ITEM_MNSD);
+			}
+		}
+	}
+}
+
+void CStudentInfoReflesh::DrawKM2LeaveItem(Graphics *graphics)
+{
+	int imgWidth = 60;
+	int splitWidth = DISPLAY_CHAN_WIDTH / 3 * 2 / m_nKM2ItemCount;
+	int x = (splitWidth - imgWidth) / 2;
+	int y = 295;
+
+	//大部分地方科目二都是5个项目
+	if (ItemCount::ITEM_COUNT_5 == m_nKM2ItemCount || ItemCount::ITEM_COUNT_7 == m_nKM2ItemCount)
+	{
+		//倒车入库
+		if (m_nEndXmStatus & ITEM_DCRK_FLAG)
+		{
+			DrawLeaveItem(graphics, x + 0 * splitWidth, y, imgWidth, imgWidth, ITEM_DCRK);
+		}
+		//侧方停车
+		if (m_nEndXmStatus & ITEM_CFTC_FLAG)
+		{
+			DrawLeaveItem(graphics, x + 1 * splitWidth, y, imgWidth, imgWidth, ITEM_CFTC);
+		}
+		//半坡起步
+		if (m_nEndXmStatus & ITEM_BPQB_FLAG)
+		{
+			DrawLeaveItem(graphics, x + 2 * splitWidth, y, imgWidth, imgWidth, ITEM_BPQB);
+		}
+		//曲线行驶
+		if (m_nEndXmStatus & ITEM_QXXS_FLAG)
+		{
+			DrawLeaveItem(graphics, x + 3 * splitWidth, y, imgWidth, imgWidth, ITEM_QXXS);
+		}
+		//直角转弯
+		if (m_nEndXmStatus & ITEM_ZJZW_FLAG)
+		{
+			DrawLeaveItem(graphics, x + 4 * splitWidth, y, imgWidth, imgWidth, ITEM_ZJZW);
+		}
+
+		if (ItemCount::ITEM_COUNT_7 == m_nKM2ItemCount)
+		{
+			//雨雾湿滑
+			if (m_nEndXmStatus & ITEM_YWSH_FLAG)
+			{
+				DrawLeaveItem(graphics, x + 5 * splitWidth, y, imgWidth, imgWidth, ITEM_YWSH);
+			}
+			//模拟隧道
+			if (m_nEndXmStatus & ITEM_MNSD_FLAG)
+			{
+				DrawLeaveItem(graphics, x + 6 * splitWidth, y, imgWidth, imgWidth, ITEM_MNSD);
+			}
+		}
 	}
 }
 

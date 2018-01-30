@@ -25,8 +25,10 @@ protected:
 	static BOOL StudentInfoRefleshThreadProc(LPVOID parameter, HANDLE stopEvent);
 
 private:
+	void LoadConfig();
 	void DrawBackground(Graphics *graphics);	//绘制背景
 	void DrawItemBackground(Graphics *graphics);	//绘制项目牌背景
+	void DrawKM2Background(Graphics *graphics);	//科目二项目牌背景
 	void DrawKM3Background(Graphics *graphics);	//科目三项目牌背景
 	void DrawNormalItem(Graphics *graphics, int x, int y, int width, int height, wstring wsItem);	//绘制单个项目图标
 	void DrawEnterItem(Graphics *graphics, int x, int y, int width, int height, wstring wsItem);	//绘制单个项目图标
@@ -38,8 +40,10 @@ private:
 	void DrawScore(Graphics *graphics);	//绘制得分
 	void DrawCurrentItem(Graphics *graphics);	//绘制实时项目状态
 	void DrawKM3EnterItem(Graphics *graphics);	//绘制正在进行的项目
-	void DrawKM3ELeaveItem(Graphics *graphics);	//绘制正在进行的项目
-	void DrawResult(Graphics *graphics);	//绘制考试结果
+	void DrawKM3LeaveItem(Graphics *graphics);	//绘制正在进行的项目
+	void DrawKM2EnterItem(Graphics *graphics);	//绘制正在进行的项目
+	void DrawKM2LeaveItem(Graphics *graphics);	//绘制正在进行的项目
+	void DrawResult(Graphics *graphics);	//绘制考试
 
 private:
 	IThread* m_studentInfoRefleshThread;
@@ -58,6 +62,7 @@ private:
 	int m_nEndXmStatus;		//标识哪些项目已经结束
 	bool m_bBigCar;		//大车的项目牌与小车不一样
 	int m_nKskm;	//考试科目
+	int m_nKM2ItemCount;	//科目二项目数量，有5项目、7项目、8项目三种 
 };
 
 #endif

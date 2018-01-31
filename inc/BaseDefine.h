@@ -93,10 +93,10 @@ using namespace Gdiplus;
 
 //资源文件
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
-#define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
-#define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
+//#define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
+//#define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
 #define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.png")
-#define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
+//#define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
 #define IMG_PATH_SIGNAL		_T("\\res\\signal\\signal.png")
 #define IMG_PATH_RESULT		_T("\\res\\result.png")

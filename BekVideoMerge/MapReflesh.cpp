@@ -195,56 +195,56 @@ EXIT:
 	return TRUE;
 }
 
-//绘制背景
-void CMapReflesh::DrawBackground(Graphics *graphics)
-{
-	try
-	{
-		wstring wsXMBackground = m_wsProgramPath + IMG_PATH_XM_BACKGROUND;
-		if (!CWinUtils::FileExists(wsXMBackground))
-		{
-			L_ERROR(_T("wsXMBackground not exist, file name = %s\n"), wsXMBackground.c_str());
-			return;
-		}
-		wstring wsXMList = m_wsProgramPath + IMG_PATH_XM_LIST;
-		if (!CWinUtils::FileExists(wsXMList))
-		{
-			L_ERROR(_T("wsXMList not exist, file name = %s\n"), wsXMList.c_str());
-			return;
-		}
-		wstring wsMapBackground = m_wsProgramPath + IMG_PATH_MAP_BACKGROUND;
-		if (!CWinUtils::FileExists(wsMapBackground))
-		{
-			L_ERROR(_T("wsMapBackground not exist, file name = %s\n"), wsMapBackground.c_str());
-			return;
-		}
-
-		////项目牌背景
-		//Image *imgXMBackground = Image::FromFile(wsXMBackground.c_str());	
-		//graphics->DrawImage(imgXMBackground, Rect(264, 0, 88, 288), 264, 0, 88, 288, UnitPixel);
-
-		////项目牌列表
-		//Image *imgXMList = Image::FromFile(wsXMList.c_str());
-		//if (KSKM_3 == m_nKskm || m_bBigCar)
-		//{
-		//	graphics->DrawImage(imgXMList, Rect(264, 0, 88, 288), 0, 0, 88, 288, UnitPixel);
-		//}
-		//else
-		//{
-		//	graphics->DrawImage(imgXMList, Rect(264, 36, 88, 252), 0, 0, 88, 252, UnitPixel);
-		//}
-
-		//地图背景
-		Image *imgMapBackground = Image::FromFile(wsMapBackground.c_str());	
-		graphics->DrawImage(imgMapBackground, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));
-
-		delete imgMapBackground;
-	}
-	catch (...)
-	{
-		L_ERROR(_T("DrawBackground catch an error.\n"));
-	}
-}
+////绘制背景
+//void CMapReflesh::DrawBackground(Graphics *graphics)
+//{
+//	try
+//	{
+//		wstring wsXMBackground = m_wsProgramPath + IMG_PATH_XM_BACKGROUND;
+//		if (!CWinUtils::FileExists(wsXMBackground))
+//		{
+//			L_ERROR(_T("wsXMBackground not exist, file name = %s\n"), wsXMBackground.c_str());
+//			return;
+//		}
+//		wstring wsXMList = m_wsProgramPath + IMG_PATH_XM_LIST;
+//		if (!CWinUtils::FileExists(wsXMList))
+//		{
+//			L_ERROR(_T("wsXMList not exist, file name = %s\n"), wsXMList.c_str());
+//			return;
+//		}
+//		wstring wsMapBackground = m_wsProgramPath + IMG_PATH_MAP_BACKGROUND;
+//		if (!CWinUtils::FileExists(wsMapBackground))
+//		{
+//			L_ERROR(_T("wsMapBackground not exist, file name = %s\n"), wsMapBackground.c_str());
+//			return;
+//		}
+//
+//		////项目牌背景
+//		//Image *imgXMBackground = Image::FromFile(wsXMBackground.c_str());	
+//		//graphics->DrawImage(imgXMBackground, Rect(264, 0, 88, 288), 264, 0, 88, 288, UnitPixel);
+//
+//		////项目牌列表
+//		//Image *imgXMList = Image::FromFile(wsXMList.c_str());
+//		//if (KSKM_3 == m_nKskm || m_bBigCar)
+//		//{
+//		//	graphics->DrawImage(imgXMList, Rect(264, 0, 88, 288), 0, 0, 88, 288, UnitPixel);
+//		//}
+//		//else
+//		//{
+//		//	graphics->DrawImage(imgXMList, Rect(264, 36, 88, 252), 0, 0, 88, 252, UnitPixel);
+//		//}
+//
+//		//地图背景
+//		Image *imgMapBackground = Image::FromFile(wsMapBackground.c_str());	
+//		graphics->DrawImage(imgMapBackground, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT));
+//
+//		delete imgMapBackground;
+//	}
+//	catch (...)
+//	{
+//		L_ERROR(_T("DrawBackground catch an error.\n"));
+//	}
+//}
 
 //绘制地图
 void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)

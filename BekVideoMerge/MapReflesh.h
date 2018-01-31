@@ -21,7 +21,7 @@ protected:
 
 private:
 	void LoadMapConfig();
-	void DrawBackground(Graphics *graphics);	//绘制背景
+	//void DrawBackground(Graphics *graphics);	//绘制背景
 	bool GetCarRelativeCoordinate(CarSignal signal, int &x, int &y);
 	void DrawMap(Graphics *graphics, int carX, int carY);	//绘制地图
 	void DrawCar(Graphics *graphics, float angle);	//绘制车模型

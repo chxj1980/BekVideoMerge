@@ -47,8 +47,8 @@ using namespace Gdiplus;
 #define  DISPLAY_DELAY_SECONDS					30
 
 //≈‰÷√Œƒº˛
-#define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
-#define LOG_CONF_BEKVIDEOWALL		_T("BekVideoWall_logconf.ini")
+#define LOG_CONF_BEKVIDEOMERGE	_T("\\conf\\BekVideoMerge_logconf.ini")
+#define LOG_CONF_BEKVIDEOWALL		_T("\\conf\\BekVideoWall_logconf.ini")
 #define CONF_PATH_DB						_T("\\conf\\HS_CONF_DB.ini")
 #define CONF_PATH_MAP						_T("\\conf\\HS_CONF_MAP.ini")
 #define CONF_PATH_ENV						_T("\\conf\\HS_CONF_ENV.ini")

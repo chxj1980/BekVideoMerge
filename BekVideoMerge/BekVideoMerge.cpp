@@ -80,7 +80,8 @@ BOOL CBekVideoMergeApp::InitInstance()
 	CWinUtils::CreateDirectorys(wstrPhotoPath);
 
 	//日志模块初始化
-	LogBase_init(LOG_CONF_BEKVIDEOMERGE);
+	wstring wsLogPath = wstrCurrentPath + LOG_CONF_BEKVIDEOMERGE;
+	LogBase_init(wsLogPath.c_str());
 
 	//gdiplus初始化
 	GdiplusStartupInput gdiplusStartupInput;

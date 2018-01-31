@@ -47,8 +47,8 @@ using namespace Gdiplus;
 #define  DISPLAY_DELAY_SECONDS					30
 
 //配置文件
-#define LOG_CONF_BEKVIDEOMERGE	_T("BekVideoMerge_logconf.ini")
-#define LOG_CONF_BEKVIDEOWALL		_T("BekVideoWall_logconf.ini")
+#define LOG_CONF_BEKVIDEOMERGE	_T("\\conf\\BekVideoMerge_logconf.ini")
+#define LOG_CONF_BEKVIDEOWALL		_T("\\conf\\BekVideoWall_logconf.ini")
 #define CONF_PATH_DB						_T("\\conf\\HS_CONF_DB.ini")
 #define CONF_PATH_MAP						_T("\\conf\\HS_CONF_MAP.ini")
 #define CONF_PATH_ENV						_T("\\conf\\HS_CONF_ENV.ini")
@@ -56,6 +56,7 @@ using namespace Gdiplus;
 #define CONF_PATH_CAR_WALL			_T("\\conf\\HS_CONF_CAR_WALL.ini")
 #define CONF_PATH_DISPLAY				_T("\\conf\\HS_CONF_DISPLAY.ini")
 #define CONF_SECTION_CONFIG			_T("CONFIG")
+#define CONF_SECTION_INDEX				_T("INDEX")
 #define CONF_SECTION_JMQ				_T("JMQ")	
 #define CONF_KEY_DBADDRESS			_T("DBADDRESS")
 #define CONF_KEY_USERNAME				_T("USERNAME")
@@ -78,6 +79,11 @@ using namespace Gdiplus;
 #define CONF_KEY_KM2_ITEM_COUNT		_T("Km2ItemCount")
 #define CONF_KEY_WND2						_T("WND2")
 #define CONF_KEY_BIGCAR					_T("BIGCAR")
+#define CONF_KEY_MAP						_T("Map")
+#define CONF_KEY_STUINFO					_T("StuInfo")
+#define CONF_KEY_MAINDRIVING		_T("MainDriving")
+#define CONF_KEY_COPILOT					_T("Copilot")
+#define CONF_KEY_ITEM						_T("Item")
 
 //文件目录
 #define FILE_PATH_LOG		_T("\\log")
@@ -87,10 +93,10 @@ using namespace Gdiplus;
 
 //资源文件
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
-#define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
-#define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
+//#define IMG_PATH_MAP_BACKGROUND		_T("\\res\\MapBackground.skin")
+//#define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
 #define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.png")
-#define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
+//#define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
 #define IMG_PATH_SIGNAL		_T("\\res\\signal\\signal.png")
 #define IMG_PATH_RESULT		_T("\\res\\result.png")
@@ -287,6 +293,15 @@ typedef enum CarCameraNoLocation {
 //项目摄像头编号
 typedef enum XmCameraNoLocation {
 	XM_CAMERA_NO_1 = 1,		//项目1号摄像头
+};
+
+//子窗口索引号
+typedef enum SubWndIndex {
+	WND_LEFT_TOP = 1,		//左上
+	WND_LEFT_BOTTOM = 2,		//左下 
+	WND_RIGHT_BOTTOM = 3,		//右下
+	WND_RIGHT_MIDDLE = 4,		//右中
+	WND_RIGHT_TOP = 5,		//右上
 };
 
 //考试过程信号类型

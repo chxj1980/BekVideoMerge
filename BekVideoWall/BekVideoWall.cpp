@@ -60,14 +60,16 @@ BOOL CBekVideoWallApp::InitInstance()
 
 	//日志模块初始化
 	wstring wstrCurrentPath = _T("");
+	wstring wstrLogPath = _T("");
 	wstring wstrLogConfPath = _T("");
 	CWinUtils::GetCurrentProcessPath(wstrCurrentPath);
-	wstrLogConfPath = wstrCurrentPath + _T("\\log");
-	if (!CWinUtils::FileExists(wstrLogConfPath))
+	wstrLogPath = wstrCurrentPath + _T("\\log");
+	if (!CWinUtils::FileExists(wstrLogPath))
 	{
-		CWinUtils::CreateDirectorys(wstrLogConfPath);
+		CWinUtils::CreateDirectorys(wstrLogPath);
 	}
-	LogBase_init(LOG_CONF_BEKVIDEOWALL);
+	wstrLogConfPath = wstrCurrentPath + LOG_CONF_BEKVIDEOWALL;
+	LogBase_init(wstrLogConfPath.c_str());
 
 	CoInitialize(NULL);
 

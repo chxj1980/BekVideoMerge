@@ -1083,10 +1083,10 @@ void CStudentInfoReflesh::DrawCurrentItem(Graphics *graphics)
 
 void CStudentInfoReflesh::DrawKM3EnterItem(Graphics *graphics)
 {
-	int x = 15;
-	int y = 295;
 	int imgWidth = 60;
-	int splitWidth = 80;
+	int splitWidth = DISPLAY_CHAN_WIDTH / 3 * 2 / ItemCount::ITEM_COUNT_16;
+	int x = (splitWidth - imgWidth) / 2;
+	int y = 295;
 	
 	//上车准备
 	if (m_nStartXmStatus & ITEM_SCZB_FLAG)
@@ -1187,10 +1187,10 @@ void CStudentInfoReflesh::DrawKM3EnterItem(Graphics *graphics)
 
 void CStudentInfoReflesh::DrawKM3LeaveItem(Graphics *graphics)
 {
-	int x = 15;
-	int y = 295;
 	int imgWidth = 60;
-	int splitWidth = 80;
+	int splitWidth = DISPLAY_CHAN_WIDTH / 3 * 2 / ItemCount::ITEM_COUNT_16;
+	int x = (splitWidth - imgWidth) / 2;
+	int y = 295;
 
 	//上车准备
 	if (m_nEndXmStatus & ITEM_SCZB_FLAG)

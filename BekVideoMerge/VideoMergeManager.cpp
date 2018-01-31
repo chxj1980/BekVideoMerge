@@ -117,7 +117,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				}
 				else
 				{
-					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 5);
+					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 4);
 				}
 			}
 
@@ -183,7 +183,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 			}
 			else
 			{
-				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 5);
+				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 4);
 			}
 
 			if (0 == m_mapItems.count(wsXmNo))
@@ -256,6 +256,8 @@ bool CVideoMergeManager::HandleCarSignal(int carNo, char* buf)
 	memcpy((char *)&signal, buf, sizeof(CarSignal));
 	L_DEBUG(_T("CVideoMergeManager HandleCarSignal, carNo=%d, x=%lf, y=%lf, angle=%lf, speed=%lf, mileage=%lf\n"),
 		carNo, signal.dX, signal.dY, signal.fDirectionAngle, signal.fSpeed, signal.fMileage);
+	L_DEBUG(_T("CVideoMergeManager HandleCarSignal, carNo=%d,aqd=%d,js=%d,ss=%d,fs=%d,lh=%d,lb=%d,zzx=%d,yzx=%d,ygd=%d,jgd=%d,jsd=%d,xh=%d,kgm=%d,dw=%d,yg=%d,wd=%d,skd=%d,dh=%d,fSpeedCar=%f,fSpeedEngine=%f\n"),
+		carNo, signal.aqd, signal.js, signal.ss, signal.fs, signal.lh, signal.lb, signal.zzx, signal.yzx, signal.ygd, signal.jgd, signal.jsd, signal.xh, signal.kgm, signal.dw, signal.yg, signal.wd, signal.skd, signal.dh, signal.fSpeedCar, signal.fSpeedEngine);
 
 	m_mapCarManagers[carNo].HandleCarSignal(signal);
 
@@ -524,7 +526,7 @@ bool CVideoMergeManager::InitItems()
 					vat = pSet->GetCollect(DB_FIELD_KFLX);
 					if (vat.vt != NULL)
 					{
-						strncpy(m_mapItems[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 10);
+						strncpy(m_mapItems[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 30);
 					}
 					vat = pSet->GetCollect(DB_FIELD_KCFS);
 					if (vat.vt != NULL)

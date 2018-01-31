@@ -17,6 +17,9 @@ using namespace Gdiplus;
 //电视墙视频叠加服务监听的TCP端口
 #define LISTENING_PORT_TCP_WALL	6800
 
+//字体
+#define FONT_MICROSOFT_YAHEI	_T("微软雅黑")
+
 //配置成四画面或者六画面，只能选其一
 //#define DISPLAY_4	
 //#define DISPLAY_6	
@@ -72,6 +75,7 @@ using namespace Gdiplus;
 #define CONF_KEY_ZOOMIN					_T("ZOOMIN")
 #define CONF_KEY_SPLITWIDTH			_T("SPLITWIDTH")
 #define CONF_KEY_KSKM						_T("KSKM")
+#define CONF_KEY_KM2_ITEM_COUNT		_T("Km2ItemCount")
 #define CONF_KEY_WND2						_T("WND2")
 #define CONF_KEY_BIGCAR					_T("BIGCAR")
 
@@ -79,6 +83,7 @@ using namespace Gdiplus;
 #define FILE_PATH_LOG		_T("\\log")
 #define FILE_PATH_VIDEO		_T("\\video")
 #define FILE_PATH_PHOTO		_T("\\photo")
+#define FILE_PATH_ITEM		_T("\\res\\item\\")
 
 //资源文件
 #define THIRDPARTY_PATH_MENCODER	_T("\\3rdparty\\mencoder.exe")
@@ -87,10 +92,87 @@ using namespace Gdiplus;
 #define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.png")
 #define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
 #define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
-#define IMG_PATH_GEAR_1		_T("\\res\\Gear_1.png")
+#define IMG_PATH_SIGNAL		_T("\\res\\signal\\signal.png")
+#define IMG_PATH_RESULT		_T("\\res\\result.png")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
 #define PHOTO_ID_FORMAT		_T("\\%d_id_photo.png")
 #define PHOTO_LOGIN_FORMAT		_T("\\%d_login_photo.png")
+#define IMG_PATH_GEAR_FORMAT		_T("\\res\\signal\\Gear_%d.png")
+
+//项目简写
+//上车准备
+#define ITEM_SCZB		_T("SCZB")
+//起步
+#define ITEM_QB			_T("QB")
+//直线行驶
+#define ITEM_ZXXS		_T("ZXXS")
+//加减档
+#define ITEM_JJD			_T("JJD")
+//变更车道
+#define ITEM_BGCD		_T("BGCD")
+//靠边停车
+#define ITEM_KBTC		_T("KBTC")
+//直行通过路口
+#define ITEM_ZX				_T("ZX")
+//左转
+#define ITEM_ZZ				_T("ZZ")
+//右转
+#define ITEM_YZ				_T("YZ")
+//人行横道
+#define ITEM_RXHD		_T("RXHD")
+//学校区域
+#define ITEM_XXQY		_T("XXQY")
+//公交车站
+#define ITEM_GJCZ			_T("GJCZ")
+//会车
+#define ITEM_HC			_T("HC")
+//超车
+#define ITEM_CC			_T("CC")
+//掉头
+#define ITEM_DT			_T("DT")
+//夜间
+#define ITEM_YJ				_T("YJ")
+//倒车入库
+#define ITEM_DCRK			_T("DCRK")
+//侧方停车
+#define ITEM_CFTC			_T("CFTC")
+//半坡起步
+#define ITEM_BPQB			_T("BPQB")
+//直角转弯
+#define ITEM_ZJZW			_T("ZJZW")
+//曲线行驶
+#define ITEM_QXXS			_T("QXXS")
+//雨雾湿滑
+#define ITEM_YWSH			_T("YWSH")
+//模拟隧道
+#define ITEM_MNSD			_T("MNSD")
+
+//项目标识
+//科目三
+#define ITEM_SCZB_FLAG		0x0001
+#define ITEM_QB_FLAG			0x0002
+#define ITEM_ZXXS_FLAG		0x0004
+#define ITEM_JJD_FLAG			0x0008
+#define ITEM_BGCD_FLAG		0x0010
+#define ITEM_KBTC_FLAG		0x0020
+#define ITEM_ZHIXING_FLAG	0x0040
+#define ITEM_ZZ_FLAG			0x0080
+#define ITEM_YZ_FLAG			0x0100
+#define ITEM_RXHD_FLAG		0x0200
+#define ITEM_XXQY_FLAG		0x0400
+#define ITEM_GJCZ_FLAG		0x0800
+#define ITEM_HC_FLAG			0x1000
+#define ITEM_CC_FLAG			0x2000
+#define ITEM_DT_FLAG			0x4000
+#define ITEM_YJ_FLAG			0x8000
+//科目二小车
+#define ITEM_DCRK_FLAG		0x0001
+#define ITEM_CFTC_FLAG		0x0002
+#define ITEM_BPQB_FLAG		0x0004
+#define ITEM_QXXS_FLAG		0x0008
+#define ITEM_ZJZW_FLAG		0x0010
+#define ITEM_YWSH_FLAG		0x0020
+#define ITEM_MNSD_FLAG	0x0040
 
 //数据库
 #define  DB_TABLE_TBKVIDEO				_T("TBKVideo")
@@ -138,8 +220,6 @@ using namespace Gdiplus;
 #define  DB_VALUE_BK							_T("补考")
 #define  DB_VALUE_KSYYWZ					_T("考试原因：未知")
 
-
-
 #define WM_SOCKET_TCP	   WM_USER + 1001
 #define WM_SOCKET_UDP	   WM_USER + 1002
 #define WM_SOCKET_TCP_WALL WM_USER + 1003
@@ -175,6 +255,13 @@ typedef enum DatabaseType {
 typedef enum KSKMType {
 	KSKM_2 = 2,
 	KSKM_3 = 3
+};
+
+//科目二项目数量
+typedef enum ItemCount {
+	ITEM_COUNT_5 = 5,	//标准是5项
+	ITEM_COUNT_7 = 7,	//贵州地区是7项
+	ITEM_COUNT_16 = 16,	//大车16项
 };
 
 //解码设备类型
@@ -241,6 +328,27 @@ typedef struct tagCarSignal
 	float fSpeed;	//速度
 	float fMileage;		//里程
 
+	int aqd;   //安全带
+	int js;	//脚刹
+	int ss;	//手刹
+	int fs;	//副刹
+	int lh;	//离合
+	int lb;	//喇叭
+	int zzx;	//左转向
+	int yzx;	//右转向
+	int ygd;	//远光灯
+	int jgd;		//近光灯
+	int jsd;		//警示灯
+	int xh;		//熄火
+	int kgm;	//开关门
+	int dw;		//档位
+	int yg;		//雨刮
+	int wd;		//雾灯
+	int skd;	//示廓灯
+	int dh;		//点火
+	float   fSpeedCar;	//原车速度
+	float   fSpeedEngine;	//转速
+
 	tagCarSignal()
 	{
 		dX = 0.0;
@@ -248,6 +356,27 @@ typedef struct tagCarSignal
 		fDirectionAngle = 0.0;
 		fSpeed = 0.0;
 		fMileage = 0.0;
+
+		aqd = 0;
+		js = 0;
+		ss = 0;
+		fs = 0;
+		lh = 0;
+		lb = 0;
+		zzx = 0;
+		yzx = 0;
+		ygd = 0;
+		jgd = 0;
+		jsd = 0;
+		xh = 0;
+		kgm = 0;
+		dw = 0;
+		yg = 0;
+		wd = 0;
+		skd = 0;
+		dh = 0;
+		fSpeedCar = 0.0;
+		fSpeedEngine = 0.0;
 	}
 
 }CarSignal, *pCarSignal;

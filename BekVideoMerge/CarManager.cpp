@@ -72,10 +72,8 @@ bool CCarManager::StopDynamicDecode(int wnd)
 //处理车载信号
 bool CCarManager::HandleCarSignal(CarSignal signal)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.SetCarSignal(signal);
-	}
+	m_mapRefleshClass.SetCarSignal(signal);
+	m_studentInfoRefleshClass.SetCarSignal(signal);
 
 	return true;
 }
@@ -92,10 +90,7 @@ bool CCarManager::Handle17C51(StudentInfo studentInfo)
 //项目开始
 bool CCarManager::Handle17C52(int xmNo, wstring xmName)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.Handle17C52(xmNo, xmName);
-	}
+	m_studentInfoRefleshClass.Handle17C52(xmNo, xmName);
 	
 	return true;
 }
@@ -103,10 +98,7 @@ bool CCarManager::Handle17C52(int xmNo, wstring xmName)
 //项目扣分
 bool CCarManager::Handle17C53(ERROR_DATA judgeInfo)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.Handle17C53(judgeInfo);
-	}
+	m_studentInfoRefleshClass.Handle17C53(judgeInfo);
 
 	return true;
 }
@@ -114,10 +106,7 @@ bool CCarManager::Handle17C53(ERROR_DATA judgeInfo)
 //项目结束
 bool CCarManager::Handle17C55(int xmNo, wstring xmName)
 {
-	if (m_bDrawMap)
-	{
-		m_mapRefleshClass.Handle17C55(xmNo, xmName);
-	}
+	m_studentInfoRefleshClass.Handle17C55(xmNo, xmName);
 
 	return true;
 }
@@ -125,7 +114,8 @@ bool CCarManager::Handle17C55(int xmNo, wstring xmName)
 //考试结束
 bool CCarManager::Handle17C56(bool bPass, int nScore)
 {
-	m_mapRefleshClass.Handle17C56(bPass, nScore);
+	m_mapRefleshClass.Handle17C56(bPass);
+	m_studentInfoRefleshClass.Handle17C56(bPass, nScore);
 
 	return true;
 }

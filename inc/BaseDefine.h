@@ -56,6 +56,7 @@ using namespace Gdiplus;
 #define CONF_PATH_CAR_WALL			_T("\\conf\\HS_CONF_CAR_WALL.ini")
 #define CONF_PATH_DISPLAY				_T("\\conf\\HS_CONF_DISPLAY.ini")
 #define CONF_SECTION_CONFIG			_T("CONFIG")
+#define CONF_SECTION_INDEX				_T("INDEX")
 #define CONF_SECTION_JMQ				_T("JMQ")	
 #define CONF_KEY_DBADDRESS			_T("DBADDRESS")
 #define CONF_KEY_USERNAME				_T("USERNAME")
@@ -78,6 +79,11 @@ using namespace Gdiplus;
 #define CONF_KEY_KM2_ITEM_COUNT		_T("Km2ItemCount")
 #define CONF_KEY_WND2						_T("WND2")
 #define CONF_KEY_BIGCAR					_T("BIGCAR")
+#define CONF_KEY_MAP						_T("Map")
+#define CONF_KEY_STUINFO					_T("StuInfo")
+#define CONF_KEY_MAINDRIVING		_T("MainDriving")
+#define CONF_KEY_COPILOT					_T("Copilot")
+#define CONF_KEY_ITEM						_T("Item")
 
 //文件目录
 #define FILE_PATH_LOG		_T("\\log")
@@ -287,6 +293,15 @@ typedef enum CarCameraNoLocation {
 //项目摄像头编号
 typedef enum XmCameraNoLocation {
 	XM_CAMERA_NO_1 = 1,		//项目1号摄像头
+};
+
+//子窗口索引号
+typedef enum SubWndIndex {
+	WND_LEFT_TOP = 1,		//左上
+	WND_LEFT_BOTTOM = 2,		//左下 
+	WND_RIGHT_BOTTOM = 3,		//右下
+	WND_RIGHT_MIDDLE = 4,		//右中
+	WND_RIGHT_TOP = 5,		//右上
 };
 
 //考试过程信号类型

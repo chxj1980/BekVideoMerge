@@ -43,6 +43,12 @@ private:
 	int m_nDBType;	//数据库类型
 	bool m_bDynamicVideo;	//画面二是否做动态切换
 	bool m_bBigCar;		//大车科目二合格分数不一样
+
+	int m_nWndIndexMap;	//地图界面窗口索引号，默认在左上角
+	int m_nWndIndexStuInfo;	//考生信息窗口索引号，默认在左下角
+	int m_nWndIndexMainDriving;	//主驾视频窗口索引号，默认在右下角
+	int m_nWndIndexCopilot;	//副驾视频窗口索引号，默认在右边中部
+	int m_nWndIndexItem;	//项目视频窗口索引号，默认在右上角
 };
 
 #endif

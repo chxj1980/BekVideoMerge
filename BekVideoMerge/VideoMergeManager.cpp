@@ -14,6 +14,12 @@ CVideoMergeManager::CVideoMergeManager()
 	m_nDBType = 0;
 	m_bDynamicVideo = false;
 	m_bBigCar = false;
+
+	m_nWndIndexMap = SubWndIndex::WND_LEFT_TOP;
+	m_nWndIndexStuInfo = SubWndIndex::WND_LEFT_BOTTOM;
+	m_nWndIndexMainDriving = SubWndIndex::WND_RIGHT_BOTTOM;
+	m_nWndIndexCopilot = SubWndIndex::WND_RIGHT_MIDDLE;
+	m_nWndIndexItem = SubWndIndex::WND_RIGHT_TOP;
 }
 
 CVideoMergeManager::~CVideoMergeManager()
@@ -117,7 +123,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 				}
 				else
 				{
-					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 4);
+					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, m_nWndIndexItem - 1);
 				}
 			}
 
@@ -183,7 +189,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 			}
 			else
 			{
-				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, 4);
+				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, m_nWndIndexItem - 1);
 			}
 
 			if (0 == m_mapItems.count(wsXmNo))
@@ -295,6 +301,20 @@ void CVideoMergeManager::InitParameter()
 	{
 		m_bDynamicVideo = true;
 	}
+
+	//读取子窗口索引号
+	m_nWndIndexMap = GetPrivateProfileInt(CONF_SECTION_INDEX, CONF_KEY_MAP, 
+		SubWndIndex::WND_LEFT_TOP, wsDisplayConfPath.c_str());
+	m_nWndIndexStuInfo = GetPrivateProfileInt(CONF_SECTION_INDEX, CONF_KEY_STUINFO, 
+		SubWndIndex::WND_LEFT_BOTTOM, wsDisplayConfPath.c_str());
+	m_nWndIndexMainDriving = GetPrivateProfileInt(CONF_SECTION_INDEX, CONF_KEY_MAINDRIVING,
+		SubWndIndex::WND_RIGHT_BOTTOM, wsDisplayConfPath.c_str());
+	m_nWndIndexCopilot = GetPrivateProfileInt(CONF_SECTION_INDEX, CONF_KEY_COPILOT, 
+		SubWndIndex::WND_RIGHT_MIDDLE, wsDisplayConfPath.c_str());
+	m_nWndIndexItem = GetPrivateProfileInt(CONF_SECTION_INDEX, CONF_KEY_ITEM, 
+		SubWndIndex::WND_RIGHT_TOP, wsDisplayConfPath.c_str());
+	L_INFO(_T("Get Wnd Index, map = %d, stuinfo = %d, mainDriving = %d, copilot = %d, item = %d\n"),
+		m_nWndIndexMap, m_nWndIndexStuInfo, m_nWndIndexMainDriving, m_nWndIndexCopilot, m_nWndIndexItem);
 
 	L_TRACE_LEAVE(_T("\n"));
 }
@@ -918,14 +938,33 @@ bool CVideoMergeManager::InitDVIChannel(int userId, int deviceNo, NET_DVR_MATRIX
 				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH;
 				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT;
 				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3 * 2;
-				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_WIDTH / 3 * 2;
+
+				//根据考生信息配置在哪个窗口，开窗的高度也不一样
+				if (SubWndIndex::WND_LEFT_TOP == m_nWndIndexStuInfo)
+				{
+					pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
+				}
+				else
+				{
+					pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3 * 2;
+				}
 			}
 			else if (1 == i % nWinCount)
 			{
 				pStruWinPos[i].struRect.dwXCoordinate = ((i / nWinCount) % 4) * DISPLAY_CHAN_WIDTH;
-				pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
 				pStruWinPos[i].struRect.dwWidth = DISPLAY_CHAN_WIDTH / 3 * 2;
-				pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
+
+				//根据考生信息配置在哪个窗口，开窗的高度也不一样
+				if (SubWndIndex::WND_LEFT_TOP == m_nWndIndexStuInfo)
+				{
+					pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3;
+					pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3 * 2;
+				}
+				else
+				{
+					pStruWinPos[i].struRect.dwYCoordinate = ((i / nWinCount) / 4) * DISPLAY_CHAN_HEIGHT + DISPLAY_CHAN_HEIGHT / 3 * 2;
+					pStruWinPos[i].struRect.dwHeight = DISPLAY_CHAN_HEIGHT / 3;
+				}
 			}
 			else if (2 == i % nWinCount)
 			{
@@ -1121,7 +1160,7 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 2);
+			it->second.StartDynamicDecode(channel, m_nWndIndexMainDriving - 1);
 		}
 		key = CStringUtils::Format(_T("考车%d_2"), it->first);
 		if (!GetVideoChannel(key, channel))
@@ -1130,7 +1169,7 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 3);
+			it->second.StartDynamicDecode(channel, m_nWndIndexCopilot - 1);
 		}
 		key = CStringUtils::Format(_T("考车%d_3"), it->first);
 		if (!GetVideoChannel(key, channel))
@@ -1139,13 +1178,13 @@ bool CVideoMergeManager::Run()
 		}
 		else
 		{
-			it->second.StartDynamicDecode(channel, 4);
+			it->second.StartDynamicDecode(channel, m_nWndIndexItem - 1);
 		}
 		
 		//被动解码
 		LONG lStudentInfoHandle = -1;
 		LONG lMapHandle = -1;
-		if (it->second.StartPassiveDecode(0, lMapHandle) && it->second.StartPassiveDecode(1, lStudentInfoHandle))
+		if (it->second.StartPassiveDecode(m_nWndIndexMap - 1, lMapHandle) && it->second.StartPassiveDecode(m_nWndIndexStuInfo - 1, lStudentInfoHandle))
 		{
 			it->second.InitPassiveMode(lStudentInfoHandle, lMapHandle);
 		}

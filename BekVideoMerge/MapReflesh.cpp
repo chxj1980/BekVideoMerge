@@ -62,7 +62,7 @@ void CMapReflesh::LoadMapConfig()
 		m_bDrawCar = true;
 	}
 
-	int uNineMaps = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_NINEMAPS, 0, wsEnvConfPath.c_str());
+	int uNineMaps = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_NINEMAPS, 0, wsMapConfPath.c_str());
 	if (1 == uNineMaps)
 	{
 		m_bNineMaps = true;

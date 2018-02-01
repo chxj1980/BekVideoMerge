@@ -205,6 +205,7 @@ begin
   if RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{3B83F3B3-A6F9-43A9-A90E-962EDE90E3A1}_is1', 'UninstallString', uicmd) then
   begin
     //É±½ø³Ì
+    Exec(ExpandConstant('{sys}\taskkill.exe'), '/im CZDemons.exe /f /t', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Exec(ExpandConstant('{sys}\taskkill.exe'), '/im BekVideoMerge.exe /f /t', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
   end;
 

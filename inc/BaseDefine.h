@@ -100,7 +100,7 @@ using namespace Gdiplus;
 //#define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
 #define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.png")
 //#define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
-#define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
+#define IMG_PATH_CAR_SKIN		_T("\\res\\car\\car.png")
 #define IMG_PATH_SIGNAL		_T("\\res\\signal\\signal.png")
 #define IMG_PATH_RESULT		_T("\\res\\result.png")
 #define IMG_PATH_NORMAL_MAP		_T("\\res\\map\\map.png")

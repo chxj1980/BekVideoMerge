@@ -42,7 +42,11 @@ Source: "./3rd-party/mencoder.exe"; DestDir: "{app}/3rdparty"; Flags: ignorevers
 Source: "./3rd-party/HKLib/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "./common/CUdpForJMQ.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "./common/ConfigTool/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "./common/CZDemons.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "./common/CLogFilez.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "./common/ZDemons.dat"; DestDir: "{app}"; Flags: ignoreversion
+
+Source: "./common/ConfigTool/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "../Release/BekVideoMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../Release/CommonDll.dll"; DestDir: "{app}"; Flags: ignoreversion

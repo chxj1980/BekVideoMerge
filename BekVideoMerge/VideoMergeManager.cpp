@@ -115,15 +115,26 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 			//动态切换到对应的项目视频
 			if (m_bDynamicVideo)
 			{
-				CHANNEL_CONFIG channel;
+				CHANNEL_CONFIG channel1;
 				wstring key = wsXmNo + CStringUtils::Format(_T("_%d"), XM_CAMERA_NO_1);
-				if (!GetVideoChannel(key, channel))
+				if (!GetVideoChannel(key, channel1))
 				{
 					L_INFO(_T("Video channel %s not configured\n"), key.c_str());
 				}
 				else
 				{
-					m_mapCarManagers[nCarNo].StartDynamicDecode(channel, m_nWndIndexItem - 1);
+					m_mapCarManagers[nCarNo].StartDynamicDecode(channel1, m_nWndIndexItem - 1);
+				}
+
+				CHANNEL_CONFIG channel2;
+				key = wsXmNo + CStringUtils::Format(_T("_%d"), XM_CAMERA_NO_2);
+				if (!GetVideoChannel(key, channel2))
+				{
+					L_INFO(_T("Video channel %s not configured\n"), key.c_str());
+				}
+				else
+				{
+					m_mapCarManagers[nCarNo].StartDynamicDecode(channel2, m_nWndIndexCopilot - 1);
 				}
 			}
 
@@ -190,6 +201,7 @@ bool CVideoMergeManager::HandleExamSignal(wstring buf)
 			else
 			{
 				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, m_nWndIndexItem - 1);
+				m_mapCarManagers[nCarNo].StartDynamicDecode(channel, m_nWndIndexCopilot - 1);
 			}
 
 			if (0 == m_mapItems.count(wsXmNo))

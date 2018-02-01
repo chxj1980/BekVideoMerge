@@ -104,6 +104,21 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
+	L_INFO(_T("\n"));
+	L_INFO(_T("/***************************************************************\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("Start BekVideoMerge Now.\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("***************************************************************/\n"));
+
 	L_DEBUG(_T("CBekVideoMergeDlg OnInitDialog\n"));
 
 	if (!videoMergeManager.StartWork())

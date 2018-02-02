@@ -37,7 +37,10 @@ AlwaysRestart=yes
 Name: "chinesesimp"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "./3rd-party/vcredist.exe"; DestDir: "{app}/3rdparty"; Flags: onlyifdoesntexist ignoreversionSource: "./3rd-party/{#DotNetFile}"; DestDir: "{tmp}"; Flags: onlyifdoesntexist ignoreversion deleteafterinstall; AfterInstall: InstallFramework; Check: FrameworkIsNotInstalled
+Source: "./public/vcredist_2015_x86.exe"; DestDir: "{tmp}"; Flags: ignoreversion;
+Source: "./public/vcredist_2015_x64.exe"; DestDir: "{tmp}"; Flags: ignoreversion; Check: IsWin64
+Source: "./public/{#DotNetFile}"; DestDir: "{tmp}"; Flags: onlyifdoesntexist ignoreversion deleteafterinstall; AfterInstall: InstallFramework; Check: FrameworkIsNotInstalled
+
 Source: "./3rd-party/mencoder.exe"; DestDir: "{app}/3rdparty"; Flags: ignoreversion
 Source: "./3rd-party/HKLib/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -58,6 +61,14 @@ Source: "./conf/*"; DestDir: "{app}/conf"; Flags: ignoreversion recursesubdirs c
 ;一些通用的资源文件和配置文件
 Source: "./res/*"; DestDir: "{app}/res"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+[Run]
+; Install vcredist
+Filename: "{tmp}\vcredist_2015_x86.exe"; Parameters: "/q /NORESTART"
+Filename: "{tmp}\vcredist_2015_x64.exe"; Parameters: "/q /NORESTART"; Check: IsWin64;
+
+;add firewall rule
+Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""BekVideoMerge"" dir=in action=allow program=""{app}\BekVideoMerge.exe"" enable=yes"; Flags:runhidden; MinVersion: 0, 6.0.0;
+Filename: "netsh.exe"; Parameters: " firewall  add allowedprogram program=""{app}\BekVideoMerge.exe"" name=BekVideoMerge mode=enable profile=ALL"; Flags:runhidden; OnlyBelowVersion: 0, 6.0.0;
 
 [code]
 var

@@ -2,7 +2,7 @@
 ; 有关创建 Inno Setup 脚本文件的详细资料请查阅帮助文档！
 
 #define MyAppName "BekVideoMerge"
-#define MyAppVersion "2.5.1"
+#define MyAppVersion "2.5.2"
 #define MyAppPublisher "福州北科大舟宇电子有限公司"
 #define MyAppBuildID GetDateTimeString('yyyymmdd','','');
 #define MyAppURL "http://www.bekzoyo.com.cn/"
@@ -45,13 +45,11 @@ Source: "./3rd-party/mencoder.exe"; DestDir: "{app}/3rdparty"; Flags: ignorevers
 Source: "./3rd-party/HKLib/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "./common/CUdpForJMQ.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "./common/CZDemons.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "./common/CLogFilez.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "./common/ZDemons.dat"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "./common/ConfigTool/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "../Release/BekVideoMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../Release/BekVideoDaemon.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../Release/CommonDll.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../Release/BekHikUtil.dll"; DestDir: "{app}"; Flags: ignoreversion
 
@@ -68,7 +66,9 @@ Filename: "{tmp}\vcredist_2015_x64.exe"; Parameters: "/q /NORESTART"; Check: IsW
 
 ;add firewall rule
 Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""BekVideoMerge"" dir=in action=allow program=""{app}\BekVideoMerge.exe"" enable=yes"; Flags:runhidden; MinVersion: 0, 6.0.0;
+Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""BekVideoDaemon"" dir=in action=allow program=""{app}\BekVideoDaemon.exe"" enable=yes"; Flags:runhidden; MinVersion: 0, 6.0.0;
 Filename: "netsh.exe"; Parameters: " firewall  add allowedprogram program=""{app}\BekVideoMerge.exe"" name=BekVideoMerge mode=enable profile=ALL"; Flags:runhidden; OnlyBelowVersion: 0, 6.0.0;
+Filename: "netsh.exe"; Parameters: " firewall  add allowedprogram program=""{app}\BekVideoDaemon.exe"" name=BekVideoDaemon mode=enable profile=ALL"; Flags:runhidden; OnlyBelowVersion: 0, 6.0.0;
 
 [code]
 var

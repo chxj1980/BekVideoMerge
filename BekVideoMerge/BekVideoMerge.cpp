@@ -59,6 +59,12 @@ BOOL CBekVideoMergeApp::InitInstance()
 		return FALSE;
 	}
 
+	wstring wsCmdLine = m_lpCmdLine;
+	if (wsCmdLine.empty())
+	{
+		return FALSE;
+	}
+
 	//文件目录初始化
 	wstring wstrCurrentPath = _T("");
 	CWinUtils::GetCurrentProcessPath(wstrCurrentPath);

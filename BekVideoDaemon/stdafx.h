@@ -37,7 +37,18 @@
 
 
 
+#define WM_SYSTEMTRAY		WM_USER+1001
+#define WM_USER_EXIT			WM_USER+1002
 
+#include <TlHelp32.h>
+#include <string>
+using namespace std;
+
+//CommonDll
+#include "Common/LogBase.h"
+#include "Common/WinUtils.h"
+#include "Common/StringUtils.h"
+#pragma comment(lib, "CommonDll.lib")
 
 
 

@@ -49,6 +49,29 @@ BOOL CBekVideoDaemonApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
+
+	//进程互斥
+	HANDLE hObject = CreateMutex(NULL, FALSE, _T("BekVideoDaemon"));
+	if (ERROR_ALREADY_EXISTS == GetLastError())
+	{
+		CloseHandle(hObject);
+		return FALSE;
+	}
+
+	//文件目录初始化
+	wstring wstrCurrentPath = _T("");
+	CWinUtils::GetCurrentProcessPath(wstrCurrentPath);
+	wstring wstrLogPath = wstrCurrentPath + _T("\\log");
+	if (!CWinUtils::FileExists(wstrLogPath))
+	{
+		CWinUtils::CreateDirectorys(wstrLogPath);
+	}
+
+	//日志模块初始化
+	wstring wsLogPath = wstrCurrentPath + _T("\\conf\\BekVideoDaemon_logconf.ini");
+	LogBase_init(wsLogPath.c_str());
+
+
 	CWinApp::InitInstance();
 
 
@@ -69,6 +92,10 @@ BOOL CBekVideoDaemonApp::InitInstance()
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
+
+	//CBekVideoDaemonDlg *pDlg = new CBekVideoDaemonDlg;
+	//m_pMainWnd = pDlg;
+	//return pDlg->Create(IDD_BEKVIDEODAEMON_DIALOG);
 
 	CBekVideoDaemonDlg dlg;
 	m_pMainWnd = &dlg;

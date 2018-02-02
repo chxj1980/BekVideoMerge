@@ -36,6 +36,10 @@ AlwaysRestart=yes
 [Languages]
 Name: "chinesesimp"; MessagesFile: "compiler:Default.isl"
 
+;桌面快捷方式
+[Icons]
+Name: "{userdesktop}\六合一";Filename: "{app}\BekVideoDaemon.exe"; WorkingDir: "{app}"
+
 [Files]
 Source: "./public/vcredist_2015_x86.exe"; DestDir: "{tmp}"; Flags: ignoreversion;
 Source: "./public/vcredist_2015_x64.exe"; DestDir: "{tmp}"; Flags: ignoreversion; Check: IsWin64

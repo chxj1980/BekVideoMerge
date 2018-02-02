@@ -450,6 +450,7 @@ bool CVideoMergeManager::InitVideoChannel()
 		VARIANT cnt;
 		cnt.vt = VT_INT;
 		_RecordsetPtr pSet = m_pDB->Execute((_bstr_t)wsSql.c_str(), &cnt, adCmdUnknown);
+
 		_variant_t vat;
 		if (pSet != NULL && !pSet->adoEOF)
 		{
@@ -459,12 +460,13 @@ bool CVideoMergeManager::InitVideoChannel()
 				wstring wsNid = _T("");
 				
 				vat = pSet->GetCollect(DB_FIELD_BH);
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					wsBh = (_bstr_t)vat;
 				}
+
 				vat = pSet->GetCollect(DB_FIELD_NID);
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					wsNid = (_bstr_t)vat;
 				}
@@ -473,42 +475,49 @@ bool CVideoMergeManager::InitVideoChannel()
 				{
 					wstring wsKey = wsBh + _T("_") + wsNid;
 					vat = pSet->GetCollect(DB_FIELD_BH);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szDeviceNo, (LPCSTR)(_bstr_t)vat, 10);
 					}
+
 					vat = pSet->GetCollect(DB_FIELD_SBIP);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szDeviceIP, (LPCSTR)(_bstr_t)vat, 16);
 					}
+
 					vat = pSet->GetCollect(DB_FIELD_YHM);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szUsername, (LPCSTR)(_bstr_t)vat, 16);
 					}
+
 					vat = pSet->GetCollect(DB_FIELD_MM);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szPassword, (LPCSTR)(_bstr_t)vat, 16);
 					}
+
 					vat = pSet->GetCollect(DB_FIELD_DKH);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						m_mapChannels[wsKey].dwPort = atoi((_bstr_t)vat);
 					}
+
 					vat = pSet->GetCollect(DB_FIELD_TDH);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						m_mapChannels[wsKey].dwChannel = atoi((_bstr_t)vat);
 					}
+
 					vat = pSet->GetCollect(DB_FIELD_TRANSMODE);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						m_mapChannels[wsKey].nStreamType = atoi((_bstr_t)vat);
 					}
+
 					vat = pSet->GetCollect(DB_FIELD_MEDIAIP);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szMediaIP, (LPCSTR)(_bstr_t)vat, 16);
 					}
@@ -552,16 +561,16 @@ bool CVideoMergeManager::InitItems()
 			while (!pSet->adoEOF)
 			{
 				vat = pSet->GetCollect(DB_FIELD_CWBH);
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					wstring wsNo = (_bstr_t)vat;
 					vat = pSet->GetCollect(DB_FIELD_KFLX);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapItems[wsNo].errorlx, (LPCSTR)(_bstr_t)vat, 30);
 					}
 					vat = pSet->GetCollect(DB_FIELD_KCFS);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						m_mapItems[wsNo].ikcfs = atoi((_bstr_t)vat);
 					}
@@ -1274,73 +1283,73 @@ bool CVideoMergeManager::GetStudentInfo(wstring certificateNo, int carNo, Studen
 			while (!pSet->adoEOF)
 			{
 				vat = pSet->GetCollect(DB_FIELD_KCH);	//考车号
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsCarNo = (_bstr_t)vat;
 				}
 				
 				vat = pSet->GetCollect(DB_FIELD_BZ);	//备注，车牌号
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsRemarks = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(DB_FIELD_KSCX);	//考试车型
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsCarType = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(DB_FIELD_XINGMING);	//姓名
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsName = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(DB_FIELD_XB);	//性别
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsGender = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(_T("MYDATE"));	//日期
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsDate = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(DB_FIELD_LSH);	//流水号
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsSerialNo = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(DB_FIELD_SFZMBH);	//身份证明编号
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsID = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(DB_FIELD_JXMC);	//驾校名称
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsDrivingSchool = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(DB_FIELD_KSY1);	//考试员1
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsExaminer = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(DB_FIELD_DRCS);	//当日次数
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					studentInfo.wsDayCount = (_bstr_t)vat;
 				}
 
 				vat = pSet->GetCollect(DB_FIELD_KSYY);	//考试原因
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					wstring examReasonNo = (_bstr_t)vat;
 					studentInfo.wsExamReason = GetExamReason(examReasonNo);

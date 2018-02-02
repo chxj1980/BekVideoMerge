@@ -188,12 +188,12 @@ bool CWallVideoMerge::InitVideoChannel()
 				wstring wsNid = _T("");
 
 				vat = pSet->GetCollect(DB_FIELD_BH);
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					wsBh = (_bstr_t)vat;
 				}
 				vat = pSet->GetCollect(DB_FIELD_NID);
-				if (vat.vt != NULL)
+				if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 				{
 					wsNid = (_bstr_t)vat;
 				}
@@ -202,42 +202,42 @@ bool CWallVideoMerge::InitVideoChannel()
 				{
 					wstring wsKey = wsBh + _T("_") + wsNid;
 					vat = pSet->GetCollect(DB_FIELD_BH);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szDeviceNo, (LPCSTR)(_bstr_t)vat, 10);
 					}
 					vat = pSet->GetCollect(DB_FIELD_SBIP);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szDeviceIP, (LPCSTR)(_bstr_t)vat, 16);
 					}
 					vat = pSet->GetCollect(DB_FIELD_YHM);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szUsername, (LPCSTR)(_bstr_t)vat, 16);
 					}
 					vat = pSet->GetCollect(DB_FIELD_MM);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szPassword, (LPCSTR)(_bstr_t)vat, 16);
 					}
 					vat = pSet->GetCollect(DB_FIELD_DKH);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						m_mapChannels[wsKey].dwPort = atoi((_bstr_t)vat);
 					}
 					vat = pSet->GetCollect(DB_FIELD_TDH);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						m_mapChannels[wsKey].dwChannel = atoi((_bstr_t)vat);
 					}
 					vat = pSet->GetCollect(DB_FIELD_TRANSMODE);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						m_mapChannels[wsKey].nStreamType = atoi((_bstr_t)vat);
 					}
 					vat = pSet->GetCollect(DB_FIELD_MEDIAIP);
-					if (vat.vt != NULL)
+					if (vat.vt != NULL && vat.vt != VT_NULL && vat.vt != VT_EMPTY)
 					{
 						strncpy(m_mapChannels[wsKey].szMediaIP, (LPCSTR)(_bstr_t)vat, 16);
 					}

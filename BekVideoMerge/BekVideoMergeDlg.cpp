@@ -119,6 +119,9 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 	L_INFO(_T("*\n"));
 	L_INFO(_T("***************************************************************/\n"));
 
+	//设置中文环境
+	setlocale(LC_ALL, ".936");
+
 	L_DEBUG(_T("CBekVideoMergeDlg OnInitDialog\n"));
 
 	if (!videoMergeManager.StartWork())

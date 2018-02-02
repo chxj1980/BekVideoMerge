@@ -86,13 +86,13 @@ bool CMapReflesh::GetCarRelativeCoordinate(CarSignal signal, int &x, int &y)
 	y = abs((int)((signal.dY - m_mapMaxY) * m_mapZoomIn));
 	if (x < 0 || x > m_mapWidth)
 	{
-		L_INFO(_T("GetCarRelativeCoordinate fail, x=%d, mapMinX=%d, mapZoomIn=%d\n"),
+		L_DEBUG(_T("GetCarRelativeCoordinate fail, x=%d, mapMinX=%d, mapZoomIn=%d\n"),
 			signal.dX, m_mapMinX, m_mapZoomIn);
 		x = 0;
 	}
 	if (y < 0 || y > m_mapHeight)
 	{
-		L_INFO(_T("GetCarRelativeCoordinate fail, y=%d, mapMaxY=%d, mapZoomIn=%d\n"),
+		L_DEBUG(_T("GetCarRelativeCoordinate fail, y=%d, mapMaxY=%d, mapZoomIn=%d\n"),
 			signal.dY, m_mapMaxY, m_mapZoomIn);
 		y = 0;
 	}

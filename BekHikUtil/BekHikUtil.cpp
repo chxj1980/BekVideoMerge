@@ -18,7 +18,7 @@ bool CBekHikUtil::InitSDK()
 		wstring wstrSdkLogPath = _T("");
 		string strLogPath = "";
 		CWinUtils::GetCurrentProcessPath(wstrCurrentPath);
-		wstrSdkLogPath = wstrCurrentPath + _T("\\SdkLog");
+		wstrSdkLogPath = wstrCurrentPath + _T("\\log\\SdkLog");
 		CStringUtils::Unicode2ASCII(wstrSdkLogPath, strLogPath);
 
 		NET_DVR_SetLogToFile(3, (char*)strLogPath.c_str(), true);

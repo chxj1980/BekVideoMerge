@@ -2,7 +2,7 @@
 ; 有关创建 Inno Setup 脚本文件的详细资料请查阅帮助文档！
 
 #define MyAppName "BekVideoMerge"
-#define MyAppVersion "2.5.0"
+#define MyAppVersion "2.5.3"
 #define MyAppPublisher "福州北科大舟宇电子有限公司"
 #define MyAppBuildID GetDateTimeString('yyyymmdd','','');
 #define MyAppURL "http://www.bekzoyo.com.cn/"
@@ -36,15 +36,24 @@ AlwaysRestart=yes
 [Languages]
 Name: "chinesesimp"; MessagesFile: "compiler:Default.isl"
 
+;桌面快捷方式
+[Icons]
+Name: "{userdesktop}\六合一";Filename: "{app}\BekVideoDaemon.exe"; WorkingDir: "{app}"
+
 [Files]
-Source: "./3rd-party/vcredist.exe"; DestDir: "{app}/3rdparty"; Flags: onlyifdoesntexist ignoreversionSource: "./3rd-party/{#DotNetFile}"; DestDir: "{tmp}"; Flags: onlyifdoesntexist ignoreversion deleteafterinstall; AfterInstall: InstallFramework; Check: FrameworkIsNotInstalled
+Source: "./public/vcredist_2015_x86.exe"; DestDir: "{tmp}"; Flags: ignoreversion;
+Source: "./public/vcredist_2015_x64.exe"; DestDir: "{tmp}"; Flags: ignoreversion; Check: IsWin64
+Source: "./public/{#DotNetFile}"; DestDir: "{tmp}"; Flags: onlyifdoesntexist ignoreversion deleteafterinstall; AfterInstall: InstallFramework; Check: FrameworkIsNotInstalled
+
 Source: "./3rd-party/mencoder.exe"; DestDir: "{app}/3rdparty"; Flags: ignoreversion
 Source: "./3rd-party/HKLib/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "./common/CUdpForJMQ.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "./common/ConfigTool/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+Source: "./common/ConfigTool/*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: "../Release/BekVideoMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../Release/BekVideoDaemon.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../Release/CommonDll.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "../Release/BekHikUtil.dll"; DestDir: "{app}"; Flags: ignoreversion
 
@@ -54,6 +63,16 @@ Source: "./conf/*"; DestDir: "{app}/conf"; Flags: ignoreversion recursesubdirs c
 ;一些通用的资源文件和配置文件
 Source: "./res/*"; DestDir: "{app}/res"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+[Run]
+; Install vcredist
+Filename: "{tmp}\vcredist_2015_x86.exe"; Parameters: "/q /NORESTART"
+Filename: "{tmp}\vcredist_2015_x64.exe"; Parameters: "/q /NORESTART"; Check: IsWin64;
+
+;add firewall rule
+Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""BekVideoMerge"" dir=in action=allow program=""{app}\BekVideoMerge.exe"" enable=yes"; Flags:runhidden; MinVersion: 0, 6.0.0;
+Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""BekVideoDaemon"" dir=in action=allow program=""{app}\BekVideoDaemon.exe"" enable=yes"; Flags:runhidden; MinVersion: 0, 6.0.0;
+Filename: "netsh.exe"; Parameters: " firewall  add allowedprogram program=""{app}\BekVideoMerge.exe"" name=BekVideoMerge mode=enable profile=ALL"; Flags:runhidden; OnlyBelowVersion: 0, 6.0.0;
+Filename: "netsh.exe"; Parameters: " firewall  add allowedprogram program=""{app}\BekVideoDaemon.exe"" name=BekVideoDaemon mode=enable profile=ALL"; Flags:runhidden; OnlyBelowVersion: 0, 6.0.0;
 
 [code]
 var
@@ -201,6 +220,7 @@ begin
   if RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{3B83F3B3-A6F9-43A9-A90E-962EDE90E3A1}_is1', 'UninstallString', uicmd) then
   begin
     //杀进程
+    Exec(ExpandConstant('{sys}\taskkill.exe'), '/im CZDemons.exe /f /t', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
     Exec(ExpandConstant('{sys}\taskkill.exe'), '/im BekVideoMerge.exe /f /t', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
   end;
 

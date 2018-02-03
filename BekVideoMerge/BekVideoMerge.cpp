@@ -59,6 +59,12 @@ BOOL CBekVideoMergeApp::InitInstance()
 		return FALSE;
 	}
 
+	wstring wsCmdLine = m_lpCmdLine;
+	if (wsCmdLine.empty())
+	{
+		return FALSE;
+	}
+
 	//文件目录初始化
 	wstring wstrCurrentPath = _T("");
 	CWinUtils::GetCurrentProcessPath(wstrCurrentPath);
@@ -117,7 +123,7 @@ int CBekVideoMergeApp::ExitInstance()
 {
 	// TODO: Add your specialized code here and/or call the base class
 
-	L_INFO(_T("BekVideoMerge Exit"));
+	L_INFO(_T("BekVideoMerge Exit\n"));
 
 	GdiplusShutdown(gdiplusToken);	//GDI+ exit
 	CoUninitialize();

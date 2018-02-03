@@ -23,6 +23,8 @@ CMapReflesh::CMapReflesh()
 	m_wsExamStatus = _T("");
 	m_nDisplayDelays = 0;
 
+	m_bNineMaps = false;
+
 	SetEvent(m_refleshEvent);
 }
 
@@ -60,6 +62,12 @@ void CMapReflesh::LoadMapConfig()
 		m_bDrawCar = true;
 	}
 
+	int uNineMaps = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_NINEMAPS, 0, wsMapConfPath.c_str());
+	if (1 == uNineMaps)
+	{
+		m_bNineMaps = true;
+	}
+
 	m_mapMaxX = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_MAXX, 0, wsMapConfPath.c_str());
 	m_mapMinX = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_MINX, 0, wsMapConfPath.c_str());
 	m_mapMaxY = GetPrivateProfileInt(CONF_SECTION_CONFIG, CONF_KEY_MAXY, 0, wsMapConfPath.c_str());
@@ -78,13 +86,13 @@ bool CMapReflesh::GetCarRelativeCoordinate(CarSignal signal, int &x, int &y)
 	y = abs((int)((signal.dY - m_mapMaxY) * m_mapZoomIn));
 	if (x < 0 || x > m_mapWidth)
 	{
-		L_INFO(_T("GetCarRelativeCoordinate fail, x=%d, mapMinX=%d, mapZoomIn=%d\n"),
+		L_DEBUG(_T("GetCarRelativeCoordinate fail, x=%d, mapMinX=%d, mapZoomIn=%d\n"),
 			signal.dX, m_mapMinX, m_mapZoomIn);
 		x = 0;
 	}
 	if (y < 0 || y > m_mapHeight)
 	{
-		L_INFO(_T("GetCarRelativeCoordinate fail, y=%d, mapMaxY=%d, mapZoomIn=%d\n"),
+		L_DEBUG(_T("GetCarRelativeCoordinate fail, y=%d, mapMaxY=%d, mapZoomIn=%d\n"),
 			signal.dY, m_mapMaxY, m_mapZoomIn);
 		y = 0;
 	}
@@ -162,7 +170,14 @@ BOOL CMapReflesh::MapRefleshThreadProc(LPVOID parameter, HANDLE stopEvent)
 				mapRefleshClass->GetCarRelativeCoordinate(carSignal, nCarRelativeX, nCarRelativeY);
 
 				//绘制地图
-				mapRefleshClass->DrawMap(&graphics, nCarRelativeX, nCarRelativeY);
+				if (mapRefleshClass->m_bNineMaps)
+				{
+					mapRefleshClass->DrawNineMap(&graphics, nCarRelativeX, nCarRelativeY);
+				}
+				else
+				{
+					mapRefleshClass->DrawNormalMap(&graphics, nCarRelativeX, nCarRelativeY);
+				}
 
 				//绘制车模型
 				mapRefleshClass->DrawCar(&graphics, carSignal.fDirectionAngle);
@@ -247,7 +262,7 @@ EXIT:
 //}
 
 //绘制地图
-void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
+void CMapReflesh::DrawNineMap(Graphics *graphics, int carX, int carY)
 {
 	try
 	{
@@ -321,6 +336,31 @@ void CMapReflesh::DrawMap(Graphics *graphics, int carX, int carY)
 		L_ERROR(_T("DrawMap catch an error.\n"));
 	}
 
+}
+
+void CMapReflesh::DrawNormalMap(Graphics *graphics, int carX, int carY)
+{
+	wstring wsImgMap = m_wsProgramPath + IMG_PATH_NORMAL_MAP;
+	if (!CWinUtils::FileExists(wsImgMap))
+	{
+		L_ERROR(_T("wsImgMap not exist, file name = %s\n"), wsImgMap.c_str());
+		return;
+	}
+
+	Image * imgMap = Image::FromFile(wsImgMap.c_str());
+
+	if (carX < VIDEO_WIDTH / 2)
+	{
+		carX = VIDEO_WIDTH / 2;
+	}
+	if (carY < VIDEO_HEIGHT / 2)
+	{
+		carY = VIDEO_HEIGHT / 2;
+	}
+	graphics->DrawImage(imgMap, Rect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT),
+		(carX - (VIDEO_WIDTH) / 2), (carY - VIDEO_HEIGHT / 2), VIDEO_WIDTH, VIDEO_HEIGHT, UnitPixel);
+
+	delete imgMap;
 }
 
 //绘制车模型

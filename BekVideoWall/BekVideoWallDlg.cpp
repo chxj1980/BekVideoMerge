@@ -104,6 +104,10 @@ BOOL CBekVideoWallDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 
 	L_DEBUG(_T("CBekVideoWallDlg OnInitDialog\n"));
+
+	//设置中文环境
+	setlocale(LC_ALL, ".936");
+
 	if (!wallVideoMerge.StartWork())
 	{
 		L_ERROR(_T("wallVideoMerge.StartWork failed, Exit\n"));

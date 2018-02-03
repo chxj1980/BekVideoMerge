@@ -104,6 +104,24 @@ BOOL CBekVideoMergeDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
+	L_INFO(_T("\n"));
+	L_INFO(_T("/***************************************************************\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("Start BekVideoMerge Now.\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("*\n"));
+	L_INFO(_T("***************************************************************/\n"));
+
+	//设置中文环境
+	setlocale(LC_ALL, ".936");
+
 	L_DEBUG(_T("CBekVideoMergeDlg OnInitDialog\n"));
 
 	if (!videoMergeManager.StartWork())

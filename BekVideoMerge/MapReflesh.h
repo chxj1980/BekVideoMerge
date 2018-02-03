@@ -23,7 +23,8 @@ private:
 	void LoadMapConfig();
 	//void DrawBackground(Graphics *graphics);	//绘制背景
 	bool GetCarRelativeCoordinate(CarSignal signal, int &x, int &y);
-	void DrawMap(Graphics *graphics, int carX, int carY);	//绘制地图
+	void DrawNineMap(Graphics *graphics, int carX, int carY);	//绘制九宫格版本地图
+	void DrawNormalMap(Graphics *graphics, int carX, int carY);	//绘制地图
 	void DrawCar(Graphics *graphics, float angle);	//绘制车模型
 	void DrawStatus(Graphics *graphics, CarSignal carSignal);	//绘制状态信息
 
@@ -41,6 +42,8 @@ private:
 	int m_mapWidth;
 	int m_mapHeight;
 	int m_mapSplitWidth;
+
+	bool m_bNineMaps;	//九宫格模式
 
 	bool m_bStartExam;	//开始考试
 	bool m_bEndExam;	//结束考试

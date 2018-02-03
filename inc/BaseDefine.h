@@ -33,6 +33,8 @@ using namespace Gdiplus;
 
 #define VIDEO_WIDTH	640
 #define VIDEO_HEIGHT	360
+//#define VIDEO_WIDTH	1280
+//#define VIDEO_HEIGHT	720
 
 //科目二远景摄像头编号
 #define CAMERA_KM2_PUBLIC				_T("10086_1")
@@ -84,6 +86,7 @@ using namespace Gdiplus;
 #define CONF_KEY_MAINDRIVING		_T("MainDriving")
 #define CONF_KEY_COPILOT					_T("Copilot")
 #define CONF_KEY_ITEM						_T("Item")
+#define CONF_KEY_NINEMAPS				_T("NineMaps")
 
 //文件目录
 #define FILE_PATH_LOG		_T("\\log")
@@ -97,9 +100,10 @@ using namespace Gdiplus;
 //#define IMG_PATH_XM_BACKGROUND		_T("\\res\\XMBackground.skin")
 #define IMG_PATH_STUDENT_BACKGROUND		_T("\\res\\StuBackground.png")
 //#define IMG_PATH_XM_LIST					_T("\\res\\XMList.skin")
-#define IMG_PATH_CAR_SKIN		_T("\\res\\Car.skin")
+#define IMG_PATH_CAR_SKIN		_T("\\res\\car\\car.png")
 #define IMG_PATH_SIGNAL		_T("\\res\\signal\\signal.png")
 #define IMG_PATH_RESULT		_T("\\res\\result.png")
+#define IMG_PATH_NORMAL_MAP		_T("\\res\\map\\map.png")
 #define MAP_FILENAME_FORMAT		_T("\\res\\map\\%d_%d.png")
 #define PHOTO_ID_FORMAT		_T("\\%d_id_photo.png")
 #define PHOTO_LOGIN_FORMAT		_T("\\%d_login_photo.png")
@@ -293,6 +297,7 @@ typedef enum CarCameraNoLocation {
 //项目摄像头编号
 typedef enum XmCameraNoLocation {
 	XM_CAMERA_NO_1 = 1,		//项目1号摄像头
+	XM_CAMERA_NO_2 = 2,		//项目2号摄像头
 };
 
 //子窗口索引号
